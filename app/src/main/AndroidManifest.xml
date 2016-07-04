@@ -18,22 +18,19 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".MarketWatcherService"
-            android:enabled="true"
-            android:exported="true" />
-
         <receiver
-            android:name=".BootReceiver"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
-            android:name=".AlarmReceiver"
-            android:enabled="true"
+            android:name=".Receivers.BootReceiver"
+            android:enabled="false"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".Receivers.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true">
         </receiver>
     </application>
 

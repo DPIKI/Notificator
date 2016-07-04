@@ -1,4 +1,4 @@
-package dpiki.notificator;
+package dpiki.notificator.Data;
 
 /**
  * Created by Lenovo on 01.07.2016.
