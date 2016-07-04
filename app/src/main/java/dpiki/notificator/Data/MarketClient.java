@@ -1,4 +1,4 @@
-package dpiki.notificator.Data;
+package dpiki.notificator.data;
 
 /**
  * Created by Lenovo on 01.07.2016.
@@ -6,16 +6,16 @@ package dpiki.notificator.Data;
 public class MarketClient {
     Integer id;
     String name;
-    String param1;
-    String param2;
-    String param3;
+    String pref1;
+    String pref2;
+    String pref3;
 
-    public MarketClient(Integer id, String name, String param1, String param2, String param3) {
+    public MarketClient(Integer id, String name, String pref1, String pref2, String pref3) {
         this.id = id;
         this.name = name;
-        this.param1 = param1;
-        this.param2 = param2;
-        this.param3 = param3;
+        this.pref1 = pref1;
+        this.pref2 = pref2;
+        this.pref3 = pref3;
     }
 
     public Integer getId() {
@@ -26,35 +26,35 @@ public class MarketClient {
         this.id = id;
     }
 
-    public String getParam1() {
-        return param1;
-    }
-
-    public void setParam1(String param1) {
-        this.param1 = param1;
-    }
-
-    public String getParam2() {
-        return param2;
-    }
-
-    public void setParam2(String param2) {
-        this.param2 = param2;
-    }
-
-    public String getParam3() {
-        return param3;
-    }
-
-    public void setParam3(String param3) {
-        this.param3 = param3;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPref1() {
+        return pref1;
+    }
+
+    public void setPref1(String pref1) {
+        this.pref1 = pref1;
+    }
+
+    public String getPref2() {
+        return pref2;
+    }
+
+    public void setPref2(String pref2) {
+        this.pref2 = pref2;
+    }
+
+    public String getPref3() {
+        return pref3;
+    }
+
+    public void setPref3(String pref3) {
+        this.pref3 = pref3;
     }
 }

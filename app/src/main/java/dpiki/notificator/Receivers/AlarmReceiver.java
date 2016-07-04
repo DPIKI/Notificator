@@ -1,9 +1,11 @@
-package dpiki.notificator.Receivers;
+package dpiki.notificator.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
+
+import dpiki.notificator.SyncMarketService;
 
 public class AlarmReceiver extends BroadcastReceiver {
     public AlarmReceiver() {
@@ -11,6 +13,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "Alarm received", Toast.LENGTH_SHORT).show();
+        SyncMarketService.fetchPhoneData(context);
     }
 }

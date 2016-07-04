@@ -1,12 +1,10 @@
-package dpiki.notificator.Receivers;
+package dpiki.notificator.receivers;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
-import dpiki.notificator.Receivers.AlarmReceiver;
 
 public class BootReceiver extends BroadcastReceiver {
     public BootReceiver() {

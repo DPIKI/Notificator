@@ -2,7 +2,7 @@ package dpiki.notificator;
 
 import java.util.ArrayList;
 
-import dpiki.notificator.Data.MarketClient;
+import dpiki.notificator.data.MarketClient;
 
 /**
  * Created by Lenovo on 01.07.2016.

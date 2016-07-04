@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dpiki.notificator">
-    
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -19,19 +20,20 @@
         </activity>
 
         <receiver
-            android:name=".Receivers.BootReceiver"
+            android:name=".receivers.BootReceiver"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <receiver
-            android:name=".Receivers.AlarmReceiver"
-            android:enabled="true"
-            android:exported="true">
-        </receiver>
+            android:name=".receivers.AlarmReceiver"
+            android:enabled="true" />
+
+        <service
+            android:name=".SyncMarketService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

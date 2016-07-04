@@ -3,7 +3,7 @@ package dpiki.notificator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import dpiki.notificator.Receivers.BootReceiver;
+import dpiki.notificator.receivers.BootReceiver;
 
 public class MainActivity extends AppCompatActivity {
 
