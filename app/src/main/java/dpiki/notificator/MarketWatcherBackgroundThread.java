@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -33,7 +32,7 @@ public class MarketWatcherBackgroundThread extends Thread {
         SharedPreferences.Editor editor = pref.edit();
 
         String lastUpdate = pref.getString(KEY_LAST_UPDATE, "");
-        int notifId = pref.getInt(KEY_NOTIF_ID, 0);
+        int notifyId = pref.getInt(KEY_NOTIF_ID, 0);
 
         try {
             while (true) {
@@ -57,13 +56,14 @@ public class MarketWatcherBackgroundThread extends Thread {
                             .setSmallIcon(android.R.drawable.ic_dialog_alert)
                             .setWhen(System.currentTimeMillis())
                             .setDefaults(Notification.DEFAULT_ALL)
+                            .setTicker("Есть рекомендация")
                             .setContentTitle("Есть рекомендация")
                             .setContentText("Клиент: " + i.client.getName() +
                                             "\nТелефон: " + i.phone.getName());
                     Notification n = builder.build();
-                    nm.notify(notifId, n);
-                    notifId++;
-                    editor.putInt(KEY_NOTIF_ID, notifId);
+                    nm.notify(notifyId, n);
+                    notifyId++;
+                    editor.putInt(KEY_NOTIF_ID, notifyId);
                     editor.apply();
                 }
 
@@ -80,7 +80,9 @@ public class MarketWatcherBackgroundThread extends Thread {
         MarketClient client = new MarketClient(0, "Gosha", "param1", "param2", "param3");
         Recommendation rec = new Recommendation(client, phone);
         ArrayList<Recommendation> ret_val = new ArrayList<>();
+
         ret_val.add(rec);
+
         return ret_val;
     }
 }

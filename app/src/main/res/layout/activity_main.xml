@@ -13,4 +13,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
+
+    <Button
+        android:id="@+id/btn_start_alarm"
+        android:text="Start alarm"
+        android:layout_centerInParent="true"
+        android:onClick="onStartAlarmClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:text="Stop alarm"
+        android:onClick="onStopAlarmClick"
+        android:layout_below="@id/btn_start_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </RelativeLayout>
