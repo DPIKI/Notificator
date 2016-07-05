@@ -17,6 +17,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -101,6 +102,17 @@ public class SyncMarketService extends IntentService {
 
     ArrayList<Recommendation> filterNewPhones(ArrayList<Phone> phones,
                                               ArrayList<MarketClient> filter) {
-        return new ArrayList<>();
+        ArrayList<Recommendation> recommendation = new ArrayList<>();
+
+        for (Phone i : phones) {
+            for (MarketClient j : filter) {
+                if ((i.getParam1().equals(j.getPref1()) || i.getParam1().isEmpty()) &&
+                        (i.getParam2().equals(j.getPref2()) || i.getParam2().isEmpty()) &&
+                                (i.getParam3().equals(j.getPref3()) || i.getParam3().isEmpty())) {
+                    recommendation.add(new Recommendation(j, i));
+                }
+            }
+        }
+        return recommendation;
     }
 }
