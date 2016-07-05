@@ -19,9 +19,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -32,8 +35,12 @@ import dpiki.notificator.data.Recommendation;
 
 public class SyncMarketService extends IntentService {
     public static final String TAG = "SyncMarket";
+
     public static final String PREF_KEY_NOTIFY_ID = "notifyId";
     public static final String PREF_KEY_LAST_DATE = "lastDate";
+
+    public static final String JSON_KEY_SUCCESS = "success";
+    public static final String JSON_KEY_LAST_DATE = "lastDate";
 
     RequestQueue queue;
 
@@ -55,38 +62,22 @@ public class SyncMarketService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = pref.edit();
-
         String lastDate = pref.getString(PREF_KEY_LAST_DATE, "");
+
         if (!lastDate.equals("")) {
-            RequestFuture<JSONObject> future = RequestFuture.newFuture();
-            JsonObjectRequest request = new JsonObjectRequest(
-                    JsonObjectRequest.Method.GET,
-                    "http://192.168.137.144/get_new_phones.php?date=2016-07-04%2014:00:00", future, future);
-            queue.add(request);
-
-            try {
-                JSONObject response = future.get(10, TimeUnit.SECONDS);
-                ArrayList<Phone> phones = extractResponse(response);
-                ArrayList<MarketClient> clients = readClients();
-                ArrayList<Recommendation> recommendations = filterNewPhones(phones, clients);
-                notifyUser(recommendations);
-                Log.d(TAG, response.toString());
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                e.printStackTrace();
-            }
+            requestNewPhones(lastDate);
         } else {
-
+            requestLastDate();
         }
     }
 
     ArrayList<Phone> extractResponse(JSONObject object) {
         ArrayList<Phone> phones = new ArrayList<>();
         try {
-            if (object.getBoolean("success")){
+            if (object.getBoolean("success")) {
                 JSONArray json = object.getJSONArray("phones");
 
-                for (int i = 0; i < json.length(); i++){
+                for (int i = 0; i < json.length(); i++) {
                     JSONObject jsonObject = json.getJSONObject(i);
                     Phone phone = new Phone(
                             jsonObject.getInt("pid"),
@@ -101,7 +92,7 @@ public class SyncMarketService extends IntentService {
         } catch (JSONException e) {
             e.printStackTrace();
             phones.clear();
-        }finally {
+        } finally {
             return phones;
         }
     }
@@ -149,5 +140,79 @@ public class SyncMarketService extends IntentService {
             editor.putInt(PREF_KEY_NOTIFY_ID, notifyId);
             editor.apply();
         }
+    }
+
+    void requestNewPhones(String lastDate) {
+        try {
+            RequestFuture<JSONObject> future = RequestFuture.newFuture();
+            JsonObjectRequest request = new JsonObjectRequest(
+                    JsonObjectRequest.Method.GET,
+                    "http://192.168.137.144/get_new_phones.php?date="
+                            + lastDate.replace(" ", "%20"),
+                    future, future);
+            queue.add(request);
+
+            JSONObject response = future.get(10, TimeUnit.SECONDS);
+            ArrayList<Phone> phones = extractResponse(response);
+
+            if (!phones.isEmpty()) {
+                Date last = findLastAddedPhone(phones);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                lastDate = sdf.format(last);
+                saveLastDate(lastDate);
+
+                ArrayList<MarketClient> clients = readClients();
+                ArrayList<Recommendation> recommendations = filterNewPhones(phones, clients);
+                notifyUser(recommendations);
+            }
+        } catch (InterruptedException |
+                 ExecutionException |
+                 TimeoutException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void requestLastDate() {
+        try {
+            RequestFuture<JSONObject> future = RequestFuture.newFuture();
+            JsonObjectRequest request = new JsonObjectRequest(
+                    JsonObjectRequest.Method.GET,
+                    "http://192.168.137.144/get_last_date.php",
+                    future, future);
+            queue.add(request);
+
+            JSONObject response = future.get(10, TimeUnit.SECONDS);
+            if (response.getBoolean(JSON_KEY_SUCCESS)) {
+                String lastDate = response.getString(JSON_KEY_LAST_DATE);
+                saveLastDate(lastDate);
+            }
+        } catch (InterruptedException |
+                ExecutionException |
+                TimeoutException |
+                JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    Date findLastAddedPhone(ArrayList<Phone> phones) {
+        return Collections.max(phones, new Comparator<Phone>() {
+            @Override
+            public int compare(Phone lhs, Phone rhs) {
+                if (lhs.getDate().after(rhs.getDate())) {
+                    return 1;
+                } else if (rhs.getDate().after(lhs.getDate())) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        }).getDate();
+    }
+
+    void saveLastDate(String lastDate) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(PREF_KEY_LAST_DATE, lastDate);
+        editor.apply();
     }
 }

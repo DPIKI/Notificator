@@ -1,6 +1,7 @@
 package dpiki.notificator.data;
 
-import java.sql.Date;
+
+import java.util.Date;
 
 /**
  * Created by Lenovo on 01.07.2016.
