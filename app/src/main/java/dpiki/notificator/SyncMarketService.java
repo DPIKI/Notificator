@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
@@ -110,7 +111,18 @@ public class SyncMarketService extends IntentService {
 
     ArrayList<Recommendation> filterNewPhones(ArrayList<Phone> phones,
                                               ArrayList<MarketClient> filter) {
-        return new ArrayList<>();
+        ArrayList<Recommendation> recommendation = new ArrayList<>();
+
+        for (Phone i : phones) {
+            for (MarketClient j : filter) {
+                if ((i.getParam1().equals(j.getPref1()) || i.getParam1().isEmpty()) &&
+                        (i.getParam2().equals(j.getPref2()) || i.getParam2().isEmpty()) &&
+                                (i.getParam3().equals(j.getPref3()) || i.getParam3().isEmpty())) {
+                    recommendation.add(new Recommendation(j, i));
+                }
+            }
+        }
+        return recommendation;
     }
 
     void notifyUser(ArrayList<Recommendation> recommendations) {
