@@ -6,7 +6,9 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -100,13 +102,9 @@ public class SyncMarketService extends IntentService {
         } catch (JSONException e) {
             e.printStackTrace();
             phones.clear();
-        } finally {
-            return phones;
         }
-    }
 
-    ArrayList<MarketClient> readClients() {
-        return new ArrayList<>();
+        return phones;
     }
 
     ArrayList<Recommendation> filterNewPhones(ArrayList<Phone> phones,
@@ -169,7 +167,7 @@ public class SyncMarketService extends IntentService {
                 lastDate = sdf.format(last);
                 saveLastDate(lastDate);
 
-                ArrayList<MarketClient> clients = readClients();
+                ArrayList<MarketClient> clients = DatabaseHelper.readClients(this);
                 ArrayList<Recommendation> recommendations = filterNewPhones(phones, clients);
                 notifyUser(recommendations);
             }
