@@ -14,8 +14,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -92,7 +95,29 @@ public class SyncMarketService extends IntentService {
     }
 
     ArrayList<Phone> extractResponse(JSONObject object) {
-        return new ArrayList<>();
+        ArrayList<Phone> phones = new ArrayList<>();
+        try {
+            if (object.getBoolean("success")){
+                JSONArray json = object.getJSONArray("phones");
+
+                for (int i = 0; i < json.length(); i++){
+                    JSONObject jsonObject = json.getJSONObject(i);
+                    Phone phone = new Phone(
+                            jsonObject.getInt("pid"),
+                            jsonObject.getString("name"),
+                            jsonObject.getString("param1"),
+                            jsonObject.getString("param2"),
+                            jsonObject.getString("param3"),
+                            Date.valueOf(jsonObject.getString("creation_date")));
+                    phones.add(phone);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            phones.clear();
+        }finally {
+            return phones;
+        }
     }
 
     ArrayList<MarketClient> readClients() {
