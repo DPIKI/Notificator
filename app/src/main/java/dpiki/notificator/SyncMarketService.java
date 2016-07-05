@@ -8,8 +8,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
@@ -39,6 +37,14 @@ public class SyncMarketService extends IntentService {
     public static final String PREF_KEY_LAST_DATE = "lastDate";
 
     public static final String JSON_KEY_SUCCESS = "success";
+    public static final String JSON_KEY_PHONES = "phones";
+    public static final String JSON_KEY_ID = "pid";
+    public static final String JSON_KEY_NAME = "name";
+    public static final String JSON_KEY_PARAM1 = "param1";
+    public static final String JSON_KEY_PARAM2 = "param2";
+    public static final String JSON_KEY_PARAM3 = "param3";
+    //TODO: Rename JSON_KEY_DATE
+    public static final String JSON_KEY_DATE = "creation_date";
     public static final String JSON_KEY_LAST_DATE = "lastDate";
 
     RequestQueue queue;
@@ -73,18 +79,20 @@ public class SyncMarketService extends IntentService {
     ArrayList<Phone> extractResponse(JSONObject object) {
         ArrayList<Phone> phones = new ArrayList<>();
         try {
-            if (object.getBoolean("success")) {
-                JSONArray json = object.getJSONArray("phones");
+            if (object.getBoolean(JSON_KEY_SUCCESS)) {
+                JSONArray json = object.getJSONArray(JSON_KEY_PHONES);
 
                 for (int i = 0; i < json.length(); i++) {
                     JSONObject jsonObject = json.getJSONObject(i);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = new Date(sdf.format(jsonObject.getString(JSON_KEY_DATE)));
                     Phone phone = new Phone(
-                            jsonObject.getInt("pid"),
-                            jsonObject.getString("name"),
-                            jsonObject.getString("param1"),
-                            jsonObject.getString("param2"),
-                            jsonObject.getString("param3"),
-                            Date.valueOf(jsonObject.getString("creation_date")));
+                            jsonObject.getInt(JSON_KEY_ID),
+                            jsonObject.getString(JSON_KEY_NAME),
+                            jsonObject.getString(JSON_KEY_PARAM1),
+                            jsonObject.getString(JSON_KEY_PARAM2),
+                            jsonObject.getString(JSON_KEY_PARAM3),
+                            date);
                     phones.add(phone);
                 }
             }
