@@ -38,6 +38,7 @@ public class SyncMarketService extends IntentService {
 
     public static final String PREF_KEY_NOTIFY_ID = "notifyId";
     public static final String PREF_KEY_LAST_DATE = "lastDate";
+    public static final String PREF_KEY_IP = "ipAddress";
 
     public static final String JSON_KEY_SUCCESS = "success";
     public static final String JSON_KEY_PHONES = "phones";
@@ -71,11 +72,13 @@ public class SyncMarketService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         String lastDate = pref.getString(PREF_KEY_LAST_DATE, "");
+        //String ip = pref.getString(PREF_KEY_IP, "127.0.0.1");
+        String ip = "192.168.137.110";
 
         if (!lastDate.equals("")) {
-            requestNewPhones(lastDate);
+            requestNewPhones(ip, lastDate);
         } else {
-            requestLastDate();
+            requestLastDate(ip);
         }
     }
 
@@ -148,12 +151,12 @@ public class SyncMarketService extends IntentService {
         }
     }
 
-    void requestNewPhones(String lastDate) {
+    void requestNewPhones(String ip, String lastDate) {
         try {
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
             JsonObjectRequest request = new JsonObjectRequest(
                     JsonObjectRequest.Method.GET,
-                    "http://192.168.137.144/get_new_phones.php?date="
+                    "http://" + ip + "/get_new_phones.php?date="
                             + lastDate.replace(" ", "%20"),
                     future, future);
             queue.add(request);
@@ -178,12 +181,12 @@ public class SyncMarketService extends IntentService {
         }
     }
 
-    void requestLastDate() {
+    void requestLastDate(String ip) {
         try {
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
             JsonObjectRequest request = new JsonObjectRequest(
                     JsonObjectRequest.Method.GET,
-                    "http://192.168.137.144/get_last_date.php",
+                    "http://" + ip + "/get_last_date.php",
                     future, future);
             queue.add(request);
 
