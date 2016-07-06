@@ -18,6 +18,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MarketClients";
     public static final Integer DATABASE_VERSION = 1;
 
+    public static final String TABLE_NOTIFICATION = "Notification";
+    public static final String FIELD_ID_NITIFICATION = "id_notification";
+    public static final String FIELD_ID_CLIENT = "id_client";
+    public static final String FIELD_ID_PFONE = "id_phone";
+
     public static final String TABLE_CLIENTS = "Clients";
     public static final String FIELD_ID = "id";
     public static final String FIELD_NAME = "name";
@@ -33,6 +38,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + FIELD_PREF3 + " TEXT);";
     public static final String QUERY_DROP_TABLE_CLIENTS = "DROP TABLE IF EXIST " + TABLE_CLIENTS + ";";
 
+    public static final String QUERY_CREATE_TABLE_NOTIFICATION = "CREATE TABLE " + TABLE_NOTIFICATION + " ("
+            + FIELD_ID_NITIFICATION + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + FIELD_ID_CLIENT + " TEXT NOT NULL, "
+            + FIELD_ID_PFONE + " TEXT NOT NULL);";
+    public static final String QUERY_DROP_TABLE_NOTIFICATION = "DROP TABLE IF EXIST " + TABLE_NOTIFICATION + ";";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -40,12 +51,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(QUERY_CREATE_TABLE_CLIENTS);
+        db.execSQL(QUERY_CREATE_TABLE_NOTIFICATION);
         fillTestData(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(QUERY_DROP_TABLE_CLIENTS);
+        db.execSQL(QUERY_DROP_TABLE_NOTIFICATION);
         onCreate(db);
     }
 
