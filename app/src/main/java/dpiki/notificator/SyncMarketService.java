@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -19,10 +18,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
@@ -90,8 +89,11 @@ public class SyncMarketService extends IntentService {
 
                 for (int i = 0; i < json.length(); i++) {
                     JSONObject jsonObject = json.getJSONObject(i);
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = new Date(sdf.format(jsonObject.getString(JSON_KEY_DATE)));
+
+                    SimpleDateFormat sdf = new SimpleDateFormat();
+                    sdf.applyPattern("yyyy-MM-dd HH:mm:ss");
+                    Date date = sdf.parse(jsonObject.getString(JSON_KEY_DATE));
+
                     Phone phone = new Phone(
                             jsonObject.getInt(JSON_KEY_ID),
                             jsonObject.getString(JSON_KEY_NAME),
@@ -105,8 +107,9 @@ public class SyncMarketService extends IntentService {
         } catch (JSONException e) {
             e.printStackTrace();
             phones.clear();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-
         return phones;
     }
 
