@@ -115,10 +115,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_CLIENTS, null, values);
 
         values = new ContentValues();
-        values.put(FIELD_NAME, "Vasya");
-        values.put(FIELD_PREF1, "pref111");
-        values.put(FIELD_PREF2, "pref222");
+        values.put(FIELD_NAME, "Bes filtrov");
+        values.put(FIELD_PREF1, "");
+        values.put(FIELD_PREF2, "");
+        values.put(FIELD_PREF3, "");
+        db.insert(TABLE_CLIENTS, null, values);
+
+        values = new ContentValues();
+        values.put(FIELD_NAME, "s odnim filtrom");
+        values.put(FIELD_PREF1, "");
+        values.put(FIELD_PREF2, "");
         values.put(FIELD_PREF3, "pref333");
         db.insert(TABLE_CLIENTS, null, values);
+
     }
 }

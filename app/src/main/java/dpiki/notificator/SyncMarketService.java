@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
@@ -37,6 +39,7 @@ public class SyncMarketService extends IntentService {
 
     public static final String PREF_KEY_NOTIFY_ID = "notifyId";
     public static final String PREF_KEY_LAST_DATE = "lastDate";
+    public static final String PREF_KEY_IP = "ipAddress";
 
     public static final String JSON_KEY_SUCCESS = "success";
     public static final String JSON_KEY_PHONES = "phones";
@@ -70,15 +73,18 @@ public class SyncMarketService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         String lastDate = pref.getString(PREF_KEY_LAST_DATE, "");
+        //String ip = pref.getString(PREF_KEY_IP, "127.0.0.1");
+        String ip = "192.168.137.110";
 
         if (!lastDate.equals("")) {
-            requestNewPhones(lastDate);
+            requestNewPhones(ip, lastDate);
         } else {
-            requestLastDate();
+            requestLastDate(ip);
         }
     }
 
     ArrayList<Phone> extractResponse(JSONObject object) {
+        Log.d(TAG, "Extracting phones...");
         ArrayList<Phone> phones = new ArrayList<>();
         try {
             if (object.getBoolean(JSON_KEY_SUCCESS)) {
@@ -107,6 +113,7 @@ public class SyncMarketService extends IntentService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        Log.d(TAG, "Extracted phones: " + phones.size());
         return phones;
     }
 
@@ -116,9 +123,9 @@ public class SyncMarketService extends IntentService {
 
         for (Phone i : phones) {
             for (MarketClient j : filter) {
-                if ((i.getParam1().equals(j.getPref1()) || i.getParam1().isEmpty()) &&
-                        (i.getParam2().equals(j.getPref2()) || i.getParam2().isEmpty()) &&
-                                (i.getParam3().equals(j.getPref3()) || i.getParam3().isEmpty())) {
+                if ((i.getParam1().equals(j.getPref1()) || j.getPref1().isEmpty()) &&
+                    (i.getParam2().equals(j.getPref2()) || j.getPref2().isEmpty()) &&
+                    (i.getParam3().equals(j.getPref3()) || j.getPref3().isEmpty())) {
                     recommendation.add(new Recommendation(j, i));
                 }
             }
@@ -133,6 +140,8 @@ public class SyncMarketService extends IntentService {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = pref.edit();
         Integer notifyId = pref.getInt(PREF_KEY_NOTIFY_ID, 0);
+
+        Log.d(TAG, "Notify id : " + notifyId);
 
         for (Recommendation i : recommendations) {
             NotificationCompat.Builder builder =
@@ -151,12 +160,14 @@ public class SyncMarketService extends IntentService {
         }
     }
 
-    void requestNewPhones(String lastDate) {
+    void requestNewPhones(String ip, String lastDate) {
         try {
+            Log.d(TAG, "requestNewPhones");
+
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
             JsonObjectRequest request = new JsonObjectRequest(
                     JsonObjectRequest.Method.GET,
-                    "http://192.168.137.144/get_new_phones.php?date="
+                    "http://" + ip + "/get_new_phones.php?date="
                             + lastDate.replace(" ", "%20"),
                     future, future);
             queue.add(request);
@@ -168,6 +179,7 @@ public class SyncMarketService extends IntentService {
                 Date last = findLastAddedPhone(phones);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 lastDate = sdf.format(last);
+                Log.d(TAG, "saving new last date: " + lastDate);
                 saveLastDate(lastDate);
 
                 ArrayList<MarketClient> clients = DatabaseHelper.readClients(this);
@@ -181,12 +193,12 @@ public class SyncMarketService extends IntentService {
         }
     }
 
-    void requestLastDate() {
+    void requestLastDate(String ip) {
         try {
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
             JsonObjectRequest request = new JsonObjectRequest(
                     JsonObjectRequest.Method.GET,
-                    "http://192.168.137.144/get_last_date.php",
+                    "http://" + ip + "/get_last_date.php",
                     future, future);
             queue.add(request);
 
