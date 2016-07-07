@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
 import dpiki.notificator.data.MarketClient;
+import dpiki.notificator.network.MyFetcher;
 
 /**
  * Created by Lenovo on 05.07.2016.

@@ -1,10 +1,10 @@
-package dpiki.notificator;
+package dpiki.notificator.network;
 
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+
+import dpiki.notificator.network.MyFetcher;
 
 /**
  * Created by Lenovo on 07.07.2016.

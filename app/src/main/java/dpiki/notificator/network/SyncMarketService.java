@@ -1,12 +1,8 @@
-package dpiki.notificator;
+package dpiki.notificator.network;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
-import android.util.Log;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 
 public class SyncMarketService extends IntentService {
     public static final String TAG = "SyncMarket";
