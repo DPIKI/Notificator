@@ -20,7 +20,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.StreamHandler;
 
+import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.data.Phone;
+import dpiki.notificator.data.Recommendation;
 
 /**
  * Created by Witaliy on 06.07.2016.
@@ -100,6 +102,63 @@ public class SyncMarketServiceTest {
         }
     }
 
+    @Test
+    public void filterNewPhones_isCorrect() throws Exception{
+        ArrayList<Phone> phones = new ArrayList<>();
+        String sDate = "2016-01-01 10:00:00";
+        Phone p1 = new Phone(1, "Nokia", "p1", "p2", "p3", sdf.parse(sDate));
+        Phone p2 = new Phone(2, "Samsung", "p3", "p2", "p4", sdf.parse(sDate));
+        Phone p3 = new Phone(3, "Lenovo", "p1", "p2", "p3", sdf.parse(sDate));
+        Phone p4 = new Phone(4, "Acer", "p3", "p5", "p4", sdf.parse(sDate));
+        Phone p5 = new Phone(5, "Asus", "p3", "p2", "p4", sdf.parse(sDate));
+        phones.add(p1);
+        phones.add(p2);
+        phones.add(p3);
+        phones.add(p4);
+        phones.add(p5);
+
+        ArrayList<MarketClient> marketClients = new ArrayList<>();
+        MarketClient client1 = new MarketClient(1, "Antony", "p3", "p2", "p4");
+        MarketClient client2 = new MarketClient(2, "Witaliy", "p3", "p5", "p4");
+        MarketClient client3 = new MarketClient(3, "Vlad", "p1", "p2", "p3");
+        MarketClient client4 = new MarketClient(4, "Denis", "p3", "p5", "p4");
+        marketClients.add(client1);
+        marketClients.add(client2);
+        marketClients.add(client3);
+        marketClients.add(client4);
+
+
+
+        ArrayList<Recommendation> expectedRecommendations = new ArrayList<>();
+        //-------------------------Antony
+        expectedRecommendations.add(new Recommendation(client1,p2));
+        expectedRecommendations.add(new Recommendation(client1,p5));
+
+        //-------------------------Witaliy
+        expectedRecommendations.add(new Recommendation(client2,p4));
+
+        //-------------------------Vlad
+        expectedRecommendations.add(new Recommendation(client3,p1));
+        expectedRecommendations.add(new Recommendation(client3,p3));
+
+        //-------------------------Denis
+        expectedRecommendations.add(new Recommendation(client4,p4));
+
+        ArrayList<Recommendation> actualRecommendations =
+                marketService.filterNewPhones(phones, marketClients);
+
+        Assert.assertEquals(
+                "(Exp)Size: " + expectedRecommendations.size() + " != " +
+                        "(Act)Size: " + actualRecommendations.size(),
+                expectedRecommendations.size(), actualRecommendations.size());
+        for (int i = 0; i < expectedRecommendations.size(); i++){
+            Assert.assertTrue(
+                    "(Exp)Recommendation: " + expectedRecommendations.get(i) + " not contains in" +
+                            "(Act)Recommendation",
+                    actualRecommendations.contains(expectedRecommendations.get(i)));
+        }
+    }
+
     public JSONObject getJSONFromPhone(Phone phone) throws Exception{
         JSONObject phoneJSON = new JSONObject();
 
@@ -112,4 +171,5 @@ public class SyncMarketServiceTest {
 
         return phoneJSON;
     }
+
 }
