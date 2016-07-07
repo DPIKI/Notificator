@@ -1,4 +1,4 @@
-package dpiki.notificator;
+package dpiki.notificator.network;
 
 /**
  * Created by prog1 on 07.07.2016.
@@ -18,6 +18,8 @@ import org.robolectric.annotation.Config;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import dpiki.notificator.BuildConfig;
+import dpiki.notificator.MainActivity;
 import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.data.Phone;
 import dpiki.notificator.network.MyFetcher;

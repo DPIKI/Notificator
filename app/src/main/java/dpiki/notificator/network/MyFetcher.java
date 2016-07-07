@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import dpiki.notificator.DatabaseHelper;
 import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.data.Phone;
+import dpiki.notificator.network.DataFetcher;
 
 /**
  * Created by Lenovo on 07.07.2016.

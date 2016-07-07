@@ -4,8 +4,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import dpiki.notificator.network.MyFetcher;
-
 /**
  * Created by Lenovo on 07.07.2016.
  */
@@ -48,9 +46,9 @@ public abstract class DataFetcher<Item, Filter> {
         }
     }
 
-    class Recommendation {
-        Item i;
-        Filter f;
+    public class Recommendation {
+        public Item i;
+        public Filter f;
 
         public Recommendation(Item i, Filter f) {
             this.i = i;
