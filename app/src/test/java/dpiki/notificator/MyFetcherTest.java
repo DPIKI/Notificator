@@ -3,13 +3,25 @@ package dpiki.notificator;
 /**
  * Created by prog1 on 07.07.2016.
  */
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
+import android.test.AndroidTestCase;
+import android.test.IsolatedContext;
+import android.test.mock.MockApplication;
+import android.test.mock.MockContentResolver;
+import android.test.mock.MockContext;
+import android.util.DisplayMetrics;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.text.SimpleDateFormat;
@@ -20,21 +32,22 @@ import dpiki.notificator.data.Phone;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 18)
-public class MyFetcherTest {
+public class MyFetcherTest{
     private MyFetcher myFetcher;
     private SimpleDateFormat sdf;
+    private Context context;
 
     @Before
     public void setUp() throws Exception {
         sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss");
 
-        Context context = null;
+        context = Robolectric.buildActivity(MainActivity.class).get().getApplicationContext();
         myFetcher = new MyFetcher(context);
     }
 
     @Test
-    public void isMatch_isCorrect() throws Exception{
+    public void test_isMatch() throws Exception{
         ArrayList<Phone> phones = new ArrayList<>();
         String sDate = "2016-01-01 10:00:00";
         Phone p1 = new Phone(1, "Nokia", "p1", "p2", "p3", sdf.parse(sDate));
