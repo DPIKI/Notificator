@@ -38,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
                     client.getPref3()
             );
         }
+
+        int nclients = DatabaseHelper.getNumberNotifyClients(this);
+        int nphones = DatabaseHelper.getNumberNotifyPhones(this);
+        Log.d(TAG,nclients + " клииентов " + nphones +  " телефонов");
+
     }
 
     public void onChangeIpClick(View v) {

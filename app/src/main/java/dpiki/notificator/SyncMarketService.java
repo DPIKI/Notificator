@@ -99,7 +99,7 @@ public class SyncMarketService extends IntentService {
             notifyId++;
             editor.putInt(PREF_KEY_NOTIFY_ID, notifyId);
             editor.apply();
-        }*/
+        }
     }
 
     void requestNewPhones(String ip, String lastDate) {

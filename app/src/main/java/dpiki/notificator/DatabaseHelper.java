@@ -137,9 +137,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(FIELD_PREF3, "pref333");
         db.insert(TABLE_CLIENTS, null, values);
 
+        values = new ContentValues();
+        values.put(FIELD_ID_CLIENT,1);
+        values.put(FIELD_ID_PHONE,1);
+        db.insert(TABLE_NOTIFICATION,null,values);
+
+        values = new ContentValues();
+        values.put(FIELD_ID_CLIENT,1);
+        values.put(FIELD_ID_PHONE,2);
+        db.insert(TABLE_NOTIFICATION,null,values);
+        values = new ContentValues();
+        values.put(FIELD_ID_CLIENT,2);
+        values.put(FIELD_ID_PHONE,3);
+        db.insert(TABLE_NOTIFICATION,null,values);
     }
 
-    public static void addNotifications(ArrayList<Recommendation> recommendations, Context context) {
+    public static void addNotifications(ArrayList<MyFetcher.Recommendation> recommendations, Context context) {
         DatabaseHelper helper = new DatabaseHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -147,10 +160,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return;
 
         try {
-            for (Recommendation i : recommendations) {
+            for (MyFetcher.Recommendation i : recommendations) {
                 ContentValues values = new ContentValues();
-                values.put(FIELD_ID_CLIENT, i.client.getId());
-                values.put(FIELD_ID_PHONE, i.phone.getId());
+                values.put(FIELD_ID_CLIENT, i.f.getId());
+                values.put(FIELD_ID_PHONE, i.i.getId());
                 db.insert(TABLE_NOTIFICATION, null, values);
             }
         } finally {
