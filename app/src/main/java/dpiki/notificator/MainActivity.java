@@ -41,27 +41,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onChangeIpClick(View v) {
-        String s = editText.getText().toString();
-        String[] sl = s.split(".");
-
-        if (sl.length != 4)
-            return;
-
-        for (String i : sl) {
-            try {
-                int k = Integer.parseInt(i);
-
-                if (k > 255 || k < 0)
-                    return;
-
-            } catch (Exception e) {
-                return;
-            }
-        }
-
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(SyncMarketService.PREF_KEY_IP, s);
-        editor.apply();
     }
 }

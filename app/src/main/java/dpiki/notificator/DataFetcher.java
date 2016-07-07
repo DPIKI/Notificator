@@ -1,5 +1,7 @@
 package dpiki.notificator;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -35,6 +37,8 @@ public abstract class DataFetcher<Item, Filter> {
                     }
                 }
             }
+
+            Log.d(MyFetcher.TAG, "Recommendations: " + recommendations.size());
 
             if (!recommendations.isEmpty()) {
                 onNewRecommendations(recommendations);

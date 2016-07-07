@@ -1,18 +1,14 @@
 package dpiki.notificator;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.ContactsContract;
 
 import java.util.ArrayList;
 
 import dpiki.notificator.data.MarketClient;
-import dpiki.notificator.data.Recommendation;
 
 /**
  * Created by Lenovo on 05.07.2016.
@@ -139,7 +135,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public static void addNotifications(ArrayList<Recommendation> recommendations, Context context) {
+    public static void addNotifications(ArrayList<MyFetcher.Recommendation> recommendations, Context context) {
         DatabaseHelper helper = new DatabaseHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -147,62 +143,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return;
 
         try {
-            for (Recommendation i : recommendations) {
+            for (MyFetcher.Recommendation i : recommendations) {
                 ContentValues values = new ContentValues();
-                values.put(FIELD_ID_CLIENT, i.client.getId());
-                values.put(FIELD_ID_PHONE, i.phone.getId());
+                values.put(FIELD_ID_CLIENT, i.f.getId());
+                values.put(FIELD_ID_PHONE, i.i.getId());
                 db.insert(TABLE_NOTIFICATION, null, values);
             }
         } finally {
             db.close();
         }
-
     }
-
-    public static int getNumberNotifyClients(Context context) {
-        DatabaseHelper helper = new DatabaseHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
-        int n = 0;
-        if (db == null)
-            return 0;
-
-        try {
-            Cursor cursor = db.rawQuery(QUERY_COUNT_CLIENTS, null);
-            if (cursor == null)
-                return 0;
-            try {
-                if (cursor.moveToNext())
-                n = cursor.getInt(0);
-                }
-            finally {
-                cursor.close();
-            }
-        } finally {
-            db.close();
-        }
-        return n;
-    }
-
-    public static int getNumberNotifyPhones(Context context) {
-        DatabaseHelper helper = new DatabaseHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
-        int n = 0;
-        if (db == null)
-            return 0;
-
-        try {
-            Cursor cursor = db.rawQuery(QUERY_COUNT_PHONES, null);
-            if (cursor == null)
-                return 0;
-            try {
-                if (cursor.moveToNext())
-                    n = cursor.getInt(0);
-            }
-            finally {
-                cursor.close();
-            }
-        } finally {
-            db.close();
-        }
-        return n;    }
 }
+

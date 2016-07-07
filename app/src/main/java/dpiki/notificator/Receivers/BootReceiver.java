@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import dpiki.notificator.MyFetcher;
+import dpiki.notificator.SyncMarketService;
+
 public class BootReceiver extends BroadcastReceiver {
     public BootReceiver() {
     }

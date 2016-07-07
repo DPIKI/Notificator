@@ -42,7 +42,7 @@ public class SyncMarketServiceTest {
     public void testInit() throws Exception {
         Assert.assertNotNull("marketService == null", marketService);
     }
-
+/*
     @Test
     public void extractResponse_isCorrect() throws Exception {
         JSONObject jsonObject;
@@ -111,5 +111,5 @@ public class SyncMarketServiceTest {
         phoneJSON.put(SyncMarketService.JSON_KEY_DATE, sdf.format(phone.getDate()));
 
         return phoneJSON;
-    }
+    }*/
 }
