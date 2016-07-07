@@ -1,37 +1,11 @@
 package dpiki.notificator;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import dpiki.notificator.data.MarketClient;
-import dpiki.notificator.data.Phone;
-import dpiki.notificator.data.Recommendation;
 
 public class SyncMarketService extends IntentService {
     public static final String TAG = "SyncMarket";
@@ -40,18 +14,9 @@ public class SyncMarketService extends IntentService {
     public static final String PREF_KEY_LAST_DATE = "lastDate";
     public static final String PREF_KEY_IP = "ipAddress";
 
-    public static final String JSON_KEY_SUCCESS = "success";
-    public static final String JSON_KEY_PHONES = "phones";
-    public static final String JSON_KEY_ID = "pid";
-    public static final String JSON_KEY_NAME = "name";
-    public static final String JSON_KEY_PARAM1 = "param1";
-    public static final String JSON_KEY_PARAM2 = "param2";
-    public static final String JSON_KEY_PARAM3 = "param3";
-    //TODO: Rename JSON_KEY_DATE
-    public static final String JSON_KEY_DATE = "creation_date";
-    public static final String JSON_KEY_LAST_DATE = "lastDate";
-
     RequestQueue queue;
+
+    DataFetcher<?, ?> fetcher;
 
     public SyncMarketService() {
         super("SyncMarketService");
@@ -70,51 +35,12 @@ public class SyncMarketService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        String lastDate = pref.getString(PREF_KEY_LAST_DATE, "");
-        //String ip = pref.getString(PREF_KEY_IP, "127.0.0.1");
-        String ip = "192.168.137.110";
-
-        if (!lastDate.equals("")) {
-            requestNewPhones(ip, lastDate);
-        } else {
-            requestLastDate(ip);
-        }
+        fetcher.fetch();
     }
-
+/*
     ArrayList<Phone> extractResponse(JSONObject object) {
         Log.d(TAG, "Extracting phones...");
-        ArrayList<Phone> phones = new ArrayList<>();
-        try {
-            if (object.getBoolean(JSON_KEY_SUCCESS)) {
-                JSONArray json = object.getJSONArray(JSON_KEY_PHONES);
-
-                for (int i = 0; i < json.length(); i++) {
-                    JSONObject jsonObject = json.getJSONObject(i);
-
-                    SimpleDateFormat sdf = new SimpleDateFormat();
-                    sdf.applyPattern("yyyy-MM-dd HH:mm:ss");
-                    Date date = sdf.parse(jsonObject.getString(JSON_KEY_DATE));
-
-                    Phone phone = new Phone(
-                            jsonObject.getInt(JSON_KEY_ID),
-                            jsonObject.getString(JSON_KEY_NAME),
-                            jsonObject.getString(JSON_KEY_PARAM1),
-                            jsonObject.getString(JSON_KEY_PARAM2),
-                            jsonObject.getString(JSON_KEY_PARAM3),
-                            date);
-                    phones.add(phone);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            phones.clear();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Log.d(TAG, "Extracted phones: " + phones.size());
-        return phones;
-    }
+   }
 
     ArrayList<Recommendation> filterNewPhones(ArrayList<Phone> phones,
                                               ArrayList<MarketClient> filter) {
@@ -122,9 +48,9 @@ public class SyncMarketService extends IntentService {
 
         for (Phone i : phones) {
             for (MarketClient j : filter) {
-                if ((i.getParam1().equals(j.getPref1()) || j.getPref1().isEmpty()) &&
-                    (i.getParam2().equals(j.getPref2()) || j.getPref2().isEmpty()) &&
-                    (i.getParam3().equals(j.getPref3()) || j.getPref3().isEmpty())) {
+                if ((i.getParam1().equals(j.getPref1())) &&
+                    (i.getParam2().equals(j.getPref2())) &&
+                    (i.getParam3().equals(j.getPref3()))) {
                     recommendation.add(new Recommendation(j, i));
                 }
             }
@@ -231,25 +157,11 @@ public class SyncMarketService extends IntentService {
         }
     }
 
-    Date findLastAddedPhone(ArrayList<Phone> phones) {
-        return Collections.max(phones, new Comparator<Phone>() {
-            @Override
-            public int compare(Phone lhs, Phone rhs) {
-                if (lhs.getDate().after(rhs.getDate())) {
-                    return 1;
-                } else if (rhs.getDate().after(lhs.getDate())) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-        }).getDate();
-    }
 
     void saveLastDate(String lastDate) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(PREF_KEY_LAST_DATE, lastDate);
         editor.apply();
-    }
+    }*/
 }
