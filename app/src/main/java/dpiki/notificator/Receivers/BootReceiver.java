@@ -20,6 +20,6 @@ public class BootReceiver extends BroadcastReceiver {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0,
                 new Intent(context, AlarmReceiver.class), 0);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,
-                10000, alarmIntent);
+                30000, alarmIntent);
     }
 }
