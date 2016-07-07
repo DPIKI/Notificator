@@ -135,8 +135,8 @@ public class SyncMarketService extends IntentService {
     void notifyUser(ArrayList<Recommendation> recommendations) {
 
         DatabaseHelper.addNotifications(recommendations,this);
-        int nclients = DatabaseHelper.getNumberNotifiClients(this);
-        int nphones = DatabaseHelper.getNumberNotifiPhones(this);
+        int nclients = DatabaseHelper.getNumberNotifyClients(this);
+        int nphones = DatabaseHelper.getNumberNotifyPhones(this);
         NotificationManager nm =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 

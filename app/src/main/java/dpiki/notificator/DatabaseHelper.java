@@ -159,7 +159,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public static int getNumberNotifiClients(Context context) {
+    public static int getNumberNotifyClients(Context context) {
         DatabaseHelper helper = new DatabaseHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
         int n = 0;
@@ -183,7 +183,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return n;
     }
 
-    public static int getNumberNotifiPhones(Context context) {
+    public static int getNumberNotifyPhones(Context context) {
         DatabaseHelper helper = new DatabaseHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
         int n = 0;
