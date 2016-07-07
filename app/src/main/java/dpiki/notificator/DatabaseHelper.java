@@ -1,5 +1,7 @@
 package dpiki.notificator;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +12,7 @@ import android.provider.ContactsContract;
 import java.util.ArrayList;
 
 import dpiki.notificator.data.MarketClient;
+import dpiki.notificator.data.Recommendation;
 
 /**
  * Created by Lenovo on 05.07.2016.
@@ -17,6 +20,11 @@ import dpiki.notificator.data.MarketClient;
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MarketClients";
     public static final Integer DATABASE_VERSION = 1;
+
+    public static final String TABLE_NOTIFICATION = "Notification";
+    public static final String FIELD_ID_NOTIFICATION = "id_notification";
+    public static final String FIELD_ID_CLIENT = "id_client";
+    public static final String FIELD_ID_PHONE = "id_phone";
 
     public static final String TABLE_CLIENTS = "Clients";
     public static final String FIELD_ID = "id";
@@ -33,6 +41,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + FIELD_PREF3 + " TEXT);";
     public static final String QUERY_DROP_TABLE_CLIENTS = "DROP TABLE IF EXIST " + TABLE_CLIENTS + ";";
 
+    public static final String QUERY_CREATE_TABLE_NOTIFICATION = "CREATE TABLE " + TABLE_NOTIFICATION + " ("
+            + FIELD_ID_NOTIFICATION + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + FIELD_ID_CLIENT + " TEXT NOT NULL, "
+            + FIELD_ID_PHONE + " TEXT NOT NULL);";
+    public static final String QUERY_DROP_TABLE_NOTIFICATION = "DROP TABLE IF EXIST " + TABLE_NOTIFICATION + ";";
+
+    public static final String QUERY_COUNT_CLIENTS = "SELECT COUNT(" + FIELD_ID_CLIENT + ") FROM "
+            + TABLE_NOTIFICATION + " GROUP BY " + FIELD_ID_CLIENT;
+
+    public static final String QUERY_COUNT_PHONES = "SELECT COUNT(" + FIELD_ID_PHONE + ") FROM "
+            + TABLE_NOTIFICATION + " GROUP BY " + FIELD_ID_PHONE;
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -40,12 +60,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(QUERY_CREATE_TABLE_CLIENTS);
+        db.execSQL(QUERY_CREATE_TABLE_NOTIFICATION);
         fillTestData(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(QUERY_DROP_TABLE_CLIENTS);
+        db.execSQL(QUERY_DROP_TABLE_NOTIFICATION);
         onCreate(db);
     }
 
@@ -116,4 +138,71 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_CLIENTS, null, values);
 
     }
+
+    public static void addNotifications(ArrayList<Recommendation> recommendations, Context context) {
+        DatabaseHelper helper = new DatabaseHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        if (db == null)
+            return;
+
+        try {
+            for (Recommendation i : recommendations) {
+                ContentValues values = new ContentValues();
+                values.put(FIELD_ID_CLIENT, i.client.getId());
+                values.put(FIELD_ID_PHONE, i.phone.getId());
+                db.insert(TABLE_NOTIFICATION, null, values);
+            }
+        } finally {
+            db.close();
+        }
+
+    }
+
+    public static int getNumberNotifyClients(Context context) {
+        DatabaseHelper helper = new DatabaseHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int n = 0;
+        if (db == null)
+            return 0;
+
+        try {
+            Cursor cursor = db.rawQuery(QUERY_COUNT_CLIENTS, null);
+            if (cursor == null)
+                return 0;
+            try {
+                if (cursor.moveToNext())
+                n = cursor.getInt(0);
+                }
+            finally {
+                cursor.close();
+            }
+        } finally {
+            db.close();
+        }
+        return n;
+    }
+
+    public static int getNumberNotifyPhones(Context context) {
+        DatabaseHelper helper = new DatabaseHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int n = 0;
+        if (db == null)
+            return 0;
+
+        try {
+            Cursor cursor = db.rawQuery(QUERY_COUNT_PHONES, null);
+            if (cursor == null)
+                return 0;
+            try {
+                if (cursor.moveToNext())
+                    n = cursor.getInt(0);
+            }
+            finally {
+                cursor.close();
+            }
+        } finally {
+            db.close();
+        }
+        return n;    }
 }

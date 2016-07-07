@@ -59,6 +59,10 @@ public class SyncMarketService extends IntentService {
     }
 
     void notifyUser(ArrayList<Recommendation> recommendations) {
+
+        DatabaseHelper.addNotifications(recommendations,this);
+        int nclients = DatabaseHelper.getNumberNotifyClients(this);
+        int nphones = DatabaseHelper.getNumberNotifyPhones(this);
         NotificationManager nm =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -67,7 +71,20 @@ public class SyncMarketService extends IntentService {
         Integer notifyId = pref.getInt(PREF_KEY_NOTIFY_ID, 0);
 
         Log.d(TAG, "Notify id : " + notifyId);
-
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                        .setWhen(System.currentTimeMillis())
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setContentTitle("Есть рекомендация")
+                        .setContentText("Для " + nclients +
+                                " клиентов  есть " + nphones +  " рекомендации");
+        Notification n = builder.build();
+        nm.notify(notifyId, n);
+        notifyId++;
+        editor.putInt(PREF_KEY_NOTIFY_ID, notifyId);
+        editor.apply();
+        /*
         for (Recommendation i : recommendations) {
             NotificationCompat.Builder builder =
                     new NotificationCompat.Builder(this)
@@ -82,7 +99,7 @@ public class SyncMarketService extends IntentService {
             notifyId++;
             editor.putInt(PREF_KEY_NOTIFY_ID, notifyId);
             editor.apply();
-        }
+        }*/
     }
 
     void requestNewPhones(String ip, String lastDate) {
