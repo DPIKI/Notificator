@@ -16,6 +16,8 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -70,17 +72,29 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
                 future, future);
         queue.add(request);
         JSONObject response = future.get(10, TimeUnit.SECONDS);
-        extractResponse(response);
+
+        ArrayList<Phone> ret = extractResponse(response);
+
+        if (!ret.isEmpty()) {
+            Date lastFetch = findLastAddedPhone(ret);
+            strLastFetch = sdf.format(lastFetch);
+            editor.putString(PREF_KEY_LAST_DATE, strLastFetch);
+            editor.apply();
+        }
+
+        return ret;
     }
 
     @Override
     public ArrayList<MarketClient> loadFilters() throws Exception {
-        return null;
+        return DatabaseHelper.readClients(context);
     }
 
     @Override
     public Boolean isMatch(Phone i, MarketClient f) {
-        return null;
+        return (i.getParam1().equals(f.getPref1()) &&
+                i.getParam2().equals(f.getPref2()) &&
+                i.getParam3().equals(f.getPref3()));
     }
 
     @Override
@@ -108,4 +122,20 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
         Log.d(TAG, "Extracted phones: " + phones.size());
         return phones;
     }
+
+    Date findLastAddedPhone(ArrayList<Phone> phones) {
+        return Collections.max(phones, new Comparator<Phone>() {
+            @Override
+            public int compare(Phone lhs, Phone rhs) {
+                if (lhs.getDate().after(rhs.getDate())) {
+                    return 1;
+                } else if (rhs.getDate().after(lhs.getDate())) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        }).getDate();
+    }
+
 }

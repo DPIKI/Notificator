@@ -140,20 +140,6 @@ public class SyncMarketService extends IntentService {
         }
     }
 
-    Date findLastAddedPhone(ArrayList<Phone> phones) {
-        return Collections.max(phones, new Comparator<Phone>() {
-            @Override
-            public int compare(Phone lhs, Phone rhs) {
-                if (lhs.getDate().after(rhs.getDate())) {
-                    return 1;
-                } else if (rhs.getDate().after(lhs.getDate())) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-        }).getDate();
-    }
 
     void saveLastDate(String lastDate) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);

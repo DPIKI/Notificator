@@ -16,7 +16,14 @@ public abstract class DataFetcher<Item, Filter> {
     public void fetch() {
         try {
             ArrayList<Item> items = loadItems();
+
+            if (items.isEmpty())
+                return;
+
             ArrayList<Filter> filters = loadFilters();
+
+            if (filters.isEmpty())
+                return;
 
             ArrayList<Recommendation> recommendations = new ArrayList<>();
 
