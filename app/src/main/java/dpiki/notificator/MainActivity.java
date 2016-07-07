@@ -1,8 +1,5 @@
 package dpiki.notificator;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +9,7 @@ import android.widget.EditText;
 import java.util.ArrayList;
 
 import dpiki.notificator.data.MarketClient;
-import dpiki.notificator.receivers.BootReceiver;
+import dpiki.notificator.network.BootReceiver;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";

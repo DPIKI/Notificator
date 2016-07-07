@@ -1,11 +1,10 @@
-package dpiki.notificator;
+package dpiki.notificator.network;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
-import android.util.ArraySet;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -25,6 +24,7 @@ import java.util.Date;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
+import dpiki.notificator.DatabaseHelper;
 import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.data.Phone;
 

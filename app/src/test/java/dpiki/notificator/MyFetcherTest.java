@@ -3,15 +3,7 @@ package dpiki.notificator;
 /**
  * Created by prog1 on 07.07.2016.
  */
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.Resources;
-import android.test.AndroidTestCase;
-import android.test.IsolatedContext;
-import android.test.mock.MockApplication;
-import android.test.mock.MockContentResolver;
-import android.test.mock.MockContext;
-import android.util.DisplayMetrics;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,11 +11,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.text.SimpleDateFormat;
@@ -31,6 +20,7 @@ import java.util.ArrayList;
 
 import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.data.Phone;
+import dpiki.notificator.network.MyFetcher;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 18)
