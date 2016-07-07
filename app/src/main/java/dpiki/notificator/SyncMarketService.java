@@ -123,9 +123,9 @@ public class SyncMarketService extends IntentService {
 
         for (Phone i : phones) {
             for (MarketClient j : filter) {
-                if ((i.getParam1().equals(j.getPref1()) || j.getPref1().isEmpty()) &&
-                    (i.getParam2().equals(j.getPref2()) || j.getPref2().isEmpty()) &&
-                    (i.getParam3().equals(j.getPref3()) || j.getPref3().isEmpty())) {
+                if ((i.getParam1().equals(j.getPref1())) &&
+                    (i.getParam2().equals(j.getPref2())) &&
+                    (i.getParam3().equals(j.getPref3()))) {
                     recommendation.add(new Recommendation(j, i));
                 }
             }
