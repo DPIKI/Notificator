@@ -21,7 +21,7 @@
         </activity>
 
         <receiver
-            android:name=".receivers.BootReceiver"
+            android:name=".network.BootReceiver"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -29,11 +29,11 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".receivers.AlarmReceiver"
+            android:name=".network.AlarmReceiver"
             android:enabled="true" />
 
         <service
-            android:name=".SyncMarketService"
+            android:name=".network.SyncMarketService"
             android:exported="false"></service>
     </application>
 

@@ -1,8 +1,8 @@
-package dpiki.notificator;
+package dpiki.notificator.network;
+
+import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Lenovo on 07.07.2016.
@@ -36,6 +36,8 @@ public abstract class DataFetcher<Item, Filter> {
                 }
             }
 
+            Log.d(MyFetcher.TAG, "Recommendations: " + recommendations.size());
+
             if (!recommendations.isEmpty()) {
                 onNewRecommendations(recommendations);
             }
@@ -44,9 +46,9 @@ public abstract class DataFetcher<Item, Filter> {
         }
     }
 
-    class Recommendation {
-        Item i;
-        Filter f;
+    public class Recommendation {
+        public Item i;
+        public Filter f;
 
         public Recommendation(Item i, Filter f) {
             this.i = i;

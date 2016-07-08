@@ -7,6 +7,8 @@ import android.content.Context;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import dpiki.notificator.network.DataFetcher;
+
 public class SyncMarketService extends IntentService {
     public static final String TAG = "SyncMarket";
 
