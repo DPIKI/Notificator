@@ -163,6 +163,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(FIELD_UNREAD_NOTIFICATIONS, 3);
         db.insert(TABLE_CLIENTS, null, values);
 
+        values = new ContentValues();
+        values.put(FIELD_ID_CLIENT,1);
+        values.put(FIELD_ID_PHONE,1);
+        db.insert(TABLE_NOTIFICATION,null,values);
+
+        values = new ContentValues();
+        values.put(FIELD_ID_CLIENT,1);
+        values.put(FIELD_ID_PHONE,2);
+        db.insert(TABLE_NOTIFICATION,null,values);
+        values = new ContentValues();
+        values.put(FIELD_ID_CLIENT,2);
+        values.put(FIELD_ID_PHONE,3);
+        db.insert(TABLE_NOTIFICATION,null,values);
     }
 
     public static void addNotifications(ArrayList<MyFetcher.Recommendation> recommendations,
@@ -202,6 +215,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 values.put(FIELD_UNREAD_NOTIFICATIONS, i.getValue());
                 db.update(TABLE_CLIENTS, values, FIELD_ID + " = " + i.getKey(), null);
             }
+        } finally {
+            db.close();
+        }
+    }
+
+    public static void clearUnreadNotification(int idclient, Context context) {
+        DatabaseHelper helper = new DatabaseHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        if (db == null)
+            return;
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(FIELD_UNREAD_NOTIFICATIONS, 0);
+            db.update(TABLE_CLIENTS, values, FIELD_ID + " = " + idclient, null);
         } finally {
             db.close();
         }
