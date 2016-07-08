@@ -167,5 +167,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
         }
     }
+
+    public static void clearUnreadNotification(int idclient, Context context) {
+
+    }
 }
 
