@@ -79,7 +79,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             tvNameClient = (TextView) v.findViewById(R.id.tv_recycler_item_name_client);
             tvUnreadNotificationCount = (TextView) v.findViewById(R.id.tv_recycler_item_unread_notification_count);
             tvFilter = (TextView) v.findViewById(R.id.tv_recycler_item_filter);
-            cardView = (CardView) v;
+            cardView = (CardView) v.findViewById(R.id.card_view);
             cardView.setOnClickListener(this);
         }
 

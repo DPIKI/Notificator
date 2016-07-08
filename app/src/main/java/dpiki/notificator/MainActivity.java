@@ -9,12 +9,8 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-<<<<<<< HEAD
 import android.view.View;
 import android.widget.AdapterView;
-=======
-import android.util.Log;
->>>>>>> 732af539b614d8ccff98b8bb88e882f2177766bb
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -43,22 +39,8 @@ public class MainActivity extends AppCompatActivity {
         BootReceiver.initAlarmManager(this);
 
         ArrayList<MarketClient> clients = DatabaseHelper.readClients(this);
-<<<<<<< HEAD
         ItemClickListener listener = new ItemClickListener();
         recyclerAdapter = new RecyclerAdapter(clients, listener);
-=======
-        for (MarketClient client : clients) {
-            Log.d(TAG,
-                    client.getId().toString() + " " +
-                    client.getName() + " " +
-                    client.getPref1() + " " +
-                    client.getPref2() + " " +
-                    client.getPref3()
-            );
-        }
-
-        recyclerAdapter = new RecyclerAdapter(clients);
->>>>>>> 732af539b614d8ccff98b8bb88e882f2177766bb
 
         rvLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(rvLayoutManager);
@@ -72,10 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
         broadcastReceiver = new Receiver();
         IntentFilter intentFilter = new IntentFilter(MyFetcher.ACTION_NEW_RECOMMENDATIONS);
-<<<<<<< HEAD
-        registerReceiver(broadcastReceiver,intentFilter);
-
-=======
         registerReceiver(broadcastReceiver, intentFilter);
     }
 
@@ -84,13 +62,13 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         unregisterReceiver(broadcastReceiver);
->>>>>>> 732af539b614d8ccff98b8bb88e882f2177766bb
     }
 
     public class ItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            DatabaseHelper.clearUnreadNotification(recyclerAdapter.mDataset.get(position).getId(), this);
+            DatabaseHelper.clearUnreadNotification(recyclerAdapter.mDataset.get(position).getId(), MainActivity.this);
+            recyclerAdapter.update(DatabaseHelper.readClients(MainActivity.this));
         }
     }
 
