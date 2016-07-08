@@ -31,25 +31,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String FIELD_PREF3 = "pref3";
     public static final String FIELD_UNREAD_NOTIFICATIONS = "unread_notifications";
 
-    public static final String QUERY_CREATE_TABLE_CLIENTS = "CREATE TABLE " + TABLE_CLIENTS + " ("
+    public static final String QUERY_CREATE_TABLE_CLIENTS =
+            "CREATE TABLE " + TABLE_CLIENTS + " ("
             + FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + FIELD_NAME + " TEXT NOT NULL, "
             + FIELD_PREF1 + " TEXT, "
             + FIELD_PREF2 + " TEXT, "
             + FIELD_PREF3 + " TEXT, "
             + FIELD_UNREAD_NOTIFICATIONS + " INTEGER);";
-    public static final String QUERY_DROP_TABLE_CLIENTS = "DROP TABLE IF EXIST " + TABLE_CLIENTS + ";";
 
-    public static final String QUERY_CREATE_TABLE_NOTIFICATION = "CREATE TABLE " + TABLE_NOTIFICATION + " ("
+    public static final String QUERY_DROP_TABLE_CLIENTS =
+            "DROP TABLE IF EXIST " + TABLE_CLIENTS + ";";
+
+    public static final String QUERY_CREATE_TABLE_NOTIFICATION =
+            "CREATE TABLE " + TABLE_NOTIFICATION + " ("
             + FIELD_ID_NOTIFICATION + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + FIELD_ID_CLIENT + " TEXT NOT NULL, "
             + FIELD_ID_PHONE + " TEXT NOT NULL);";
-    public static final String QUERY_DROP_TABLE_NOTIFICATION = "DROP TABLE IF EXIST " + TABLE_NOTIFICATION + ";";
 
-    public static final String QUERY_COUNT_CLIENTS = "SELECT COUNT(" + FIELD_ID_CLIENT + ") FROM "
+    public static final String QUERY_DROP_TABLE_NOTIFICATION =
+            "DROP TABLE IF EXIST " + TABLE_NOTIFICATION + ";";
+
+    public static final String QUERY_COUNT_CLIENTS =
+            "SELECT COUNT(" + FIELD_ID_CLIENT + ") FROM "
             + TABLE_NOTIFICATION + " GROUP BY " + FIELD_ID_CLIENT;
 
-    public static final String QUERY_COUNT_PHONES = "SELECT COUNT(" + FIELD_ID_PHONE + ") FROM "
+    public static final String QUERY_COUNT_PHONES =
+            "SELECT COUNT(" + FIELD_ID_PHONE + ") FROM "
             + TABLE_NOTIFICATION + " GROUP BY " + FIELD_ID_PHONE;
 
     public DatabaseHelper(Context context) {
@@ -88,7 +96,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     FIELD_PREF3,
                     FIELD_UNREAD_NOTIFICATIONS
             };
-            Cursor cursor = db.query(TABLE_CLIENTS, columns, null, null, null, null, null);
+            Cursor cursor = db.query(TABLE_CLIENTS, columns, null, null, null, null,
+                    FIELD_UNREAD_NOTIFICATIONS);
 
             if (cursor == null)
                 return ret_val;
