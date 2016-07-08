@@ -5,10 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
 
 import dpiki.notificator.data.MarketClient;
+import dpiki.notificator.network.DataFetcher;
 import dpiki.notificator.network.MyFetcher;
 
 /**
@@ -37,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + FIELD_PREF1 + " TEXT, "
             + FIELD_PREF2 + " TEXT, "
             + FIELD_PREF3 + " TEXT, "
-            + FIELD_UNREAD_NOTIFICATIONS + "INTEGER);";
+            + FIELD_UNREAD_NOTIFICATIONS + " INTEGER);";
     public static final String QUERY_DROP_TABLE_CLIENTS = "DROP TABLE IF EXIST " + TABLE_CLIENTS + ";";
 
     public static final String QUERY_CREATE_TABLE_NOTIFICATION = "CREATE TABLE " + TABLE_NOTIFICATION + " ("
@@ -150,7 +156,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public static void addNotifications(ArrayList<MyFetcher.Recommendation> recommendations, Context context) {
+    public static void addNotifications(ArrayList<MyFetcher.Recommendation> recommendations,
+                                        Context context) {
         DatabaseHelper helper = new DatabaseHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -167,6 +174,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             db.close();
         }
+
+        TreeMap<Integer, Integer> cn = new TreeMap<>();
+        for (MyFetcher.Recommendation i : recommendations) {
+            int fid = i.f.getId();
+            if (cn.containsKey(fid)) {
+                cn.put(fid, cn.get(fid) + 1);
+            } else {
+                cn.put(fid, 1);
+            }
+        }
+
+        for (MarketClient i : readClients(context)) {
+            if (cn.containsKey(i.getId())) {
+                cn.put(i.getId(), i.getUnreadNotificationCount() + cn.get(i.getId()));
+            }
+        }
+
+        for (Map.Entry<Integer, Integer> i : cn.entrySet()) {
+            ContentValues values = new ContentValues();
+            values.put(FIELD_UNREAD_NOTIFICATIONS, i.getValue());
+            db.update(TABLE_CLIENTS, values, FIELD_ID + " = " + i.getKey(), null);
+        }
     }
 }
-

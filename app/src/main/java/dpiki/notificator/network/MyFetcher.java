@@ -3,7 +3,9 @@ package dpiki.notificator.network;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -27,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import dpiki.notificator.DatabaseHelper;
 import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.data.Phone;
-import dpiki.notificator.network.DataFetcher;
 
 /**
  * Created by Lenovo on 07.07.2016.
@@ -35,9 +36,10 @@ import dpiki.notificator.network.DataFetcher;
 public class MyFetcher extends DataFetcher<Phone, MarketClient> {
     public static final String TAG = "MyFetcher";
 
+    public static final String ACTION_NEW_RECOMMENDATIONS = "dpiki.notificator.action.NEW_RECOMMENDATIONS";
+
     public static final String PREF_KEY_NOTIFY_ID = "notifyId";
     public static final String PREF_KEY_LAST_DATE = "lastDate";
-    public static final String PREF_KEY_IP = "ipAddress";
 
     public static final String JSON_KEY_SUCCESS = "success";
     public static final String JSON_KEY_PHONES = "phones";
@@ -150,6 +152,9 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(PREF_KEY_NOTIFY_ID, notifyId);
         editor.apply();
+
+        Intent intent = new Intent(ACTION_NEW_RECOMMENDATIONS);
+        context.sendBroadcast(intent);
     }
 
     ArrayList<Phone> extractResponse(JSONObject response) throws Exception {
