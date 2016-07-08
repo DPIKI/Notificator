@@ -59,10 +59,22 @@ public class MainActivity extends AppCompatActivity {
         rvLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(rvLayoutManager);
         recyclerView.setAdapter(recyclerAdapter);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         broadcastReceiver = new Receiver();
         IntentFilter intentFilter = new IntentFilter(MyFetcher.ACTION_NEW_RECOMMENDATIONS);
-        registerReceiver(broadcastReceiver,intentFilter);
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        unregisterReceiver(broadcastReceiver);
     }
 
     public class Receiver extends android.content.BroadcastReceiver{
