@@ -1,9 +1,11 @@
 package dpiki.notificator;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -16,29 +18,19 @@ import dpiki.notificator.data.MarketClient;
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    private ArrayList<MarketClient> mDataset;
+    public ArrayList<MarketClient> mDataset;
+    private AdapterView.OnItemClickListener mItemClickListener;
+
+    public RecyclerAdapter(ArrayList<MarketClient> dataset,
+                           AdapterView.OnItemClickListener itemClickListener) {
+        mItemClickListener = itemClickListener;
+        update(dataset);
+    }
 
     public void update(ArrayList<MarketClient> marketClients) {
         mDataset = marketClients;
         Collections.reverse(mDataset);
         this.notifyDataSetChanged();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvNameClient;
-        public TextView tvUnreadNotificationCount;
-        public TextView tvFilter;
-
-        public ViewHolder(View v) {
-            super(v);
-            tvNameClient = (TextView) v.findViewById(R.id.tv_recycler_item_name_client);
-            tvUnreadNotificationCount = (TextView) v.findViewById(R.id.tv_recycler_item_unread_notification_count);
-            tvFilter = (TextView) v.findViewById(R.id.tv_recycler_item_filter);
-        }
-    }
-
-    public RecyclerAdapter(ArrayList<MarketClient> dataset) {
-        update(dataset);
     }
 
     @Override
@@ -47,8 +39,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_item, parent, false);
 
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v, mItemClickListener);
     }
 
     @Override
@@ -69,8 +60,33 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public int getItemCount() {
+
         return mDataset.size();
     }
 
+    public static class ViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
+        public TextView tvNameClient;
+        public TextView tvUnreadNotificationCount;
+        public TextView tvFilter;
+        public CardView cardView;
+
+        AdapterView.OnItemClickListener listener;
+
+        public ViewHolder(View v, AdapterView.OnItemClickListener listener) {
+            super(v);
+            this.listener = listener;
+            tvNameClient = (TextView) v.findViewById(R.id.tv_recycler_item_name_client);
+            tvUnreadNotificationCount = (TextView) v.findViewById(R.id.tv_recycler_item_unread_notification_count);
+            tvFilter = (TextView) v.findViewById(R.id.tv_recycler_item_filter);
+            cardView = (CardView) v;
+            cardView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onItemClick(null, v, getAdapterPosition(), 0);
+        }
+    }
 }
 
