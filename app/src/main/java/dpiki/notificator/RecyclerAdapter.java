@@ -47,7 +47,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.tvNameClient.setText(mDataset.get(position).getName());
-        holder.tvUnreadNotificationCount.setText(mDataset.get(position).getUnreadNotificationCount());
+        holder.tvUnreadNotificationCount.setText("" + mDataset.get(position).getUnreadNotificationCount());
         String filter =
                 mDataset.get(position).getPref1() + "\n" +
                 mDataset.get(position).getPref2() + "\n" +

@@ -19,14 +19,11 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager rvLayoutManager;
     private RecyclerAdapter recyclerAdapter;
 
-    EditText editText;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editText = (EditText)findViewById(R.id.et_ip_address);
         recyclerView = (RecyclerView) findViewById(R.id.activity_main_recycler_view) ;
         recyclerView.setHasFixedSize(true);
 
@@ -35,17 +32,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<MarketClient> clients = DatabaseHelper.readClients(this);
         recyclerAdapter = new RecyclerAdapter(clients);
 
+        rvLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(rvLayoutManager);
         recyclerView.setAdapter(recyclerAdapter);
-
-        for (MarketClient client : clients) {
-            Log.d(TAG,
-                    client.getId().toString() + " " +
-                    client.getName() + " " +
-                    client.getPref1() + " " +
-                    client.getPref2() + " " +
-                    client.getPref3()
-            );
-        }
 
     }
 

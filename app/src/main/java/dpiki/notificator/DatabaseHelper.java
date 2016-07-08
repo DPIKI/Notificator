@@ -37,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + FIELD_PREF1 + " TEXT, "
             + FIELD_PREF2 + " TEXT, "
             + FIELD_PREF3 + " TEXT, "
-            + FIELD_UNREAD_NOTIFICATIONS + "INTEGER);";
+            + FIELD_UNREAD_NOTIFICATIONS + " INTEGER);";
     public static final String QUERY_DROP_TABLE_CLIENTS = "DROP TABLE IF EXIST " + TABLE_CLIENTS + ";";
 
     public static final String QUERY_CREATE_TABLE_NOTIFICATION = "CREATE TABLE " + TABLE_NOTIFICATION + " ("
