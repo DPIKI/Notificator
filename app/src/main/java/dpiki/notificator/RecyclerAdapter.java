@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import dpiki.notificator.data.MarketClient;
 
@@ -16,6 +17,12 @@ import dpiki.notificator.data.MarketClient;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     private ArrayList<MarketClient> mDataset;
+
+    public void update(ArrayList<MarketClient> marketClients) {
+        mDataset = marketClients;
+        Collections.reverse(mDataset);
+        this.notifyDataSetChanged();
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvNameClient;
@@ -31,7 +38,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     public RecyclerAdapter(ArrayList<MarketClient> dataset) {
-        mDataset = dataset;
+        update(dataset);
     }
 
     @Override
@@ -48,6 +55,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.tvNameClient.setText(mDataset.get(position).getName());
         holder.tvUnreadNotificationCount.setText("" + mDataset.get(position).getUnreadNotificationCount());
+        holder.tvUnreadNotificationCount.setVisibility(mDataset
+                .get(position)
+                .getUnreadNotificationCount() == 0 ?
+                View.INVISIBLE :
+                View.VISIBLE);
         String filter =
                 mDataset.get(position).getPref1() + "\n" +
                 mDataset.get(position).getPref2() + "\n" +

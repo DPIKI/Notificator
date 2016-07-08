@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,18 +54,12 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver,intentFilter);
     }
 
-    public void updateMarketClientsList(){
-        marketClients = DatabaseHelper.readClients(MainActivity.this);
-        Collections.reverse(marketClients);
-        recyclerAdapter.notifyDataSetChanged();
-    }
-
     public class Receiver extends android.content.BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(MainActivity.this, "Update...", Toast.LENGTH_LONG);
-            updateMarketClientsList();
+            Toast.makeText(MainActivity.this, "Update...", Toast.LENGTH_LONG).show();
+            recyclerAdapter.update(DatabaseHelper.readClients(MainActivity.this));
         }
     }
 }

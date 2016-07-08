@@ -180,30 +180,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 values.put(FIELD_ID_PHONE, i.i.getId());
                 db.insert(TABLE_NOTIFICATION, null, values);
             }
+
+            TreeMap<Integer, Integer> cn = new TreeMap<>();
+            for (MyFetcher.Recommendation i : recommendations) {
+                int fid = i.f.getId();
+                if (cn.containsKey(fid)) {
+                    cn.put(fid, cn.get(fid) + 1);
+                } else {
+                    cn.put(fid, 1);
+                }
+            }
+
+            for (MarketClient i : readClients(context)) {
+                if (cn.containsKey(i.getId())) {
+                    cn.put(i.getId(), i.getUnreadNotificationCount() + cn.get(i.getId()));
+                }
+            }
+
+            for (Map.Entry<Integer, Integer> i : cn.entrySet()) {
+                ContentValues values = new ContentValues();
+                values.put(FIELD_UNREAD_NOTIFICATIONS, i.getValue());
+                db.update(TABLE_CLIENTS, values, FIELD_ID + " = " + i.getKey(), null);
+            }
         } finally {
             db.close();
-        }
-
-        TreeMap<Integer, Integer> cn = new TreeMap<>();
-        for (MyFetcher.Recommendation i : recommendations) {
-            int fid = i.f.getId();
-            if (cn.containsKey(fid)) {
-                cn.put(fid, cn.get(fid) + 1);
-            } else {
-                cn.put(fid, 1);
-            }
-        }
-
-        for (MarketClient i : readClients(context)) {
-            if (cn.containsKey(i.getId())) {
-                cn.put(i.getId(), i.getUnreadNotificationCount() + cn.get(i.getId()));
-            }
-        }
-
-        for (Map.Entry<Integer, Integer> i : cn.entrySet()) {
-            ContentValues values = new ContentValues();
-            values.put(FIELD_UNREAD_NOTIFICATIONS, i.getValue());
-            db.update(TABLE_CLIENTS, values, FIELD_ID + " = " + i.getKey(), null);
         }
     }
 }
