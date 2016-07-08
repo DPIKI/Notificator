@@ -8,11 +8,11 @@ import android.content.Context;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.text.SimpleDateFormat;
@@ -22,7 +22,6 @@ import dpiki.notificator.BuildConfig;
 import dpiki.notificator.MainActivity;
 import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.data.Phone;
-import dpiki.notificator.network.MyFetcher;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 18)
@@ -147,6 +146,7 @@ public class MyFetcherTest{
                     ,expected.getDate(), actual.getDate());
         }
     }
+
 
     public JSONObject getJSONFromPhone(Phone phone) throws Exception{
         JSONObject phoneJSON = new JSONObject();

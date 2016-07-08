@@ -9,13 +9,16 @@ public class MarketClient {
     String pref1;
     String pref2;
     String pref3;
+    int unreadNotificationCount;
 
-    public MarketClient(Integer id, String name, String pref1, String pref2, String pref3) {
+    public MarketClient(Integer id, String name, String pref1,
+                        String pref2, String pref3, int unreadNotificationCount) {
         this.id = id;
         this.name = name;
         this.pref1 = pref1;
         this.pref2 = pref2;
         this.pref3 = pref3;
+        this.unreadNotificationCount = unreadNotificationCount;
     }
 
     public Integer getId() {
@@ -57,4 +60,13 @@ public class MarketClient {
     public void setPref3(String pref3) {
         this.pref3 = pref3;
     }
+
+    public int getUnreadNotificationCount() {
+        return this.unreadNotificationCount;
+    }
+
+    public void setUnreadNotificationCount(int unreadNotificationCount) {
+        this.unreadNotificationCount = unreadNotificationCount;
+    }
+
 }
