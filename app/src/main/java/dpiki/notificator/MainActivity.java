@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,12 +18,7 @@ import dpiki.notificator.network.BootReceiver;
 import dpiki.notificator.network.MyFetcher;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TAG = "MainActivity";
-
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager rvLayoutManager;
     private RecyclerAdapter recyclerAdapter;
-
     private BroadcastReceiver broadcastReceiver;
 
     @Override
@@ -33,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.activity_main_recycler_view) ;
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.activity_main_recycler_view);
+        assert recyclerView != null;
         recyclerView.setHasFixedSize(true);
 
         BootReceiver.initAlarmManager(this);
@@ -42,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         ItemClickListener listener = new ItemClickListener();
         recyclerAdapter = new RecyclerAdapter(clients, listener);
 
-        rvLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager rvLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(rvLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerAdapter);
@@ -64,10 +58,13 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
-    public class ItemClickListener implements AdapterView.OnItemClickListener {
+    public class ItemClickListener implements OnCardViewClickListener {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            DatabaseHelper.clearUnreadNotification(recyclerAdapter.mDataset.get(position).getId(), MainActivity.this);
+        public void onCardViewClicked(MarketClient client, int position) {
+            if (client == null)
+                return;
+
+            DatabaseHelper.clearUnreadNotification(client.getId(), MainActivity.this);
             recyclerAdapter.update(DatabaseHelper.readClients(MainActivity.this));
         }
     }

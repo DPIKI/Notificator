@@ -9,10 +9,10 @@ public class MarketClient {
     String pref1;
     String pref2;
     String pref3;
-    int unreadNotificationCount;
+    Integer unreadNotificationCount;
 
     public MarketClient(Integer id, String name, String pref1,
-                        String pref2, String pref3, int unreadNotificationCount) {
+                        String pref2, String pref3, Integer unreadNotificationCount) {
         this.id = id;
         this.name = name;
         this.pref1 = pref1;
@@ -61,7 +61,7 @@ public class MarketClient {
         this.pref3 = pref3;
     }
 
-    public int getUnreadNotificationCount() {
+    public Integer getUnreadNotificationCount() {
         return this.unreadNotificationCount;
     }
 

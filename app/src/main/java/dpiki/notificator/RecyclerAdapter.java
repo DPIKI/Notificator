@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,11 +18,11 @@ import dpiki.notificator.data.MarketClient;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     public ArrayList<MarketClient> mDataset;
-    private AdapterView.OnItemClickListener mItemClickListener;
+    private OnCardViewClickListener mItemClickListener;
 
     public RecyclerAdapter(ArrayList<MarketClient> dataset,
-                           AdapterView.OnItemClickListener itemClickListener) {
-        mItemClickListener = itemClickListener;
+                           OnCardViewClickListener listener) {
+        mItemClickListener = listener;
         update(dataset);
     }
 
@@ -44,23 +43,25 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvNameClient.setText(mDataset.get(position).getName());
-        holder.tvUnreadNotificationCount.setText("" + mDataset.get(position).getUnreadNotificationCount());
-        holder.tvUnreadNotificationCount.setVisibility(mDataset
-                .get(position)
+        MarketClient client = mDataset.get(position);
+
+        holder.tvNameClient.setText(client.getName());
+        holder.tvUnreadNotificationCount.setText(client.getUnreadNotificationCount().toString());
+        holder.tvUnreadNotificationCount.setVisibility(client
                 .getUnreadNotificationCount() == 0 ?
                 View.INVISIBLE :
                 View.VISIBLE);
         String filter =
-                mDataset.get(position).getPref1() + "\n" +
-                mDataset.get(position).getPref2() + "\n" +
-                mDataset.get(position).getPref3();
+                client.getPref1() + "\n" +
+                client.getPref2() + "\n" +
+                client.getPref3();
         holder.tvFilter.setText(filter);
+
+        holder.currClient = client;
     }
 
     @Override
     public int getItemCount() {
-
         return mDataset.size();
     }
 
@@ -70,22 +71,26 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public TextView tvUnreadNotificationCount;
         public TextView tvFilter;
         public CardView cardView;
+        public MarketClient currClient;
 
-        AdapterView.OnItemClickListener listener;
+        OnCardViewClickListener listener;
 
-        public ViewHolder(View v, AdapterView.OnItemClickListener listener) {
+        public ViewHolder(View v, OnCardViewClickListener listener) {
             super(v);
-            this.listener = listener;
+
             tvNameClient = (TextView) v.findViewById(R.id.tv_recycler_item_name_client);
             tvUnreadNotificationCount = (TextView) v.findViewById(R.id.tv_recycler_item_unread_notification_count);
             tvFilter = (TextView) v.findViewById(R.id.tv_recycler_item_filter);
             cardView = (CardView) v.findViewById(R.id.card_view);
+            currClient = null;
+
             cardView.setOnClickListener(this);
+            this.listener = listener;
         }
 
         @Override
         public void onClick(View v) {
-            listener.onItemClick(null, v, getAdapterPosition(), 0);
+            listener.onCardViewClicked(currClient, getAdapterPosition());
         }
     }
 }
