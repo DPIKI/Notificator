@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         broadcastReceiver = new Receiver();
         IntentFilter intentFilter = new IntentFilter(MyFetcher.ACTION_NEW_RECOMMENDATIONS);
         registerReceiver(broadcastReceiver, intentFilter);
+        recyclerAdapter.update(DatabaseHelper.readClients(MainActivity.this));
     }
 
     @Override
@@ -63,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         public void onCardViewClicked(MarketClient client, int position) {
             if (client == null)
                 return;
-
             DatabaseHelper.clearUnreadNotification(client.getId(), MainActivity.this);
             recyclerAdapter.update(DatabaseHelper.readClients(MainActivity.this));
         }

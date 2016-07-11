@@ -78,7 +78,7 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
-                "http://192.168.137.97/get_new_phones.php?date=" + strLastFetch.replace(" ", "%20"),
+                "http://192.168.137.110/get_new_phones.php?date=" + strLastFetch.replace(" ", "%20"),
                 future, future);
         queue.add(request);
         JSONObject response = future.get(10, TimeUnit.SECONDS);
@@ -145,6 +145,7 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
                 (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context)
+                        .setAutoCancel(true)
                         .setContentIntent(pendingIntent)
                         .setSmallIcon(android.R.drawable.ic_dialog_alert)
                         .setWhen(System.currentTimeMillis())
