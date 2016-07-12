@@ -34,8 +34,9 @@
             android:enabled="true" />
 
         <service
+            android:process=":my_process"
             android:name=".network.SyncMarketService"
-            android:exported="false"></service>
+            android:exported="false"/>
     </application>
 
 </manifest>

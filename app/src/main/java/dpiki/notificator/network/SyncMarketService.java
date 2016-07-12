@@ -31,6 +31,7 @@ public class SyncMarketService extends Service {
                 .setContentText("Service")
                 .setContentTitle("Title")
                 .setTicker("Ticker")
+                .setWhen(System.currentTimeMillis())
                 .setSmallIcon(android.R.drawable.btn_default);
         startForeground(0, builder.build());
 
