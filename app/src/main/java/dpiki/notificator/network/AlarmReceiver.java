@@ -1,17 +1,16 @@
 package dpiki.notificator.network;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
-import dpiki.notificator.network.SyncMarketService;
-
-public class AlarmReceiver extends BroadcastReceiver {
+public class AlarmReceiver extends WakefulBroadcastReceiver {
     public AlarmReceiver() {
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        SyncMarketService.fetchPhoneData(context);
+        Intent serviceIntent = new Intent(context, SyncMarketService.class);
+        startWakefulService(context, serviceIntent);
     }
 }

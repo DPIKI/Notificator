@@ -25,5 +25,6 @@ public class SyncMarketService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         MyFetcher fetcher = new MyFetcher(this);
         fetcher.fetch();
+        AlarmReceiver.completeWakefulIntent(intent);
     }
 }
