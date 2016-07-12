@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.network.BootReceiver;
 import dpiki.notificator.network.MyFetcher;
+import dpiki.notificator.network.SyncMarketService;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerAdapter recyclerAdapter;
@@ -27,11 +28,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intent = new Intent(this, SyncMarketService.class);
+        startService(intent);
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.activity_main_recycler_view);
         assert recyclerView != null;
         recyclerView.setHasFixedSize(true);
-
-        BootReceiver.initAlarmManager(this);
 
         ArrayList<MarketClient> clients = DatabaseHelper.readClients(this);
         ItemClickListener listener = new ItemClickListener();

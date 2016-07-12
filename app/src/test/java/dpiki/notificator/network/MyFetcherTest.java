@@ -8,6 +8,7 @@ import android.content.Context;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.junit.Before;
@@ -23,6 +24,7 @@ import dpiki.notificator.MainActivity;
 import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.data.Phone;
 
+@Ignore
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 18)
 public class MyFetcherTest{
