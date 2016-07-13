@@ -29,21 +29,12 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerAdapter recyclerAdapter;
     private BroadcastReceiver broadcastReceiver;
     private Switch sw;
-    public static final String SP_KEY = SyncMarketService.PREF_KEY_RECEIVE_NOTIFICATIONS;
     private Context contextActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Intent intent = new Intent(this, SyncMarketService.class);
-        startService(intent);
-
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean(SyncMarketService.PREF_KEY_RECEIVE_NOTIFICATIONS, true);
-        editor.apply();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.activity_main_recycler_view);
         assert recyclerView != null;
@@ -64,19 +55,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void initSwitch() {
         sw = (Switch) findViewById(R.id.switch_settings);
-        sw.setVisibility(View.VISIBLE);
-        SharedPreferences pref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        sw.setChecked(pref.getBoolean(SP_KEY, false));
+        sw.setChecked(SyncMarketService.serverStatus(contextActivity));
 
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences pref =
-                        PreferenceManager.getDefaultSharedPreferences(contextActivity);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putBoolean(SP_KEY, isChecked);
-                editor.apply();
+                if (isChecked) {
+                    SyncMarketService.startNotificationService(contextActivity);
+                } else {
+                    SyncMarketService.stopNotificationService(contextActivity);
+                }
             }
         });
     }
