@@ -13,11 +13,8 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 public class SyncMarketService extends Service {
-    public static final String TAG = "SyncMarket";
-
     public static final String PREF_KEY_RECEIVE_NOTIFICATIONS = "receive_notifications";
 
     public static int FOREGROUND_NOTIFICATION_ID = 1;
@@ -32,8 +29,6 @@ public class SyncMarketService extends Service {
     Runnable initBackgroundThread = new Runnable() {
         @Override
         public void run() {
-            Log.d(TAG, "initBackgroundThread");
-
             PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
             mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FetcherThreadLock");
             if (!mWakeLock.isHeld())
@@ -53,8 +48,6 @@ public class SyncMarketService extends Service {
     Runnable fetchData = new Runnable() {
         @Override
         public void run() {
-            Log.d(TAG, "fetchData");
-
             MyFetcher fetcher = new MyFetcher(SyncMarketService.this);
             fetcher.fetch();
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);
@@ -64,8 +57,6 @@ public class SyncMarketService extends Service {
     Runnable cleanUpBackgroundThread = new Runnable() {
         @Override
         public void run() {
-            Log.d(TAG, "cleanUpBackgroundThread");
-
             if (mWakeLock.isHeld())
                 mWakeLock.release();
             stopForeground(true);
@@ -84,8 +75,6 @@ public class SyncMarketService extends Service {
     }
 
     private void startReceiveNotifications() {
-        Log.d(TAG, "startReceiveNotifications");
-
         if (!mIsThreadRunning) {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = pref.edit();
@@ -105,8 +94,6 @@ public class SyncMarketService extends Service {
     }
 
     private void stopReceiveNotifications() {
-        Log.d(TAG, "stopReceiveNotifications");
-
         if (mIsThreadRunning) {
             mBackgroundHandler.post(cleanUpBackgroundThread);
             mIsThreadRunning = false;

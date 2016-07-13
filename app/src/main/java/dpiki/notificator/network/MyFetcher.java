@@ -6,9 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -36,26 +34,25 @@ import dpiki.notificator.data.Phone;
  * Created by Lenovo on 07.07.2016.
  */
 public class MyFetcher extends DataFetcher<Phone, MarketClient> {
-    public static final String TAG = "MyFetcher";
-
     public static final String ACTION_NEW_RECOMMENDATIONS = "dpiki.notificator.action.NEW_RECOMMENDATIONS";
 
-    public static final String PREF_KEY_NOTIFY_ID = "notifyId";
-    public static final String PREF_KEY_LAST_DATE = "lastDate";
+    private static final String PREF_KEY_NOTIFY_ID = "notifyId";
+    private static final String PREF_KEY_LAST_DATE = "lastDate";
+    private static final String PREF_NAME = "MyFetcher";
 
-    public static final String JSON_KEY_SUCCESS = "success";
-    public static final String JSON_KEY_PHONES = "phones";
-    public static final String JSON_KEY_ID = "pid";
-    public static final String JSON_KEY_NAME = "name";
-    public static final String JSON_KEY_PARAM1 = "param1";
-    public static final String JSON_KEY_PARAM2 = "param2";
-    public static final String JSON_KEY_PARAM3 = "param3";
-    public static final String JSON_KEY_CREATION_DATE = "creation_date";
+    private static final String JSON_KEY_SUCCESS = "success";
+    private static final String JSON_KEY_PHONES = "phones";
+    private static final String JSON_KEY_ID = "pid";
+    private static final String JSON_KEY_NAME = "name";
+    private static final String JSON_KEY_PARAM1 = "param1";
+    private static final String JSON_KEY_PARAM2 = "param2";
+    private static final String JSON_KEY_PARAM3 = "param3";
+    private static final String JSON_KEY_CREATION_DATE = "creation_date";
 
-    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    RequestQueue queue;
-    Context context;
+    private RequestQueue queue;
+    private Context context;
 
     public MyFetcher(Context context) {
         this.context = context;
@@ -64,46 +61,21 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
 
     @Override
     public ArrayList<Phone> loadItems() throws Exception {
-        Log.d(TAG, "loading items...");
-
-        Date currentDate = new Date();
-        String strCurrentDate = sdf.format(currentDate);
-        SharedPreferences pref = context.getSharedPreferences("MyFetcher", 0);
-        String strLastFetch = pref.getString(PREF_KEY_LAST_DATE, strCurrentDate);
-        Log.d(TAG, "date: " + strCurrentDate);
-
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(PREF_KEY_LAST_DATE, strLastFetch);
-        editor.apply();
-
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
-                "http://192.168.137.110/get_new_phones.php?date=" + strLastFetch.replace(" ", "%20"),
-                future, future);
-        queue.add(request);
-        JSONObject response = future.get(10, TimeUnit.SECONDS);
-
+        String strLastFetch = prefGetLastFetchDate();
+        prefPutLastFetchDate(strLastFetch);
+        JSONObject response = makeRequest(strLastFetch);
         ArrayList<Phone> ret = extractResponse(response);
-
         if (!ret.isEmpty()) {
             Date lastFetch = findLastAddedPhone(ret);
             strLastFetch = sdf.format(lastFetch);
-            editor.putString(PREF_KEY_LAST_DATE, strLastFetch);
-            editor.apply();
+            prefPutLastFetchDate(strLastFetch);
         }
-
         return ret;
     }
 
     @Override
     public ArrayList<MarketClient> loadFilters() throws Exception {
-        Log.d(TAG, "Loading filters...");
-
-        ArrayList<MarketClient> filters = DatabaseHelper.readClients(context);
-
-        Log.d(TAG, "Filters : " + filters.size());
-
-        return filters;
+        return DatabaseHelper.readClients(context);
     }
 
     @Override
@@ -115,8 +87,6 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
 
     @Override
     public void onNewRecommendations(ArrayList<Recommendation> recommendations) throws Exception{
-        Log.d(TAG, "onNewRecommendation");
-
         DatabaseHelper.addNotifications(recommendations, context);
 
         TreeSet<Integer> phoneids = new TreeSet<>();
@@ -130,46 +100,12 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
         int clientsCount = clientids.size();
         int phonesCount = phoneids.size();
 
-        Log.d(TAG, "Clients count: " + clientsCount);
-        Log.d(TAG, "Phones count: " + phonesCount);
+        notifyUser(clientsCount, phonesCount);
 
-        SharedPreferences pref = context.getSharedPreferences("MyFetcher", 0);
-        Integer notifyId = pref.getInt(PREF_KEY_NOTIFY_ID, 0);
-        Log.d(TAG, "Notify id : " + notifyId);
-
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-
-        NotificationManager nm =
-                (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(context)
-                        .setAutoCancel(true)
-                        .setContentIntent(pendingIntent)
-                        .setSmallIcon(android.R.drawable.ic_dialog_alert)
-                        .setWhen(System.currentTimeMillis())
-                        .setDefaults(Notification.DEFAULT_ALL)
-                        .setContentTitle("Есть рекомендация")
-                        .setContentText("Для " + clientsCount +
-                                " клиентов  есть " + phonesCount +  " рекомендации");
-        Notification n = builder.build();
-        if (notifyId == SyncMarketService.FOREGROUND_NOTIFICATION_ID)
-            notifyId++;
-        nm.notify(notifyId, n);
-        notifyId++;
-
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(PREF_KEY_NOTIFY_ID, notifyId);
-        editor.apply();
-
-        intent = new Intent(ACTION_NEW_RECOMMENDATIONS);
-        context.sendBroadcast(intent);
+        context.sendBroadcast(new Intent(ACTION_NEW_RECOMMENDATIONS));
     }
 
-    ArrayList<Phone> extractResponse(JSONObject response) throws Exception {
-        Log.d(TAG, "extracting response...");
-
+    private ArrayList<Phone> extractResponse(JSONObject response) throws Exception {
         ArrayList<Phone> phones = new ArrayList<>();
         if (response.getBoolean(JSON_KEY_SUCCESS)) {
             JSONArray json = response.getJSONArray(JSON_KEY_PHONES);
@@ -186,13 +122,10 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
                 phones.add(phone);
             }
         }
-
-        Log.d(TAG, "Extracted phones: " + phones.size());
-
         return phones;
     }
 
-    Date findLastAddedPhone(ArrayList<Phone> phones) {
+    private Date findLastAddedPhone(ArrayList<Phone> phones) {
         return Collections.max(phones, new Comparator<Phone>() {
             @Override
             public int compare(Phone lhs, Phone rhs) {
@@ -207,4 +140,61 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
         }).getDate();
     }
 
+    private void prefPutLastFetchDate(String date) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(PREF_KEY_LAST_DATE, date);
+        editor.apply();
+    }
+
+    private String prefGetLastFetchDate() {
+        Date currentDate = new Date();
+        String strCurrentDate = sdf.format(currentDate);
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
+        return pref.getString(PREF_KEY_LAST_DATE, strCurrentDate);
+    }
+
+    private int nextNotifyId() {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
+        int ret_val = pref.getInt(PREF_KEY_NOTIFY_ID, 1);
+
+        if (ret_val == SyncMarketService.FOREGROUND_NOTIFICATION_ID)
+            ret_val++;
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt(PREF_KEY_NOTIFY_ID, ret_val + 1);
+        editor.apply();
+
+        return ret_val;
+    }
+
+    private void notifyUser(int clientsCount, int phonesCount) {
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                        .setWhen(System.currentTimeMillis())
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setContentTitle("Есть рекомендация")
+                        .setContentText("Для " + clientsCount +
+                                " клиентов  есть " + phonesCount +  " рекомендации");
+        Notification n = builder.build();
+
+        NotificationManager nm =
+                (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.notify(nextNotifyId(), n);
+    }
+
+    private JSONObject makeRequest(String filterDate) throws Exception {
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                "http://192.168.137.110/get_new_phones.php?date=" + filterDate.replace(" ", "%20"),
+                future, future);
+        queue.add(request);
+        return future.get(10, TimeUnit.SECONDS);
+    }
 }

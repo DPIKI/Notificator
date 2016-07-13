@@ -1,7 +1,5 @@
 package dpiki.notificator.network;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 /**
@@ -35,8 +33,6 @@ public abstract class DataFetcher<Item, Filter> {
                     }
                 }
             }
-
-            Log.d(MyFetcher.TAG, "Recommendations: " + recommendations.size());
 
             if (!recommendations.isEmpty()) {
                 onNewRecommendations(recommendations);
