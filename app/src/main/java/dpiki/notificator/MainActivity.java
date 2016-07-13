@@ -40,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SyncMarketService.class);
         startService(intent);
 
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(SyncMarketService.PREF_KEY_RECEIVE_NOTIFICATIONS, true);
+        editor.apply();
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.activity_main_recycler_view);
         assert recyclerView != null;
         recyclerView.setHasFixedSize(true);
