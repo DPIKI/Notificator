@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Notificator</string>
+    <string name="switch_service_state">Service State</string>
 </resources>
