@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +32,11 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, SyncMarketService.class);
         startService(intent);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(SyncMarketService.PREF_KEY_RECEIVE_NOTIFICATIONS, true);
+        editor.apply();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.activity_main_recycler_view);
         assert recyclerView != null;

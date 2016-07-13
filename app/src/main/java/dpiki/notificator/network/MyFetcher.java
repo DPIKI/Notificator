@@ -154,6 +154,8 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
                         .setContentText("Для " + clientsCount +
                                 " клиентов  есть " + phonesCount +  " рекомендации");
         Notification n = builder.build();
+        if (notifyId == SyncMarketService.FOREGROUND_NOTIFICATION_ID)
+            notifyId++;
         nm.notify(notifyId, n);
         notifyId++;
 
