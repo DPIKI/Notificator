@@ -1,5 +1,7 @@
 package dpiki.notificator.network;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 
 /**

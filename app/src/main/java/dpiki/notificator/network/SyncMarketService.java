@@ -10,12 +10,23 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class SyncMarketService extends Service {
+    public static final String TAG = "SyncMS";
+
     public static final String PREF_KEY_RECEIVE_NOTIFICATIONS = "receive_notifications";
+    public static final String PREF_KEY_CREATOR = "DataFetcherCreator";
+    public static final String PREF_NAME = "SyncMarketService";
 
     public static int FOREGROUND_NOTIFICATION_ID = 1;
 
@@ -48,8 +59,27 @@ public class SyncMarketService extends Service {
     Runnable fetchData = new Runnable() {
         @Override
         public void run() {
-            MyFetcher fetcher = new MyFetcher(SyncMarketService.this);
-            fetcher.fetch();
+            SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
+            String strCreator = pref.getString(PREF_KEY_CREATOR, "");
+            Log.d(TAG, "String read : " + strCreator);
+
+            if (!strCreator.isEmpty()) {
+                try {
+                    InputStream is = new ByteArrayInputStream(strCreator.getBytes());
+                    ObjectInputStream in = new ObjectInputStream(is);
+
+                    Log.d(TAG, "Starting deserialization...");
+
+                    DataFetcherCreator creator = (DataFetcherCreator) in.readObject();
+
+                    Log.d(TAG, "Creator deserialization completed");
+
+                    DataFetcher<?, ?> fetcher = creator.createFetcher(SyncMarketService.this);
+                    fetcher.fetch();
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);
         }
     };
@@ -76,7 +106,7 @@ public class SyncMarketService extends Service {
 
     private void startReceiveNotifications() {
         if (!mIsThreadRunning) {
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
             SharedPreferences.Editor editor = pref.edit();
             editor.putBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, true);
             editor.apply();
@@ -99,7 +129,7 @@ public class SyncMarketService extends Service {
             mIsThreadRunning = false;
         }
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, false);
         editor.apply();
@@ -124,8 +154,32 @@ public class SyncMarketService extends Service {
     }
 
     public static boolean serverStatus(Context context) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
         return pref.getBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, false);
+    }
+
+    public static boolean configureService(Context context, DataFetcherCreator creator) {
+        try {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(os);
+
+            Log.d(TAG, "Starting serializing...");
+
+            out.writeObject(creator);
+
+            Log.d(TAG, "Creator serialized");
+
+            SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
+            SharedPreferences.Editor editor = pref.edit();
+
+            Log.d(TAG, "String creator : " + os.toString());
+
+            editor.putString(PREF_KEY_CREATOR, os.toString());
+            editor.apply();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Nullable
