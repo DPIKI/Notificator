@@ -42,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + FIELD_UNREAD_NOTIFICATIONS + " INTEGER);";
 
     public static final String QUERY_DROP_TABLE_CLIENTS =
-            "DROP TABLE IF EXIST " + TABLE_CLIENTS + ";";
+            "DROP TABLE IF EXISTS " + TABLE_CLIENTS + ";";
 
     public static final String QUERY_CREATE_TABLE_NOTIFICATION =
             "CREATE TABLE " + TABLE_NOTIFICATION + " ("
@@ -69,7 +69,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(QUERY_CREATE_TABLE_CLIENTS);
         db.execSQL(QUERY_CREATE_TABLE_NOTIFICATION);
-        fillTestData(db);
     }
 
     @Override
@@ -125,52 +124,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ret_val;
     }
 
-    void fillTestData(SQLiteDatabase db) {
-        ContentValues values = new ContentValues();
-        values.put(FIELD_NAME, "Vasya");
-        values.put(FIELD_PREF1, "pref1");
-        values.put(FIELD_PREF2, "pref2");
-        values.put(FIELD_PREF3, "pref3");
-        values.put(FIELD_UNREAD_NOTIFICATIONS, 0);
-        db.insert(TABLE_CLIENTS, null, values);
+    public static void fillTestData(Context context) {
+        DatabaseHelper helper = new DatabaseHelper(context);
+        SQLiteDatabase db = helper.getReadableDatabase();
 
-        values = new ContentValues();
-        values.put(FIELD_NAME, "Petro");
-        values.put(FIELD_PREF1, "pref11");
-        values.put(FIELD_PREF2, "pref22");
-        values.put(FIELD_PREF3, "pref33");
-        values.put(FIELD_UNREAD_NOTIFICATIONS, 1);
-        db.insert(TABLE_CLIENTS, null, values);
+        try {
+            db.execSQL(QUERY_DROP_TABLE_CLIENTS);
+            db.execSQL(QUERY_CREATE_TABLE_CLIENTS);
 
-        values = new ContentValues();
-        values.put(FIELD_NAME, "Bes filtrov");
-        values.put(FIELD_PREF1, "1");
-        values.put(FIELD_PREF2, "2");
-        values.put(FIELD_PREF3, "3");
-        values.put(FIELD_UNREAD_NOTIFICATIONS, 2);
-        db.insert(TABLE_CLIENTS, null, values);
+            ContentValues values = new ContentValues();
+            values.put(FIELD_NAME, "Vasya");
+            values.put(FIELD_PREF1, "pref1");
+            values.put(FIELD_PREF2, "pref2");
+            values.put(FIELD_PREF3, "pref3");
+            values.put(FIELD_UNREAD_NOTIFICATIONS, 1);
+            db.insert(TABLE_CLIENTS, null, values);
 
-        values = new ContentValues();
-        values.put(FIELD_NAME, "s odnim filtrom");
-        values.put(FIELD_PREF1, "dsz");
-        values.put(FIELD_PREF2, "sldfj");
-        values.put(FIELD_PREF3, "pref333");
-        values.put(FIELD_UNREAD_NOTIFICATIONS, 3);
-        db.insert(TABLE_CLIENTS, null, values);
+            values = new ContentValues();
+            values.put(FIELD_NAME, "Petro");
+            values.put(FIELD_PREF1, "pref11");
+            values.put(FIELD_PREF2, "pref22");
+            values.put(FIELD_PREF3, "pref33");
+            values.put(FIELD_UNREAD_NOTIFICATIONS, 1);
+            db.insert(TABLE_CLIENTS, null, values);
 
-        values = new ContentValues();
-        values.put(FIELD_ID_CLIENT,1);
-        values.put(FIELD_ID_PHONE,1);
-        db.insert(TABLE_NOTIFICATION,null,values);
+            values = new ContentValues();
+            values.put(FIELD_NAME, "Bes filtrov");
+            values.put(FIELD_PREF1, "1");
+            values.put(FIELD_PREF2, "2");
+            values.put(FIELD_PREF3, "3");
+            values.put(FIELD_UNREAD_NOTIFICATIONS, 2);
+            db.insert(TABLE_CLIENTS, null, values);
 
-        values = new ContentValues();
-        values.put(FIELD_ID_CLIENT,1);
-        values.put(FIELD_ID_PHONE,2);
-        db.insert(TABLE_NOTIFICATION,null,values);
-        values = new ContentValues();
-        values.put(FIELD_ID_CLIENT,2);
-        values.put(FIELD_ID_PHONE,3);
-        db.insert(TABLE_NOTIFICATION,null,values);
+            values = new ContentValues();
+            values.put(FIELD_NAME, "s odnim filtrom");
+            values.put(FIELD_PREF1, "dsz");
+            values.put(FIELD_PREF2, "sldfj");
+            values.put(FIELD_PREF3, "pref333");
+            values.put(FIELD_UNREAD_NOTIFICATIONS, 3);
+            db.insert(TABLE_CLIENTS, null, values);
+
+            values = new ContentValues();
+            values.put(FIELD_ID_CLIENT, 1);
+            values.put(FIELD_ID_PHONE, 1);
+            db.insert(TABLE_NOTIFICATION, null, values);
+
+            values = new ContentValues();
+            values.put(FIELD_ID_CLIENT, 1);
+            values.put(FIELD_ID_PHONE, 2);
+            db.insert(TABLE_NOTIFICATION, null, values);
+            values = new ContentValues();
+            values.put(FIELD_ID_CLIENT, 2);
+            values.put(FIELD_ID_PHONE, 3);
+            db.insert(TABLE_NOTIFICATION, null, values);
+        } finally {
+            db.close();
+        }
     }
 
     public static void addNotifications(ArrayList<MyFetcher.Recommendation> recommendations,

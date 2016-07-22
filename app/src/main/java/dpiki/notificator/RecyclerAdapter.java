@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import dpiki.notificator.data.MarketClient;
 
@@ -30,6 +31,28 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         mDataset = marketClients;
         Collections.reverse(mDataset);
         this.notifyDataSetChanged();
+    }
+
+    public void clearUnreadNotifications(int position) {
+        int newPos = position;
+        Iterator<MarketClient> i = this.mDataset.listIterator(position);
+        while (i.hasNext()) {
+            MarketClient curr = i.next();
+            if (curr.getUnreadNotificationCount() == 0)
+                break;
+            newPos++;
+        }
+
+        newPos--;
+        newPos = newPos > position ? newPos : position;
+
+        MarketClient curr = this.mDataset.get(position);
+        curr.setUnreadNotificationCount(0);
+        this.notifyItemChanged(position);
+
+        this.mDataset.remove(position);
+        this.mDataset.add(newPos, curr);
+        this.notifyItemMoved(position, newPos);
     }
 
     @Override

@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
         SyncMarketService.configureService(this, new MyFetcherCreator());
         SyncMarketService.rerunNotificationService(this);
+
+        //TODO: DatabaseHelper.fillTestData(this);
     }
 
     private void initSwitch() {
@@ -100,8 +102,12 @@ public class MainActivity extends AppCompatActivity {
         public void onCardViewClicked(MarketClient client, int position) {
             if (client == null)
                 return;
+
+            if (client.getUnreadNotificationCount() == 0)
+                return;
+
             DatabaseHelper.clearUnreadNotification(client.getId(), contextActivity);
-            recyclerAdapter.update(DatabaseHelper.readClients(contextActivity));
+            recyclerAdapter.clearUnreadNotifications(position);
         }
     }
 
