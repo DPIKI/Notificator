@@ -65,7 +65,13 @@ public class SyncMarketService extends Service {
 
             if (!strCreator.isEmpty()) {
                 try {
-                    InputStream is = new ByteArrayInputStream(strCreator.getBytes());
+                    byte[] byteCreator = new byte[strCreator.length() / 2];
+                    for (int i = 0; i < strCreator.length(); i += 2) {
+                        byteCreator[i >> 1] =
+                                (byte) ((Character.digit(strCreator.charAt(i), 16) << 4) +
+                                        (Character.digit(strCreator.charAt(i + 1), 16)));
+                    }
+                    InputStream is = new ByteArrayInputStream(byteCreator);
                     ObjectInputStream in = new ObjectInputStream(is);
 
                     Log.d(TAG, "Starting deserialization...");
@@ -120,6 +126,9 @@ public class SyncMarketService extends Service {
             mBackgroundHandler.post(initBackgroundThread);
             mBackgroundHandler.post(fetchData);
             mIsThreadRunning = true;
+
+            Intent intent = new Intent(ACTION_START_RECEIVE);
+            sendBroadcast(intent);
         }
     }
 
@@ -133,6 +142,9 @@ public class SyncMarketService extends Service {
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, false);
         editor.apply();
+
+        Intent intent = new Intent(ACTION_STOP_RECEIVE);
+        sendBroadcast(intent);
     }
 
     public static void startNotificationService(Context context) {
@@ -174,7 +186,13 @@ public class SyncMarketService extends Service {
 
             Log.d(TAG, "String creator : " + os.toString());
 
-            editor.putString(PREF_KEY_CREATOR, os.toString());
+            byte[] byteObject = os.toByteArray();
+            String strObject = "";
+            for (byte i : byteObject) {
+                strObject += String.format("%02X", i);
+            }
+
+            editor.putString(PREF_KEY_CREATOR, strObject);
             editor.apply();
             return true;
         } catch (IOException e) {

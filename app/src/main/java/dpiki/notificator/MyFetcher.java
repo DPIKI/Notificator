@@ -1,6 +1,5 @@
-package dpiki.notificator.network;
+package dpiki.notificator;
 
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -26,10 +25,10 @@ import java.util.Date;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
-import dpiki.notificator.DatabaseHelper;
-import dpiki.notificator.MainActivity;
 import dpiki.notificator.data.MarketClient;
 import dpiki.notificator.data.Phone;
+import dpiki.notificator.network.DataFetcher;
+import dpiki.notificator.network.SyncMarketService;
 
 /**
  * Created by Lenovo on 07.07.2016.
@@ -193,7 +192,7 @@ public class MyFetcher extends DataFetcher<Phone, MarketClient> {
     private JSONObject makeRequest(String filterDate) throws Exception {
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
-                "http://192.168.137.110/get_new_phones.php?date=" + filterDate.replace(" ", "%20"),
+                "http://192.168.137.131/get_new_phones.php?date=" + filterDate.replace(" ", "%20"),
                 future, future);
         queue.add(request);
         return future.get(10, TimeUnit.SECONDS);

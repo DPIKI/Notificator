@@ -1,6 +1,9 @@
-package dpiki.notificator.network;
+package dpiki.notificator;
 
 import android.content.Context;
+
+import dpiki.notificator.network.DataFetcher;
+import dpiki.notificator.network.DataFetcherCreator;
 
 /**
  * Created by Lenovo on 20.07.2016.

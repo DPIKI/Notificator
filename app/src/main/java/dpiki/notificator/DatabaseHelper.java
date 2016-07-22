@@ -5,17 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
 import dpiki.notificator.data.MarketClient;
-import dpiki.notificator.network.DataFetcher;
-import dpiki.notificator.network.MyFetcher;
 
 /**
  * Created by Lenovo on 05.07.2016.
