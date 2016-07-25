@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-import dpiki.notificator.data.MarketClient;
-
 /**
  * Created by prog1 on 07.07.2016.
  */

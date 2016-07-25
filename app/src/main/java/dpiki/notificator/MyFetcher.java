@@ -25,8 +25,6 @@ import java.util.Date;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
-import dpiki.notificator.data.MarketClient;
-import dpiki.notificator.data.Phone;
 import dpiki.notificator.network.DataFetcher;
 import dpiki.notificator.network.SyncMarketService;
 

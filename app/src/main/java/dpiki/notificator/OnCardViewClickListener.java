@@ -1,7 +1,5 @@
 package dpiki.notificator;
 
-import dpiki.notificator.data.MarketClient;
-
 /**
  * Created by User on 09.07.2016.
  */

@@ -135,6 +135,8 @@ public class SyncMarketService extends Service {
     }
 
     private void stopReceiveNotifications() {
+        Log.d(TAG, "stop isThreadRunning : " + mIsThreadRunning);
+
         stopBackgroundThread();
 
         SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
@@ -147,6 +149,8 @@ public class SyncMarketService extends Service {
     }
 
     private void startBackgroundThread() {
+        Log.d(TAG, "start isThreadRunning : " + mIsThreadRunning);
+
         if (!mIsThreadRunning) {
             HandlerThread thread = new HandlerThread("SyncMarketServiceBackgroundThread");
             thread.start();

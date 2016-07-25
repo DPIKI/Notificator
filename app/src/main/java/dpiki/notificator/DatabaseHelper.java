@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import dpiki.notificator.data.MarketClient;
-
 /**
  * Created by Lenovo on 05.07.2016.
  */
