@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         SyncMarketService.configureService(this, new MyFetcherCreator());
         SyncMarketService.rerunNotificationService(this);
 
-        //TODO: DatabaseHelper.fillTestData(this);
+        DatabaseHelper.fillTestData(this);
     }
 
     private void initSwitch() {

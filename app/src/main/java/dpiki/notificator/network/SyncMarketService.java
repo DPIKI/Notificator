@@ -101,6 +101,18 @@ public class SyncMarketService extends Service {
     };
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        rerunNotificationService(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopBackgroundThread();
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(ACTION_START_RECEIVE)) {
             startReceiveNotifications();
@@ -111,12 +123,31 @@ public class SyncMarketService extends Service {
     }
 
     private void startReceiveNotifications() {
-        if (!mIsThreadRunning) {
-            SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, true);
-            editor.apply();
+        startBackgroundThread();
 
+        SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, true);
+        editor.apply();
+
+        Intent intent = new Intent(ACTION_START_RECEIVE);
+        sendBroadcast(intent);
+    }
+
+    private void stopReceiveNotifications() {
+        stopBackgroundThread();
+
+        SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, false);
+        editor.apply();
+
+        Intent intent = new Intent(ACTION_STOP_RECEIVE);
+        sendBroadcast(intent);
+    }
+
+    private void startBackgroundThread() {
+        if (!mIsThreadRunning) {
             HandlerThread thread = new HandlerThread("SyncMarketServiceBackgroundThread");
             thread.start();
             Looper looper = thread.getLooper();
@@ -126,25 +157,14 @@ public class SyncMarketService extends Service {
             mBackgroundHandler.post(initBackgroundThread);
             mBackgroundHandler.post(fetchData);
             mIsThreadRunning = true;
-
-            Intent intent = new Intent(ACTION_START_RECEIVE);
-            sendBroadcast(intent);
         }
     }
 
-    private void stopReceiveNotifications() {
+    private void stopBackgroundThread() {
         if (mIsThreadRunning) {
             mBackgroundHandler.post(cleanUpBackgroundThread);
             mIsThreadRunning = false;
         }
-
-        SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, false);
-        editor.apply();
-
-        Intent intent = new Intent(ACTION_STOP_RECEIVE);
-        sendBroadcast(intent);
     }
 
     public static void startNotificationService(Context context) {
