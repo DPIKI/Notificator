@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     @AfterViews
     protected void initRecyclerView() {
-        DatabaseHelper.fillTestData(this);
+        //DatabaseHelper.fillTestData(this);
         ArrayList<Client> clients = DatabaseHelper.readClients(this);
         recyclerAdapter = new RecyclerAdapter(clients, new ItemClickListener());
         recyclerView.setHasFixedSize(true);

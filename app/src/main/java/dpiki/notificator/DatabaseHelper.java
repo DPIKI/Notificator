@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import dpiki.notificator.data.Client;
@@ -181,15 +182,80 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public static void clearUnreadNotification(Context context, int clientId, String clientType) {
-        //TODO : implement
+        DatabaseHelper helper = new DatabaseHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        if (db == null)
+            return;
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(FIELD_UNREAD_NOTIFICATIONS, 0);
+            if (clientType.equals("phone")) {
+                db.update(TABLE_PHONE_CLIENTS, values, FIELD_ID + " = " + clientId, null);
+            }else if (clientType.equals("laptop")){
+                db.update(TABLE_LAPTOP_CLIENTS, values, FIELD_ID + " = " + clientId, null);
+            }
+        } finally {
+            db.close();
+        }
     }
 
     public static void updatePhoneClients(Context context, List<PhoneClient> clients) {
-        //TODO : implement
+        DatabaseHelper helper = new DatabaseHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        if (db == null)
+            return;
+
+        try {
+            db.execSQL(QUERY_DROP_TABLE_PHONE_CLIENTS);
+
+            Iterator<PhoneClient> i = clients.iterator();
+            while (i.hasNext()) {
+                PhoneClient phoneClient = i.next();
+                ContentValues values = new ContentValues();
+                values.put(FIELD_ID, phoneClient.id);
+                values.put(FIELD_FIO, phoneClient.fio);
+                values.put(FIELD_PREF1, phoneClient.pref1);
+                values.put(FIELD_PREF2, phoneClient.pref2);
+                values.put(FIELD_PREF3, phoneClient.pref3);
+                values.put(FIELD_TYPE_CLIENT, phoneClient.type);
+                values.put(FIELD_UNREAD_NOTIFICATIONS, phoneClient.notifCount);
+                db.insertWithOnConflict(TABLE_PHONE_CLIENTS, "", values, SQLiteDatabase.CONFLICT_IGNORE);
+            }
+        } finally {
+            db.close();
+        }
     }
 
     public static void updateLaptopClients(Context context, List<LaptopClient> clients) {
-        //TODO : implement
+        DatabaseHelper helper = new DatabaseHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        if (db == null)
+            return;
+
+        try {
+            db.execSQL(QUERY_DROP_TABLE_LAPTOP_CLIENTS);
+
+            Iterator<LaptopClient> i = clients.iterator();
+            while (i.hasNext()) {
+                LaptopClient laptopClient = i.next();
+                ContentValues values = new ContentValues();
+                values.put(FIELD_ID, laptopClient.id);
+                values.put(FIELD_FIO, laptopClient.fio);
+                values.put(FIELD_PREF11, laptopClient.pref11);
+                values.put(FIELD_PREF12, laptopClient.pref12);
+                values.put(FIELD_PREF13, laptopClient.pref13);
+                values.put(FIELD_PREF14, laptopClient.pref14);
+                values.put(FIELD_TYPE_CLIENT, laptopClient.type);
+                values.put(FIELD_UNREAD_NOTIFICATIONS, laptopClient.notifCount);
+                db.insertWithOnConflict(TABLE_LAPTOP_CLIENTS, "", values, SQLiteDatabase.CONFLICT_IGNORE);
+            }
+        } finally {
+            db.close();
+        }
     }
 
     @Override
