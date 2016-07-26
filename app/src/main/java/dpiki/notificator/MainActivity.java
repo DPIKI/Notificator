@@ -79,9 +79,9 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
-    public class ItemClickListener implements OnCardViewClickListener {
+    public class ItemClickListener implements OnViewClickListener {
         @Override
-        public void onCardViewClicked(Client client, int position) {
+        public void onViewClicked(Client client, int position) {
             if (client == null)
                 return;
 

@@ -7,9 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import dpiki.notificator.data.Client;
 import dpiki.notificator.data.LaptopClient;
@@ -43,7 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + FIELD_UNREAD_NOTIFICATIONS + " INTEGER);";
     public static final String QUERY_DROP_TABLE_PHONE_CLIENTS =
             "DROP TABLE IF EXISTS " + TABLE_PHONE_CLIENTS + ";";
-    public static final String QUERY_SELECT_PHONE_CLIENT_BY_ID =
+    public static final String QUERY_PHONE_CLIENT_BY_ID =
             "SELECT * FROM " + TABLE_PHONE_CLIENTS + " WHERE "
                     + FIELD_ID  + " = ";
 
@@ -63,7 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + FIELD_UNREAD_NOTIFICATIONS + " INTEGER);";
     public static final String QUERY_DROP_TABLE_LAPTOP_CLIENTS =
             "DROP TABLE IF EXISTS " + TABLE_LAPTOP_CLIENTS + ";";
-    public static final String QUERY_SELECT_LAPTOP_CLIENT_BY_ID =
+    public static final String QUERY_LAPTOP_CLIENT_BY_ID =
             "SELECT * FROM " + TABLE_LAPTOP_CLIENTS + " WHERE "
                     + FIELD_ID  + " = ";
 
@@ -189,13 +187,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static void addNotifications(Context context, List<Recommendation> recommendations) {
         DatabaseHelper helper = new DatabaseHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
+
         if (db == null)
             return;
-        try {
-            Iterator<Recommendation> i = recommendations.iterator();
-            while (i.hasNext()){
-                Recommendation recommendation = i.next();
 
+        try {
+            for (Recommendation recommendation : recommendations) {
                 ContentValues notifValues = new ContentValues();
                 notifValues.put(FIELD_ID_CLIENT, recommendation.client.id);
                 notifValues.put(FIELD_TYPE_CLIENT, recommendation.client.type);
@@ -210,27 +207,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             ((LaptopRecommendation) recommendation).laptop.id);
 
                     Cursor cursor = db.rawQuery
-                            (QUERY_SELECT_PHONE_CLIENT_BY_ID + recommendation.client.id, null);
+                            (QUERY_PHONE_CLIENT_BY_ID + recommendation.client.id, null);
                     int oldNotifCount =
                             cursor.getInt(cursor.getColumnIndex(FIELD_UNREAD_NOTIFICATIONS));
                     cursor.close();
 
-                    clientValues.put(FIELD_UNREAD_NOTIFICATIONS,
-                            oldNotifCount + recommendation.client.notifCount);
+                    clientValues.put(FIELD_UNREAD_NOTIFICATIONS, oldNotifCount + recommendation.client.notifCount);
 
                     db.update(TABLE_LAPTOP_CLIENTS, clientValues, FIELD_ID + " = ?",
                             new String[]{String.
                                     valueOf(((LaptopRecommendation) recommendation).laptop.id)});
-                }else if (recommendation.client.type.equals("phone")){
+                } else if (recommendation.client.type.equals("phone")) {
                     notifValues.put(FIELD_ID_PRODUCT,
                             ((PhoneRecommendation) recommendation).phone.id);
 
                     //Получаем запись клиента
-                    Cursor cursor = db.rawQuery
-                            (QUERY_SELECT_LAPTOP_CLIENT_BY_ID + recommendation.client.id, null);
+                    Cursor cursor = db.rawQuery(QUERY_LAPTOP_CLIENT_BY_ID + recommendation.client.id, null);
                     //Получаем количество непрочитанных нотификаций
-                    int oldNotifCount =
-                            cursor.getInt(cursor.getColumnIndex(FIELD_UNREAD_NOTIFICATIONS));
+                    int columnIndex = cursor.getColumnIndex(FIELD_UNREAD_NOTIFICATIONS);
+                    int oldNotifCount = cursor.getInt(columnIndex);
                     cursor.close();
 
                     clientValues.put(FIELD_UNREAD_NOTIFICATIONS,
@@ -278,9 +273,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             db.execSQL(QUERY_DROP_TABLE_PHONE_CLIENTS);
 
-            Iterator<PhoneClient> i = clients.iterator();
-            while (i.hasNext()) {
-                PhoneClient phoneClient = i.next();
+            for (PhoneClient phoneClient : clients) {
                 ContentValues values = new ContentValues();
                 values.put(FIELD_ID, phoneClient.id);
                 values.put(FIELD_FIO, phoneClient.fio);
@@ -306,9 +299,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             db.execSQL(QUERY_DROP_TABLE_LAPTOP_CLIENTS);
 
-            Iterator<LaptopClient> i = clients.iterator();
-            while (i.hasNext()) {
-                LaptopClient laptopClient = i.next();
+            for (LaptopClient laptopClient : clients) {
                 ContentValues values = new ContentValues();
                 values.put(FIELD_ID, laptopClient.id);
                 values.put(FIELD_FIO, laptopClient.fio);

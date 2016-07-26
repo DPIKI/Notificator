@@ -19,10 +19,10 @@ import dpiki.notificator.data.Client;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     public ArrayList<Client> mDataset;
-    private OnCardViewClickListener mItemClickListener;
+    private OnViewClickListener mItemClickListener;
 
     public RecyclerAdapter(ArrayList<Client> dataset,
-                           OnCardViewClickListener listener) {
+                           OnViewClickListener listener) {
         mItemClickListener = listener;
         update(dataset);
     }
@@ -91,9 +91,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public RelativeLayout relativeLayout;
         public Client currClient;
 
-        OnCardViewClickListener listener;
+        OnViewClickListener listener;
 
-        public ViewHolder(View v, OnCardViewClickListener listener) {
+        public ViewHolder(View v, OnViewClickListener listener) {
             super(v);
             tvNameClient = (TextView) v.findViewById(R.id.recycler_item_tv_name_client);
             tvNotifCount = (TextView) v.findViewById(R.id.recycler_item_tv_notif_count);
@@ -108,7 +108,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
-            listener.onCardViewClicked(currClient, getAdapterPosition());
+            listener.onViewClicked(currClient, getAdapterPosition());
         }
     }
 }
