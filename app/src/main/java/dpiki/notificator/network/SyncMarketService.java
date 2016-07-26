@@ -21,6 +21,9 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import retrofit.GsonConverterFactory;
+import retrofit2.Retrofit;
+
 public class SyncMarketService extends Service {
     public static final String TAG = "SyncMS";
 
@@ -59,33 +62,9 @@ public class SyncMarketService extends Service {
     Runnable fetchData = new Runnable() {
         @Override
         public void run() {
-            SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
-            String strCreator = pref.getString(PREF_KEY_CREATOR, "");
-            Log.d(TAG, "String read : " + strCreator);
-
-            if (!strCreator.isEmpty()) {
-                try {
-                    byte[] byteCreator = new byte[strCreator.length() / 2];
-                    for (int i = 0; i < strCreator.length(); i += 2) {
-                        byteCreator[i >> 1] =
-                                (byte) ((Character.digit(strCreator.charAt(i), 16) << 4) +
-                                        (Character.digit(strCreator.charAt(i + 1), 16)));
-                    }
-                    InputStream is = new ByteArrayInputStream(byteCreator);
-                    ObjectInputStream in = new ObjectInputStream(is);
-
-                    Log.d(TAG, "Starting deserialization...");
-
-                    DataFetcherCreator creator = (DataFetcherCreator) in.readObject();
-
-                    Log.d(TAG, "Creator deserialization completed");
-
-                    DataFetcher<?, ?> fetcher = creator.createFetcher(SyncMarketService.this);
-                    fetcher.fetch();
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
+            Retrofit retrofit = new Retrofit.Builder()
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl()
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);
         }
     };

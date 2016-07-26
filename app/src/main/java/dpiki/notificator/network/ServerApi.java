@@ -13,6 +13,8 @@ import retrofit2.http.Query;
  * Created by Lenovo on 25.07.2016.
  */
 public interface ServerApi {
+    String BASE_URL = "http://192.168.22.63/";
+
     @GET("get_clients.php")
     Call<ClientResponse> getClients(@Query("agent_id") Integer agentId);
 
