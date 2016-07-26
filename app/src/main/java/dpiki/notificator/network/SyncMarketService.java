@@ -20,9 +20,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import retrofit.GsonConverterFactory;
+import dpiki.notificator.data.ClientLaptops;
+import dpiki.notificator.data.ClientPhones;
+import dpiki.notificator.data.ClientResponse;
+import dpiki.notificator.data.Laptop;
+import dpiki.notificator.data.LaptopRecommendation;
+import dpiki.notificator.data.LaptopResponse;
+import dpiki.notificator.data.Phone;
+import dpiki.notificator.data.PhoneRecommendation;
+import dpiki.notificator.data.PhoneResponse;
+import dpiki.notificator.data.Recommendation;
+import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SyncMarketService extends Service {
     public static final String TAG = "SyncMS";
@@ -60,12 +75,96 @@ public class SyncMarketService extends Service {
     };
 
     Runnable fetchData = new Runnable() {
+        private ServerApi api;
         @Override
         public void run() {
             Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(ServerApi.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl()
+                    .build();
+            api = retrofit.create(ServerApi.class);
+
+            try {
+                Call<ClientResponse> clientsRequest = api.getClients(0);
+                Response<ClientResponse> clientResponse = clientsRequest.execute();
+
+                ClientResponse clients = clientResponse.body();
+                if (clients == null)
+                    throw new Exception("Failed to parse response with clients");
+
+                List<Recommendation> recommendations = new ArrayList<>();
+
+                List<ClientLaptops> laptopClients = clients.laptops;
+                if (!laptopClients.isEmpty()) {
+                    fetchLaptops(clients.laptops, recommendations);
+                    fetchPhones(clients.phones, recommendations);
+                }
+
+                if (!recommendations.isEmpty()) {
+                    handleRecommendations(recommendations);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);
+        }
+
+        private void fetchLaptops(List<ClientLaptops> clients, List<Recommendation> r) {
+            try {
+                Call<LaptopResponse> laptopRequest = api.getLaptops(new Date());
+                Response<LaptopResponse> laptopResponse = laptopRequest.execute();
+
+                LaptopResponse laptops = laptopResponse.body();
+                if (laptops == null)
+                    throw new Exception("Failed to parse response with laptops");
+
+                if (!laptops.success)
+                    throw new Exception("Invalid request");
+
+                for (Laptop i : laptops.laptops) {
+                    for (ClientLaptops j : clients) {
+                        if (i.param11.equals(j.pref11) &&
+                                i.param12.equals(j.pref12) &&
+                                i.param13.equals(j.pref13) &&
+                                i.param14.equals(j.pref14)) {
+                            r.add(new LaptopRecommendation(j, i));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void fetchPhones(List<ClientPhones> clients, List<Recommendation> r) {
+            try {
+                Call<PhoneResponse> phoneRequest = api.getPhones(new Date());
+                Response<PhoneResponse> phoneResponse = phoneRequest.execute();
+
+                PhoneResponse phones = phoneResponse.body();
+                if (phones == null)
+                    throw new Exception("Failed to parse response with laptops");
+
+                if (!phones.success)
+                    throw new Exception("Invalid request");
+
+                for (Phone i : phones.phones) {
+                    for (ClientPhones j : clients) {
+                        if (i.param1.equals(j.pref1) &&
+                                i.param2.equals(j.pref2) &&
+                                i.param3.equals(j.pref3)) {
+                            r.add(new PhoneRecommendation(j, i));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void handleRecommendations(List<Recommendation> r) {
+
         }
     };
 
