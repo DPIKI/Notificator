@@ -4,13 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import dpiki.notificator.data.Client;
-import dpiki.notificator.data.ClientLaptops;
-import dpiki.notificator.data.ClientPhones;
+import dpiki.notificator.data.LaptopClient;
+import dpiki.notificator.data.PhoneClient;
 import dpiki.notificator.data.Recommendation;
 
 /**
@@ -68,25 +69,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static ArrayList<Client> readClients(Context context) {
         //TODO : implement
-        return null;
+        return new ArrayList<>();
+    }
+
+    public static ArrayList<PhoneClient> readPhoneClients(Context context) {
+        //TODO : implement
+        return new ArrayList<>();
+    }
+
+    public static ArrayList<LaptopClient> readLaptopClients(Context context) {
+        //TODO : implement
+        return new ArrayList<>();
     }
 
     public static void addNotifications(Context context, List<Recommendation> recommendations) {
+        //TODO : implement
     }
 
     public static void clearUnreadNotification(Context context, int clientId, String clientType) {
+        //TODO : implement
     }
 
-    public static void addPhoneClients(Context context, List<ClientPhones> clients) {
+    public static void addPhoneClients(Context context, List<PhoneClient> clients) {
+        //TODO : implement
     }
 
-    public static void addLaptopClients(Context context, List<ClientLaptops> clients) {
+    public static void addLaptopClients(Context context, List<LaptopClient> clients) {
+        //TODO : implement
     }
 
     public static void removePhoneClients(Context context, List<Integer> clientIds) {
+        //TODO : implement
     }
 
     public static void removeLaptopClients(Context context, List<Integer> clientIds) {
+        //TODO : implement
     }
 
     public static void fillTestData(Context context) {
