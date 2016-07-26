@@ -9,6 +9,6 @@ import dpiki.notificator.data.ClientPhones;
  * Created by Lenovo on 25.07.2016.
  */
 public class ClientResponse {
-    List<ClientLaptops> laptops;
-    List<ClientPhones> phones;
+    public List<ClientLaptops> laptops;
+    public List<ClientPhones> phones;
 }
