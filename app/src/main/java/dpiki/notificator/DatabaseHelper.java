@@ -9,10 +9,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import dpiki.notificator.data.Client;
 import dpiki.notificator.data.LaptopClient;
+import dpiki.notificator.data.LaptopRecommendation;
 import dpiki.notificator.data.PhoneClient;
+import dpiki.notificator.data.PhoneRecommendation;
 import dpiki.notificator.data.Recommendation;
 
 /**
@@ -40,6 +43,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + FIELD_UNREAD_NOTIFICATIONS + " INTEGER);";
     public static final String QUERY_DROP_TABLE_PHONE_CLIENTS =
             "DROP TABLE IF EXISTS " + TABLE_PHONE_CLIENTS + ";";
+    public static final String QUERY_SELECT_PHONE_CLIENT_BY_ID =
+            "SELECT * FROM " + TABLE_PHONE_CLIENTS + " WHERE "
+                    + FIELD_ID  + " = ";
 
     public static final String TABLE_LAPTOP_CLIENTS = "PhoneClients";
     public static final String FIELD_PREF11 = "pref11";
@@ -57,6 +63,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + FIELD_UNREAD_NOTIFICATIONS + " INTEGER);";
     public static final String QUERY_DROP_TABLE_LAPTOP_CLIENTS =
             "DROP TABLE IF EXISTS " + TABLE_LAPTOP_CLIENTS + ";";
+    public static final String QUERY_SELECT_LAPTOP_CLIENT_BY_ID =
+            "SELECT * FROM " + TABLE_LAPTOP_CLIENTS + " WHERE "
+                    + FIELD_ID  + " = ";
 
     public static final String TABLE_NOTIFICATION = "Notification";
     public static final String FIELD_ID_NOTIFICATION = "id_notification";
@@ -178,7 +187,65 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public static void addNotifications(Context context, List<Recommendation> recommendations) {
-        //TODO : implement
+        DatabaseHelper helper = new DatabaseHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        if (db == null)
+            return;
+        try {
+            Iterator<Recommendation> i = recommendations.iterator();
+            while (i.hasNext()){
+                Recommendation recommendation = i.next();
+
+                ContentValues notifValues = new ContentValues();
+                notifValues.put(FIELD_ID_CLIENT, recommendation.client.id);
+                notifValues.put(FIELD_TYPE_CLIENT, recommendation.client.type);
+
+                ContentValues clientValues = new ContentValues();
+                clientValues.put(FIELD_ID_CLIENT, recommendation.client.id);
+                clientValues.put(FIELD_FIO, recommendation.client.fio);
+                clientValues.put(FIELD_TYPE_CLIENT, recommendation.client.type);
+
+                if (recommendation.client.type.equals("laptop")) {
+                    notifValues.put(FIELD_ID_PRODUCT,
+                            ((LaptopRecommendation) recommendation).laptop.id);
+
+                    Cursor cursor = db.rawQuery
+                            (QUERY_SELECT_PHONE_CLIENT_BY_ID + recommendation.client.id, null);
+                    int oldNotifCount =
+                            cursor.getInt(cursor.getColumnIndex(FIELD_UNREAD_NOTIFICATIONS));
+                    cursor.close();
+
+                    clientValues.put(FIELD_UNREAD_NOTIFICATIONS,
+                            oldNotifCount + recommendation.client.notifCount);
+
+                    db.update(TABLE_LAPTOP_CLIENTS, clientValues, FIELD_ID + " = ?",
+                            new String[]{String.
+                                    valueOf(((LaptopRecommendation) recommendation).laptop.id)});
+                }else if (recommendation.client.type.equals("phone")){
+                    notifValues.put(FIELD_ID_PRODUCT,
+                            ((PhoneRecommendation) recommendation).phone.id);
+
+                    //Получаем запись клиента
+                    Cursor cursor = db.rawQuery
+                            (QUERY_SELECT_LAPTOP_CLIENT_BY_ID + recommendation.client.id, null);
+                    //Получаем количество непрочитанных нотификаций
+                    int oldNotifCount =
+                            cursor.getInt(cursor.getColumnIndex(FIELD_UNREAD_NOTIFICATIONS));
+                    cursor.close();
+
+                    clientValues.put(FIELD_UNREAD_NOTIFICATIONS,
+                            oldNotifCount + recommendation.client.notifCount);
+
+                    //Обновляем запись в базе клиентов(старые нотификации + новые)
+                    db.update(TABLE_PHONE_CLIENTS, clientValues, FIELD_ID + " = ?",
+                            new String[]{String.
+                                    valueOf(((PhoneRecommendation) recommendation).phone.id)});
+                }
+                db.insert(TABLE_NOTIFICATION, null, notifValues);
+            }
+        }finally {
+            db.close();
+        }
     }
 
     public static void clearUnreadNotification(Context context, int clientId, String clientType) {
