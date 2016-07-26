@@ -204,13 +204,13 @@ public class SyncMarketService extends Service {
             SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
             SharedPreferences.Editor editor = pref.edit();
 
-            Log.d(TAG, "String creator : " + os.toString());
-
             byte[] byteObject = os.toByteArray();
             String strObject = "";
             for (byte i : byteObject) {
                 strObject += String.format("%02X", i);
             }
+
+            Log.d(TAG, "String creator : " + strObject);
 
             editor.putString(PREF_KEY_CREATOR, strObject);
             editor.apply();
