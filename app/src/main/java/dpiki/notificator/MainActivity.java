@@ -4,50 +4,39 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Typeface;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.CheckedChange;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 
-import dpiki.notificator.data.ClientResponse;
-import dpiki.notificator.network.ServerApi;
+import dpiki.notificator.data.Client;
 import dpiki.notificator.network.SyncMarketService;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
+    @ViewById(R.id.activity_main_recycler_view)
+    protected RecyclerView recyclerView;
+    @ViewById(R.id.toolbar)
+    protected Toolbar toolbar;
+    @ViewById(R.id.tv_toolbar_title)
+    protected TextView tvToolbarTitle;
     private RecyclerAdapter recyclerAdapter;
     private BroadcastReceiver broadcastReceiver;
     private Context contextActivity = this;
 
-    @ViewById(R.id.switch_settings) protected Switch sw;
-    @ViewById(R.id.activity_main_recycler_view) protected RecyclerView recyclerView;
-    @ViewById(R.id.toolbar) protected Toolbar toolbar;
-    @ViewById(R.id.tv_toolbar_title) protected TextView tvToolbarTitle;
-
     @AfterViews
     protected void initRecyclerView() {
         DatabaseHelper.fillTestData(this);
-        ArrayList<MarketClient> clients = DatabaseHelper.readClients(this);
+        ArrayList<Client> clients = DatabaseHelper.readClients(this);
         recyclerAdapter = new RecyclerAdapter(clients, new ItemClickListener());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -65,15 +54,6 @@ public class MainActivity extends AppCompatActivity {
     protected void initService() {
         SyncMarketService.configureService(this, new MyFetcherCreator());
         SyncMarketService.rerunNotificationService(this);
-    }
-
-    @CheckedChange(R.id.switch_settings)
-    protected void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked) {
-            SyncMarketService.startNotificationService(contextActivity);
-        } else {
-            SyncMarketService.stopNotificationService(contextActivity);
-        }
     }
 
     @Override
@@ -101,14 +81,14 @@ public class MainActivity extends AppCompatActivity {
 
     public class ItemClickListener implements OnCardViewClickListener {
         @Override
-        public void onCardViewClicked(MarketClient client, int position) {
+        public void onCardViewClicked(Client client, int position) {
             if (client == null)
                 return;
 
-            if (client.getUnreadNotificationCount() == 0)
+            if (client.notifCount == 0)
                 return;
 
-            DatabaseHelper.clearUnreadNotification(client.getId(), contextActivity);
+            DatabaseHelper.clearUnreadNotification(contextActivity, client.id, client.type);
             recyclerAdapter.clearUnreadNotifications(position);
         }
     }
