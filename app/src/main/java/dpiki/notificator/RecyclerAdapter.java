@@ -1,31 +1,33 @@
 package dpiki.notificator;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import dpiki.notificator.data.Client;
+
 /**
  * Created by prog1 on 07.07.2016.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    public ArrayList<MarketClient> mDataset;
+    public ArrayList<Client> mDataset;
     private OnCardViewClickListener mItemClickListener;
 
-    public RecyclerAdapter(ArrayList<MarketClient> dataset,
+    public RecyclerAdapter(ArrayList<Client> dataset,
                            OnCardViewClickListener listener) {
         mItemClickListener = listener;
         update(dataset);
     }
 
-    public void update(ArrayList<MarketClient> marketClients) {
+    public void update(ArrayList<Client> marketClients) {
         mDataset = marketClients;
         Collections.reverse(mDataset);
         this.notifyDataSetChanged();
@@ -33,10 +35,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     public void clearUnreadNotifications(int position) {
         int newPos = position;
-        Iterator<MarketClient> i = this.mDataset.listIterator(position);
+        Iterator<Client> i = this.mDataset.listIterator(position);
         while (i.hasNext()) {
-            MarketClient curr = i.next();
-            if (curr.getUnreadNotificationCount() == 0)
+            Client curr = i.next();
+            if (curr.notifCount == 0)
                 break;
             newPos++;
         }
@@ -44,8 +46,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         newPos--;
         newPos = newPos > position ? newPos : position;
 
-        MarketClient curr = this.mDataset.get(position);
-        curr.setUnreadNotificationCount(0);
+        Client curr = this.mDataset.get(position);
+        curr.notifCount = 0;
         this.notifyItemChanged(position);
 
         this.mDataset.remove(position);
@@ -64,19 +66,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        MarketClient client = mDataset.get(position);
+        Client client = mDataset.get(position);
 
-        holder.tvNameClient.setText(client.getName());
-        holder.tvUnreadNotificationCount.setText(client.getUnreadNotificationCount().toString());
-        holder.tvUnreadNotificationCount.setVisibility(client
-                .getUnreadNotificationCount() == 0 ?
-                View.INVISIBLE :
-                View.VISIBLE);
-        String filter =
-                client.getPref1() + "\n" +
-                client.getPref2() + "\n" +
-                client.getPref3();
-        holder.tvFilter.setText(filter);
+        holder.tvNameClient.setText(client.fio);
+        holder.tvNotifCount.setText(client.notifCount.toString());
+        holder.tvNotifCount.setVisibility(client.notifCount == 0 ? View.INVISIBLE : View.VISIBLE);
+        holder.rlCircle.setVisibility(client.notifCount == 0 ? View.INVISIBLE : View.VISIBLE);
+        holder.tvType.setText(client.type);
 
         holder.currClient = client;
     }
@@ -89,23 +85,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         public TextView tvNameClient;
-        public TextView tvUnreadNotificationCount;
-        public TextView tvFilter;
-        public CardView cardView;
-        public MarketClient currClient;
+        public TextView tvNotifCount;
+        public TextView tvType;
+        public RelativeLayout rlCircle;
+        public RelativeLayout relativeLayout;
+        public Client currClient;
 
         OnCardViewClickListener listener;
 
         public ViewHolder(View v, OnCardViewClickListener listener) {
             super(v);
+            tvNameClient = (TextView) v.findViewById(R.id.recycler_item_tv_name_client);
+            tvNotifCount = (TextView) v.findViewById(R.id.recycler_item_tv_notif_count);
+            tvType = (TextView) v.findViewById(R.id.recycler_item_tv_type);
+            relativeLayout = (RelativeLayout) v.findViewById(R.id.recycler_item_rl_general);
+            rlCircle = (RelativeLayout) v.findViewById(R.id.recycler_item_rl_circle);
 
-            tvNameClient = (TextView) v.findViewById(R.id.tv_recycler_item_name_client);
-            tvUnreadNotificationCount = (TextView) v.findViewById(R.id.tv_recycler_item_unread_notification_count);
-            tvFilter = (TextView) v.findViewById(R.id.tv_recycler_item_filter);
-            cardView = (CardView) v.findViewById(R.id.card_view);
             currClient = null;
-
-            cardView.setOnClickListener(this);
+            relativeLayout.setOnClickListener(this);
             this.listener = listener;
         }
 

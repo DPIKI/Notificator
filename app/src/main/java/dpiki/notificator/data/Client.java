@@ -7,4 +7,5 @@ public class Client {
     public Integer id;
     public String fio;
     public String type;
+    public Integer notifCount;
 }
