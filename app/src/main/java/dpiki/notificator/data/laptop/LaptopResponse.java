@@ -1,8 +1,8 @@
-package dpiki.notificator.data;
+package dpiki.notificator.data.laptop;
 
 import java.util.List;
 
-import dpiki.notificator.data.Laptop;
+import dpiki.notificator.data.laptop.Laptop;
 
 /**
  * Created by Lenovo on 25.07.2016.

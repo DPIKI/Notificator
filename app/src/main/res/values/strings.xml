@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Notificator</string>
-    <string name="switch_service_state">Service State</string>
+    <string name="s_switch_service_state">Service State</string>
+    <string name="s_toolbar_title">Landlord</string>
 </resources>

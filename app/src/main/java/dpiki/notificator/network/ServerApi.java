@@ -3,8 +3,8 @@ package dpiki.notificator.network;
 import java.util.Date;
 
 import dpiki.notificator.data.ClientResponse;
-import dpiki.notificator.data.LaptopResponse;
-import dpiki.notificator.data.PhoneResponse;
+import dpiki.notificator.data.laptop.LaptopResponse;
+import dpiki.notificator.data.phone.PhoneResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

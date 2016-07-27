@@ -1,4 +1,4 @@
-package dpiki.notificator.data;
+package dpiki.notificator.data.laptop;
 
 import java.util.Date;
 

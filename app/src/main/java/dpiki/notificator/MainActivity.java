@@ -23,19 +23,19 @@ import dpiki.notificator.network.SyncMarketService;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
-    @ViewById(R.id.activity_main_recycler_view)
+    @ViewById(R.id.activity_main_rv)
     protected RecyclerView recyclerView;
     @ViewById(R.id.toolbar)
     protected Toolbar toolbar;
-    @ViewById(R.id.tv_toolbar_title)
+    @ViewById(R.id.toolbar_tv_title)
     protected TextView tvToolbarTitle;
+
     private RecyclerAdapter recyclerAdapter;
     private BroadcastReceiver broadcastReceiver;
     private Context contextActivity = this;
 
     @AfterViews
     protected void initRecyclerView() {
-        //DatabaseHelper.fillTestData(this);
         ArrayList<Client> clients = DatabaseHelper.readClients(this);
         recyclerAdapter = new RecyclerAdapter(clients, new ItemClickListener());
         recyclerView.setHasFixedSize(true);
@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
     @AfterViews
     protected void initToolbar() {
-        tvToolbarTitle.setText(getString(R.string.app_name));
         setSupportActionBar(toolbar);
     }
 
@@ -97,11 +96,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(SyncMarketService.ACTION_START_RECEIVE)) {
-                Toast.makeText(contextActivity, "Started...", Toast.LENGTH_LONG).show();
+                Toast.makeText(contextActivity, "Receiver:Started...", Toast.LENGTH_LONG).show();
             } else if (intent.getAction().equals(SyncMarketService.ACTION_STOP_RECEIVE)) {
-                Toast.makeText(contextActivity, "Stopped...", Toast.LENGTH_LONG).show();
+                Toast.makeText(contextActivity, "Receiver:Stopped...", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(contextActivity, "Update...", Toast.LENGTH_LONG).show();
+                Toast.makeText(contextActivity, "Receiver:Update...", Toast.LENGTH_LONG).show();
                 recyclerAdapter.update(DatabaseHelper.readClients(contextActivity));
             }
         }

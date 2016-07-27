@@ -1,8 +1,8 @@
-package dpiki.notificator.data;
+package dpiki.notificator.data.phone;
 
 import java.util.List;
 
-import dpiki.notificator.data.Phone;
+import dpiki.notificator.data.phone.Phone;
 
 /**
  * Created by Lenovo on 25.07.2016.
