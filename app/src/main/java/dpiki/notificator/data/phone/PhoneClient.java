@@ -1,4 +1,6 @@
-package dpiki.notificator.data;
+package dpiki.notificator.data.phone;
+
+import dpiki.notificator.data.Client;
 
 /**
  * Created by Lenovo on 25.07.2016.

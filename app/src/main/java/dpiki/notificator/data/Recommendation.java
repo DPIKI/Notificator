@@ -5,8 +5,10 @@ package dpiki.notificator.data;
  */
 public class Recommendation {
     public Client client;
+    public Product product;
 
-    public Recommendation(Client client) {
+    public Recommendation(Client client, Product product) {
         this.client = client;
+        this.product = product;
     }
 }

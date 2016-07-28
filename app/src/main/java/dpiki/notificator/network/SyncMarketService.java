@@ -19,21 +19,11 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import dpiki.notificator.DatabaseHelper;
-import dpiki.notificator.data.LaptopClient;
-import dpiki.notificator.data.PhoneClient;
+import dpiki.notificator.data.Client;
 import dpiki.notificator.data.ClientResponse;
-import dpiki.notificator.data.Laptop;
-import dpiki.notificator.data.LaptopRecommendation;
-import dpiki.notificator.data.LaptopResponse;
-import dpiki.notificator.data.Phone;
-import dpiki.notificator.data.PhoneRecommendation;
-import dpiki.notificator.data.PhoneResponse;
 import dpiki.notificator.data.Recommendation;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -95,15 +85,7 @@ public class SyncMarketService extends Service {
 
                 List<Recommendation> recommendations = new ArrayList<>();
 
-                List<LaptopClient> laptopClients = clients.laptops;
-                if (!laptopClients.isEmpty()) {
-                    fetchLaptops(clients.laptops, recommendations);
-                    fetchPhones(clients.phones, recommendations);
-                }
-
-                if (!recommendations.isEmpty()) {
-                    handleRecommendations(recommendations);
-                }
+                handleRecommendations();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -119,102 +101,24 @@ public class SyncMarketService extends Service {
             if (clients == null)
                 throw new IOException("Failed to parse response with clients");
 
-            List<LaptopClient> dbLaptopClients
-                    = DatabaseHelper.readLaptopClients(SyncMarketService.this);
-            List<PhoneClient> dbPhoneClients
-                    = DatabaseHelper.readPhoneClients(SyncMarketService.this);
+            List<Client> cl = new ArrayList<>();
+            cl.addAll(clientResponse.body().laptops);
+            cl.addAll(clientResponse.body().phones);
 
-            for (LaptopClient i : clients.laptops) {
-                for (LaptopClient j : dbLaptopClients) {
-                    if (i.id.equals(j.id)) {
+            List<Client> dbClients = DatabaseHelper.readClients(SyncMarketService.this);
+
+            for (Client i : cl) {
+                for (Client j : dbClients) {
+                    if (i.id.equals(j.id) && i.type.equals(j.type)) {
                         i.notifCount = j.notifCount;
                         break;
                     }
                 }
             }
 
-            for (PhoneClient i : clients.phones) {
-                for (PhoneClient j : dbPhoneClients) {
-                    if (i.id.equals(j.id)) {
-                        i.notifCount = j.notifCount;
-                        break;
-                    }
-                }
-            }
-
-            DatabaseHelper.updateLaptopClients(SyncMarketService.this, clients.laptops);
-            DatabaseHelper.updatePhoneClients(SyncMarketService.this, clients.phones);
+            DatabaseHelper.updateClients(SyncMarketService.this, cl);
 
             return clients;
-        }
-
-        private void fetchLaptops(List<LaptopClient> clients, List<Recommendation> r) {
-            try {
-                Call<LaptopResponse> laptopRequest = api.getLaptops(new Date());
-                Response<LaptopResponse> laptopResponse = laptopRequest.execute();
-
-                LaptopResponse laptops = laptopResponse.body();
-                if (laptops == null)
-                    throw new Exception("Failed to parse response with laptops");
-
-                if (!laptops.success)
-                    throw new Exception("Invalid request");
-
-                for (Laptop i : laptops.laptops) {
-                    for (LaptopClient j : clients) {
-                        if (i.param11.equals(j.pref11) &&
-                                i.param12.equals(j.pref12) &&
-                                i.param13.equals(j.pref13) &&
-                                i.param14.equals(j.pref14)) {
-                            r.add(new LaptopRecommendation(j, i));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void fetchPhones(List<PhoneClient> clients, List<Recommendation> r) {
-            Date currDate = new Date();
-            String strCurrDate = sdf.format(currDate);
-            SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
-            String strLastDate = pref.getString(PREF_KEY_LAST_FETCH_DATE_PHONES, strCurrDate);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString(PREF_KEY_LAST_FETCH_DATE_PHONES, strLastDate);
-            editor.apply();
-
-            Call<PhoneResponse> phoneRequest = api.getPhones(new Date());
-            try {
-                Response<PhoneResponse> phoneResponse = phoneRequest.execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-
-            PhoneResponse phones = phoneResponse.body();
-            if (phones == null)
-                return;
-
-            if (!phones.success)
-                return;
-
-            for (Phone i : phones.phones) {
-                for (PhoneClient j : clients) {
-                    if (i.param1.equals(j.pref1) &&
-                            i.param2.equals(j.pref2) &&
-                            i.param3.equals(j.pref3)) {
-                        r.add(new PhoneRecommendation(j, i));
-                    }
-                }
-            }
-
-            Phone Collections.max(phones.phones, new Comparator<Phone>() {
-                @Override
-                public int compare(Phone lhs, Phone rhs) {
-                    return lhs.creationDate.compareTo(rhs.creationDate);
-                }
-            });
         }
 
         private void handleRecommendations(List<Recommendation> r) {

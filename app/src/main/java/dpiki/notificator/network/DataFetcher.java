@@ -1,56 +1,88 @@
 package dpiki.notificator.network;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
+import dpiki.notificator.data.Recommendation;
+import dpiki.notificator.data.ServerResponse;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by Lenovo on 07.07.2016.
  */
-public abstract class DataFetcher<Item, Filter> {
-    public abstract ArrayList<Item> loadItems() throws Exception;
-    public abstract ArrayList<Filter> loadFilters() throws Exception;
-    public abstract Boolean isMatch(Item i, Filter f);
-    public abstract void onNewRecommendations(ArrayList<Recommendation> recommendations) throws Exception;
+public abstract class DataFetcher<
+        Product extends dpiki.notificator.data.Product,
+        Client extends dpiki.notificator.data.Client> {
+    public static final String PREF_NAME = "DataFetcherPreference";
+    public static final String PREF_KEY_LAST_FETCH_DATE = "lastFetchDate";
 
-    public void fetch() {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    Context mContext;
+    String mClassName;
+
+    public DataFetcher(Context context, String className) {
+        this.mContext = context;
+        this.mClassName = className;
+    }
+
+    public void fetch(List<Client> clients, List<Recommendation> r) {
+        if (clients.isEmpty())
+            return;
+
+        Date currDate = new Date();
+        String strCurrDate = sdf.format(currDate);
+        SharedPreferences pref = mContext.getSharedPreferences(PREF_NAME, 0);
+        String strLastDate = pref.getString(PREF_KEY_LAST_FETCH_DATE + mClassName, strCurrDate);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(PREF_KEY_LAST_FETCH_DATE + mClassName, strLastDate);
+        editor.apply();
+
+        Call<ServerResponse<Product>> productRequest = getProducts(strLastDate);
+        Response<ServerResponse<Product>> productResponse;
         try {
-            ArrayList<Item> items = loadItems();
+            productResponse = productRequest.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
 
-            if (items.isEmpty())
-                return;
+        ServerResponse<Product> products = productResponse.body();
+        if (products == null)
+            return;
 
-            ArrayList<Filter> filters = loadFilters();
+        if (!products.success)
+            return;
 
-            if (filters.isEmpty())
-                return;
+        if (products.products.isEmpty())
+            return;
 
-            ArrayList<Recommendation> recommendations = new ArrayList<>();
-
-            for (Item i : items) {
-                for (Filter f : filters) {
-                    if (isMatch(i, f)) {
-                        Recommendation r = new Recommendation(i, f);
-                        recommendations.add(r);
-                    }
+        for (Product i : products.products) {
+            for (Client j : clients) {
+                if (isMatch(i, j)) {
+                    r.add(new Recommendation(j, i));
                 }
             }
+        }
 
-            if (!recommendations.isEmpty()) {
-                onNewRecommendations(recommendations);
+        Product lastProduct = Collections.max(products.products, new Comparator<Product>() {
+            @Override
+            public int compare(Product lhs, Product rhs) {
+                return lhs.creationDate.compareTo(rhs.creationDate);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
+
+        editor.putString(PREF_KEY_LAST_FETCH_DATE + mClassName, lastProduct.creationDate);
+        editor.apply();
     }
 
-    public class Recommendation {
-        public Item i;
-        public Filter f;
-
-        public Recommendation(Item i, Filter f) {
-            this.i = i;
-            this.f = f;
-        }
-    }
+    protected abstract Call<ServerResponse<Product>> getProducts(String date);
+    protected abstract boolean isMatch(Product product, Client client);
 }
