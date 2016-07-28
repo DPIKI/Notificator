@@ -1,6 +1,7 @@
 package dpiki.notificator.network;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,19 +13,26 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.util.Pair;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import dpiki.notificator.DatabaseHelper;
 import dpiki.notificator.data.Client;
 import dpiki.notificator.data.ClientResponse;
 import dpiki.notificator.data.Recommendation;
+import dpiki.notificator.data.laptop.Laptop;
+import dpiki.notificator.data.phone.Phone;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -38,9 +46,11 @@ public class SyncMarketService extends Service {
     public static final String PREF_NAME = "SyncMarketService";
 
     public static int FOREGROUND_NOTIFICATION_ID = 1;
+    public static int RECOMMENDATION_NOTIFICATION_ID = 2;
 
     public static final String ACTION_START_RECEIVE = "dpiki.notificator.action.START_RECEIVE";
     public static final String ACTION_STOP_RECEIVE = "dpiki.notificator.action.STOP_RECEIVE";
+    public static final String ACTION_NEW_RECOMMENDATIONS = "dpiki.notificator.action.NEW_RECOMMENDATION";
 
     Handler mBackgroundHandler;
     PowerManager.WakeLock mWakeLock;
@@ -66,11 +76,7 @@ public class SyncMarketService extends Service {
     };
 
     Runnable fetchData = new Runnable() {
-        public static final String PREF_KEY_LAST_FETCH_DATE_PHONES = "lastFetchDatePhones";
-        public static final String PREF_KEY_LAST_FETCH_DATE_LAPTOPS = "lastFetchDateLaptops";
-
         private ServerApi api;
-        private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
         @Override
         public void run() {
@@ -82,10 +88,12 @@ public class SyncMarketService extends Service {
 
             try {
                 ClientResponse clients = fetchClients();
-
                 List<Recommendation> recommendations = new ArrayList<>();
-
-                handleRecommendations();
+                new LaptopDataFetcher(SyncMarketService.this, Laptop.class.getName(), api)
+                        .fetch(clients.laptops, recommendations);
+                new PhoneDataFetcher(SyncMarketService.this, Phone.class.getName(), api)
+                        .fetch(clients.phones, recommendations);
+                handleRecommendations(recommendations);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -122,7 +130,29 @@ public class SyncMarketService extends Service {
         }
 
         private void handleRecommendations(List<Recommendation> r) {
+            DatabaseHelper.addRecommendation(SyncMarketService.this, r);
 
+            Set<Pair<Integer, String>> uniqueClients = new TreeSet<>();
+            Set<Integer> uniqueProducts = new TreeSet<>();
+
+            for (Recommendation i : r) {
+                uniqueClients.add(new Pair<>(i.client.id, i.client.type));
+                uniqueProducts.add(i.product.id);
+            }
+
+            Notification n = new NotificationCompat.Builder(SyncMarketService.this)
+                    .setTicker("Ticker")
+                    .setContentText("Для " + uniqueClients.size() + " клиентов " +
+                            uniqueProducts.size() + " продукта")
+                    .setSmallIcon(android.R.drawable.ic_btn_speak_now)
+                    .setContentTitle("Title")
+                    .setWhen(System.currentTimeMillis())
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .build();
+            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            nm.notify(RECOMMENDATION_NOTIFICATION_ID, n);
+
+            sendBroadcast(new Intent(ACTION_NEW_RECOMMENDATIONS));
         }
     };
 
@@ -228,36 +258,6 @@ public class SyncMarketService extends Service {
     public static boolean serverStatus(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
         return pref.getBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, false);
-    }
-
-    public static boolean configureService(Context context, DataFetcherCreator creator) {
-        try {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(os);
-
-            Log.d(TAG, "Starting serializing...");
-
-            out.writeObject(creator);
-
-            Log.d(TAG, "Creator serialized");
-
-            SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
-            SharedPreferences.Editor editor = pref.edit();
-
-            byte[] byteObject = os.toByteArray();
-            String strObject = "";
-            for (byte i : byteObject) {
-                strObject += String.format("%02X", i);
-            }
-
-            Log.d(TAG, "String creator : " + strObject);
-
-            editor.putString(PREF_KEY_CREATOR, strObject);
-            editor.apply();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
     }
 
     @Nullable

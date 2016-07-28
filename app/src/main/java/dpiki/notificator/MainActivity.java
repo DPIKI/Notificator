@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         broadcastReceiver = new Receiver();
 
-        IntentFilter intentFilter = new IntentFilter(MyFetcher.ACTION_NEW_RECOMMENDATIONS);
+        IntentFilter intentFilter = new IntentFilter(SyncMarketService.ACTION_NEW_RECOMMENDATIONS);
         registerReceiver(broadcastReceiver, intentFilter);
 
         intentFilter = new IntentFilter(SyncMarketService.ACTION_START_RECEIVE);

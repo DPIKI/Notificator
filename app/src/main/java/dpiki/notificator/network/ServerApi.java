@@ -1,6 +1,9 @@
 package dpiki.notificator.network;
 
 import dpiki.notificator.data.ClientResponse;
+import dpiki.notificator.data.ServerResponse;
+import dpiki.notificator.data.laptop.Laptop;
+import dpiki.notificator.data.phone.Phone;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -15,8 +18,8 @@ public interface ServerApi {
     Call<ClientResponse> getClients(@Query("agent_id") Integer agentId);
 
     @GET("get_phones.php")
-    Call<PhoneResponse> getPhones(@Query("date") String date);
+    Call<ServerResponse<Phone>> getPhones(@Query("date") String date);
 
     @GET("get_phones.php")
-    Call<LaptopResponse> getLaptops(@Query("date") String date);
+    Call<ServerResponse<Laptop>> getLaptops(@Query("date") String date);
 }

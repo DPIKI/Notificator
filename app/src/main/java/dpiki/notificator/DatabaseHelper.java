@@ -98,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return clients;
     }
 
-    private static void updateClients(Context context, List<Client> clients) {
+    public static void updateClients(Context context, List<Client> clients) {
         DatabaseHelper helper = new DatabaseHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
 
