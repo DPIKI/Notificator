@@ -1,6 +1,6 @@
 package dpiki.notificator.data.laptop;
 
-import java.util.Date;
+import dpiki.notificator.data.Product;
 
 import dpiki.notificator.data.Product;
 
