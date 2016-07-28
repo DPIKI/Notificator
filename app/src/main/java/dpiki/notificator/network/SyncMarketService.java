@@ -14,18 +14,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import dpiki.notificator.data.ClientLaptops;
-import dpiki.notificator.data.ClientPhones;
+import dpiki.notificator.DatabaseHelper;
+import dpiki.notificator.data.LaptopClient;
+import dpiki.notificator.data.PhoneClient;
 import dpiki.notificator.data.ClientResponse;
 import dpiki.notificator.data.Laptop;
 import dpiki.notificator.data.LaptopRecommendation;
@@ -75,7 +76,12 @@ public class SyncMarketService extends Service {
     };
 
     Runnable fetchData = new Runnable() {
+        public static final String PREF_KEY_LAST_FETCH_DATE_PHONES = "lastFetchDatePhones";
+        public static final String PREF_KEY_LAST_FETCH_DATE_LAPTOPS = "lastFetchDateLaptops";
+
         private ServerApi api;
+        private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
         @Override
         public void run() {
             Retrofit retrofit = new Retrofit.Builder()
@@ -85,16 +91,11 @@ public class SyncMarketService extends Service {
             api = retrofit.create(ServerApi.class);
 
             try {
-                Call<ClientResponse> clientsRequest = api.getClients(0);
-                Response<ClientResponse> clientResponse = clientsRequest.execute();
-
-                ClientResponse clients = clientResponse.body();
-                if (clients == null)
-                    throw new Exception("Failed to parse response with clients");
+                ClientResponse clients = fetchClients();
 
                 List<Recommendation> recommendations = new ArrayList<>();
 
-                List<ClientLaptops> laptopClients = clients.laptops;
+                List<LaptopClient> laptopClients = clients.laptops;
                 if (!laptopClients.isEmpty()) {
                     fetchLaptops(clients.laptops, recommendations);
                     fetchPhones(clients.phones, recommendations);
@@ -110,7 +111,44 @@ public class SyncMarketService extends Service {
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);
         }
 
-        private void fetchLaptops(List<ClientLaptops> clients, List<Recommendation> r) {
+        private ClientResponse fetchClients() throws IOException {
+            Call<ClientResponse> clientsRequest = api.getClients(0);
+            Response<ClientResponse> clientResponse = clientsRequest.execute();
+
+            ClientResponse clients = clientResponse.body();
+            if (clients == null)
+                throw new IOException("Failed to parse response with clients");
+
+            List<LaptopClient> dbLaptopClients
+                    = DatabaseHelper.readLaptopClients(SyncMarketService.this);
+            List<PhoneClient> dbPhoneClients
+                    = DatabaseHelper.readPhoneClients(SyncMarketService.this);
+
+            for (LaptopClient i : clients.laptops) {
+                for (LaptopClient j : dbLaptopClients) {
+                    if (i.id.equals(j.id)) {
+                        i.notifCount = j.notifCount;
+                        break;
+                    }
+                }
+            }
+
+            for (PhoneClient i : clients.phones) {
+                for (PhoneClient j : dbPhoneClients) {
+                    if (i.id.equals(j.id)) {
+                        i.notifCount = j.notifCount;
+                        break;
+                    }
+                }
+            }
+
+            DatabaseHelper.updateLaptopClients(SyncMarketService.this, clients.laptops);
+            DatabaseHelper.updatePhoneClients(SyncMarketService.this, clients.phones);
+
+            return clients;
+        }
+
+        private void fetchLaptops(List<LaptopClient> clients, List<Recommendation> r) {
             try {
                 Call<LaptopResponse> laptopRequest = api.getLaptops(new Date());
                 Response<LaptopResponse> laptopResponse = laptopRequest.execute();
@@ -123,7 +161,7 @@ public class SyncMarketService extends Service {
                     throw new Exception("Invalid request");
 
                 for (Laptop i : laptops.laptops) {
-                    for (ClientLaptops j : clients) {
+                    for (LaptopClient j : clients) {
                         if (i.param11.equals(j.pref11) &&
                                 i.param12.equals(j.pref12) &&
                                 i.param13.equals(j.pref13) &&
@@ -137,30 +175,46 @@ public class SyncMarketService extends Service {
             }
         }
 
-        private void fetchPhones(List<ClientPhones> clients, List<Recommendation> r) {
+        private void fetchPhones(List<PhoneClient> clients, List<Recommendation> r) {
+            Date currDate = new Date();
+            String strCurrDate = sdf.format(currDate);
+            SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
+            String strLastDate = pref.getString(PREF_KEY_LAST_FETCH_DATE_PHONES, strCurrDate);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString(PREF_KEY_LAST_FETCH_DATE_PHONES, strLastDate);
+            editor.apply();
+
+            Call<PhoneResponse> phoneRequest = api.getPhones(new Date());
             try {
-                Call<PhoneResponse> phoneRequest = api.getPhones(new Date());
                 Response<PhoneResponse> phoneResponse = phoneRequest.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
 
-                PhoneResponse phones = phoneResponse.body();
-                if (phones == null)
-                    throw new Exception("Failed to parse response with laptops");
+            PhoneResponse phones = phoneResponse.body();
+            if (phones == null)
+                return;
 
-                if (!phones.success)
-                    throw new Exception("Invalid request");
+            if (!phones.success)
+                return;
 
-                for (Phone i : phones.phones) {
-                    for (ClientPhones j : clients) {
-                        if (i.param1.equals(j.pref1) &&
-                                i.param2.equals(j.pref2) &&
-                                i.param3.equals(j.pref3)) {
-                            r.add(new PhoneRecommendation(j, i));
-                        }
+            for (Phone i : phones.phones) {
+                for (PhoneClient j : clients) {
+                    if (i.param1.equals(j.pref1) &&
+                            i.param2.equals(j.pref2) &&
+                            i.param3.equals(j.pref3)) {
+                        r.add(new PhoneRecommendation(j, i));
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+
+            Phone Collections.max(phones.phones, new Comparator<Phone>() {
+                @Override
+                public int compare(Phone lhs, Phone rhs) {
+                    return lhs.creationDate.compareTo(rhs.creationDate);
+                }
+            });
         }
 
         private void handleRecommendations(List<Recommendation> r) {

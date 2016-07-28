@@ -12,5 +12,5 @@ public class Laptop {
     public String param12;
     public String param13;
     public String param14;
-    public Date creationDate;
+    public String creationDate;
 }

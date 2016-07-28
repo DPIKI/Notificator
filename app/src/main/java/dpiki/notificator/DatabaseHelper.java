@@ -90,19 +90,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //TODO : implement
     }
 
-    public static void addPhoneClients(Context context, List<PhoneClient> clients) {
+    public static void updatePhoneClients(Context context, List<PhoneClient> clients) {
         //TODO : implement
     }
 
-    public static void addLaptopClients(Context context, List<LaptopClient> clients) {
-        //TODO : implement
-    }
-
-    public static void removePhoneClients(Context context, List<Integer> clientIds) {
-        //TODO : implement
-    }
-
-    public static void removeLaptopClients(Context context, List<Integer> clientIds) {
+    public static void updateLaptopClients(Context context, List<LaptopClient> clients) {
         //TODO : implement
     }
 
