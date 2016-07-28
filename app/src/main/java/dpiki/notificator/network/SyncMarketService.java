@@ -130,7 +130,7 @@ public class SyncMarketService extends Service {
         }
 
         private void handleRecommendations(List<Recommendation> r) {
-            DatabaseHelper.addRecommendation(SyncMarketService.this, r);
+            DatabaseHelper.addRecommendations(SyncMarketService.this, r);
 
             Set<Pair<Integer, String>> uniqueClients = new TreeSet<>();
             Set<Integer> uniqueProducts = new TreeSet<>();
