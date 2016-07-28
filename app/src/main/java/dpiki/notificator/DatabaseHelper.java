@@ -5,12 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import dpiki.notificator.data.Client;
 import dpiki.notificator.data.Recommendation;
+import dpiki.notificator.network.SyncMarketService;
 
 /**
  * Created by Lenovo on 05.07.2016.
@@ -33,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String QUERY_DROP_TABLE_CLIENTS =
             "DROP TABLE IF EXISTS " + TABLE_CLIENTS + ";";
     public static final String QUERY_CLIENT_BY_ID =
-            "SELECT * FROM " + TABLE_CLIENTS + " WHERE "
+            "SELECT " + FIELD_UNREAD_NOTIFICATIONS + " FROM " + TABLE_CLIENTS + " WHERE "
                     + FIELD_ID_CLIENT + " = ";
 
     public static final String TABLE_RECOMMENDATIONS = "Recommendations";
@@ -101,7 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return;
 
         try {
-            db.execSQL(QUERY_DROP_TABLE_CLIENTS);
+            db.delete(TABLE_CLIENTS, null, null);
 
             String query = "DELETE FROM " + TABLE_RECOMMENDATIONS + " WHERE ";
             for (Client client : clients) {
@@ -139,10 +141,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 clientValues.put(FIELD_FIO, rec.client.fio);
                 clientValues.put(FIELD_TYPE_CLIENT, rec.client.type);
 
-                Cursor cursor = db.rawQuery(
-                        QUERY_CLIENT_BY_ID + rec.client.id + " AND "
-                                + FIELD_TYPE_CLIENT + " = " + "'" + rec.client.type + "'", null);
-                int oldCount = cursor.getInt(3);
+                String q = QUERY_CLIENT_BY_ID + rec.client.id + " AND "
+                                + FIELD_TYPE_CLIENT + " = " + "'" + rec.client.type + "'";
+                Log.d(SyncMarketService.TAG, q);
+                Cursor cursor = db.rawQuery(q, null);
+
+                int oldCount = 0;
+                if (cursor.moveToNext()) {
+                    oldCount = cursor.getInt(0);
+                }
                 cursor.close();
 
                 //старые нотификации + новые
@@ -151,10 +158,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 db.update(
                         TABLE_CLIENTS,
                         clientValues,
-                        FIELD_ID_CLIENT + " = ?" + " AND " + FIELD_TYPE_CLIENT + " = '?'",
-                        new String[]{
-                                String.valueOf(rec.product.id),
-                                String.valueOf(rec.client.type)});
+                        FIELD_ID_CLIENT + " = " + rec.product.id + " AND "
+                                + FIELD_TYPE_CLIENT + " = '" + rec.client.type + "'",
+                        null);
                 db.insert(TABLE_RECOMMENDATIONS, null, notifValues);
             }
         } finally {

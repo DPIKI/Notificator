@@ -10,6 +10,7 @@ import dpiki.notificator.data.phone.PhoneClient;
  * Created by Lenovo on 25.07.2016.
  */
 public class ClientResponse {
+    public Boolean success;
     public List<LaptopClient> laptops;
     public List<PhoneClient> phones;
 }

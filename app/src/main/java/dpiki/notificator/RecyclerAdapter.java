@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import dpiki.notificator.data.Client;
 
@@ -18,16 +19,16 @@ import dpiki.notificator.data.Client;
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    public ArrayList<Client> mDataset;
+    public List<Client> mDataset;
     private OnViewClickListener mItemClickListener;
 
-    public RecyclerAdapter(ArrayList<Client> dataset,
+    public RecyclerAdapter(List<Client> dataset,
                            OnViewClickListener listener) {
         mItemClickListener = listener;
         update(dataset);
     }
 
-    public void update(ArrayList<Client> marketClients) {
+    public void update(List<Client> marketClients) {
         mDataset = marketClients;
         Collections.reverse(mDataset);
         this.notifyDataSetChanged();

@@ -16,7 +16,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import dpiki.notificator.data.Client;
 import dpiki.notificator.network.SyncMarketService;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     @AfterViews
     protected void initRecyclerView() {
-        ArrayList<Client> clients = DatabaseHelper.readClients(this);
+        List<Client> clients = DatabaseHelper.readClients(this);
         recyclerAdapter = new RecyclerAdapter(clients, new ItemClickListener());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     @AfterViews
     protected void initService() {
-        SyncMarketService.configureService(this, new MyFetcherCreator());
-        SyncMarketService.rerunNotificationService(this);
+        SyncMarketService.startNotificationService(this);
     }
 
     @Override
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             if (client.notifCount == 0)
                 return;
 
-            DatabaseHelper.clearUnreadNotification(contextActivity, client.id, client.type);
+            DatabaseHelper.clearNotifications(contextActivity, client.id, client.type);
             recyclerAdapter.clearUnreadNotifications(position);
         }
     }

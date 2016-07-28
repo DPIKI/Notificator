@@ -89,6 +89,10 @@ public class SyncMarketService extends Service {
             try {
                 ClientResponse clients = fetchClients();
                 List<Recommendation> recommendations = new ArrayList<>();
+
+                Log.d(TAG, "laptop client size : " + clients.laptops.size());
+                Log.d(TAG, "phone client size : " + clients.phones.size());
+
                 new LaptopDataFetcher(SyncMarketService.this, Laptop.class.getName(), api)
                         .fetch(clients.laptops, recommendations);
                 new PhoneDataFetcher(SyncMarketService.this, Phone.class.getName(), api)
@@ -102,16 +106,30 @@ public class SyncMarketService extends Service {
         }
 
         private ClientResponse fetchClients() throws IOException {
+            Log.d(TAG, "Sending request...");
+
             Call<ClientResponse> clientsRequest = api.getClients(0);
             Response<ClientResponse> clientResponse = clientsRequest.execute();
+
+            Log.d(TAG, "Sending request...");
 
             ClientResponse clients = clientResponse.body();
             if (clients == null)
                 throw new IOException("Failed to parse response with clients");
 
+            if (!clients.success)
+                throw new IOException("Imya 505");
+
+            Log.d(TAG, "Response valid.");
+
             List<Client> cl = new ArrayList<>();
-            cl.addAll(clientResponse.body().laptops);
-            cl.addAll(clientResponse.body().phones);
+            if (clients.phones == null)
+                Log.d(TAG, "Phone: Ne poveslo");
+            else
+                Log.d(TAG, "Poveslo");
+
+            cl.addAll(clients.phones);
+            cl.addAll(clients.laptops);
 
             List<Client> dbClients = DatabaseHelper.readClients(SyncMarketService.this);
 
@@ -130,13 +148,26 @@ public class SyncMarketService extends Service {
         }
 
         private void handleRecommendations(List<Recommendation> r) {
+            if (r.isEmpty())
+                return;
+
             DatabaseHelper.addRecommendations(SyncMarketService.this, r);
 
             Set<Pair<Integer, String>> uniqueClients = new TreeSet<>();
             Set<Integer> uniqueProducts = new TreeSet<>();
 
             for (Recommendation i : r) {
-                uniqueClients.add(new Pair<>(i.client.id, i.client.type));
+                uniqueClients.add(new Pair<Integer, String>(i.client.id, i.client.type) {
+                    @Override
+                    public boolean equals(Object o) {
+                        if (!(o instanceof Pair))
+                            return false;
+
+                        Pair pairo = (Pair) o;
+                        return this.first.equals(pairo.first) &&
+                                this.second.equals(pairo.second);
+                    }
+                });
                 uniqueProducts.add(i.product.id);
             }
 

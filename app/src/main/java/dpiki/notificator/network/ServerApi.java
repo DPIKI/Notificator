@@ -12,7 +12,7 @@ import retrofit2.http.Query;
  * Created by Lenovo on 25.07.2016.
  */
 public interface ServerApi {
-    String BASE_URL = "http://192.168.22.63/";
+    String BASE_URL = "http://192.168.137.144/";
 
     @GET("get_clients.php")
     Call<ClientResponse> getClients(@Query("agent_id") Integer agentId);
@@ -20,6 +20,6 @@ public interface ServerApi {
     @GET("get_phones.php")
     Call<ServerResponse<Phone>> getPhones(@Query("date") String date);
 
-    @GET("get_phones.php")
+    @GET("get_laptops.php")
     Call<ServerResponse<Laptop>> getLaptops(@Query("date") String date);
 }
