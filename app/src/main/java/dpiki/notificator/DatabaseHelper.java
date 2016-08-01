@@ -9,6 +9,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import dpiki.notificator.data.Client;
 import dpiki.notificator.data.Recommendation;
@@ -83,6 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     client.fio = cursor.getString(1);
                     client.type = cursor.getString(2);
                     client.notifCount = cursor.getInt(3);
+                    Log.d(SyncMarketService.TAG, "notifCount=" + client.notifCount);
                     clients.add(client);
                 }
             } finally {
@@ -130,39 +133,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return;
 
         try {
+            Map<String, Integer> newRecommendationsCount = new TreeMap<>();
             for (Recommendation rec : recommendations) {
+                Log.d(SyncMarketService.TAG, "notifC = " + rec.client.notifCount);
                 ContentValues notifValues = new ContentValues();
                 notifValues.put(FIELD_ID_CLIENT, rec.client.id);
                 notifValues.put(FIELD_TYPE_CLIENT, rec.client.type);
                 notifValues.put(FIELD_ID_PRODUCT, rec.product.id);
-
-                ContentValues clientValues = new ContentValues();
-                clientValues.put(FIELD_ID_CLIENT, rec.client.id);
-                clientValues.put(FIELD_FIO, rec.client.fio);
-                clientValues.put(FIELD_TYPE_CLIENT, rec.client.type);
-
-                String q = QUERY_CLIENT_BY_ID + rec.client.id + " AND "
-                                + FIELD_TYPE_CLIENT + " = " + "'" + rec.client.type + "'";
-                Log.d(SyncMarketService.TAG, q);
-                Cursor cursor = db.rawQuery(q, null);
-
-                int oldCount = 0;
-                if (cursor.moveToNext()) {
-                    oldCount = cursor.getInt(0);
-                }
-                cursor.close();
-
-                //старые нотификации + новые
-                clientValues.put(FIELD_UNREAD_NOTIFICATIONS, oldCount + rec.client.notifCount);
-                //Обновляем запись в базе клиентов
-                db.update(
-                        TABLE_CLIENTS,
-                        clientValues,
-                        FIELD_ID_CLIENT + " = " + rec.product.id + " AND "
-                                + FIELD_TYPE_CLIENT + " = '" + rec.client.type + "'",
-                        null);
                 db.insert(TABLE_RECOMMENDATIONS, null, notifValues);
+
+                String clientString = rec.client.type + "pizdos" + rec.client.id;
+                if (!newRecommendationsCount.containsKey(clientString)) {
+                    newRecommendationsCount.put(clientString, rec.client.notifCount);
+                }
+                newRecommendationsCount.put(clientString,
+                        newRecommendationsCount.get(clientString) + 1);
             }
+
+            for (Map.Entry<String, Integer> i : newRecommendationsCount.entrySet()) {
+                String[] pair = i.getKey().split("pizdos");
+
+                Log.d(SyncMarketService.TAG, i.getKey());
+                Log.d(SyncMarketService.TAG, "" + pair.length);
+
+                int id = Integer.parseInt(pair[1]);
+                String type = pair[0];
+                ContentValues clientValues = new ContentValues();
+                clientValues.put(FIELD_UNREAD_NOTIFICATIONS, i.getValue());
+                db.update(TABLE_CLIENTS, clientValues,
+                        FIELD_ID_CLIENT + " = " + id + " AND "
+                                + FIELD_TYPE_CLIENT + " = '" + type + "'",
+                        null);
+            }
+
         } finally {
             db.close();
         }
@@ -181,7 +184,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.update(
                     TABLE_CLIENTS,
                     values,
-                    FIELD_ID_CLIENT + " = " + clientId + " AND " + FIELD_TYPE_CLIENT + " = " + clientType,
+                    FIELD_ID_CLIENT + " = " + clientId + " AND " + FIELD_TYPE_CLIENT + " = '" + clientType + "'",
                     null);
         } finally {
             db.close();

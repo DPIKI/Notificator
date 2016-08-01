@@ -153,21 +153,11 @@ public class SyncMarketService extends Service {
 
             DatabaseHelper.addRecommendations(SyncMarketService.this, r);
 
-            Set<Pair<Integer, String>> uniqueClients = new TreeSet<>();
+            Set<String> uniqueClients = new TreeSet<>();
             Set<Integer> uniqueProducts = new TreeSet<>();
 
             for (Recommendation i : r) {
-                uniqueClients.add(new Pair<Integer, String>(i.client.id, i.client.type) {
-                    @Override
-                    public boolean equals(Object o) {
-                        if (!(o instanceof Pair))
-                            return false;
-
-                        Pair pairo = (Pair) o;
-                        return this.first.equals(pairo.first) &&
-                                this.second.equals(pairo.second);
-                    }
-                });
+                uniqueClients.add(i.client.type + i.client.id);
                 uniqueProducts.add(i.product.id);
             }
 
