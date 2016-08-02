@@ -1,8 +1,6 @@
-package dpiki.notificator.data.requirements;
+package dpiki.notificator.network.dataobjects;
 
 import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 /**
  * Created by prog1 on 02.08.2016.
@@ -13,62 +11,56 @@ public class HouseholdsReq {
     Integer id;
 
     @SerializedName("")
-    String name;
+    String address;
 
     @SerializedName("")
-    String city;
+    Float costFrom;
 
     @SerializedName("")
-    List<String> district;
+    Float costTo;
 
     @SerializedName("")
-    Double costLow;
+    Boolean firm;
 
     @SerializedName("")
-    Double costHigh;
+    Boolean withPhoto;
 
     @SerializedName("")
-    Integer firm; //???
+    String variant;
 
     @SerializedName("")
-    Integer photoOnly;
+    Float totalAreaFrom;
 
     @SerializedName("")
-    String objectSelect;
+    Float totalAreaTo;
 
     @SerializedName("")
-    Integer steadLow;
+    Float livingAreaFrom;
 
     @SerializedName("")
-    Integer steadHigh;
+    Float livingAreaTo;
 
     @SerializedName("")
-    Double totalAreaLow;
+    Float kitchenAreaFrom;
 
     @SerializedName("")
-    Double totalAreaHigh;
+    Float kitchenAreaTo;
 
     @SerializedName("")
-    Double livingAreaLow;
+    Float steadFrom;
 
     @SerializedName("")
-    Double livingAreaHigh;
+    Float steadTo;
 
     @SerializedName("")
-    Double kitchenAreaLow;
+    String state;
 
     @SerializedName("")
-    Double kitchenAreaHigh;
+    String wallMaterial;
 
     @SerializedName("")
-    String typeComfort;
+    String entry;
 
     @SerializedName("")
-    String typeWallMaterial;
-
-    @SerializedName("")
-    String typeRealestateState;
-
-    @SerializedName("")
-    String typeEntry;
+    String furniture;
 }

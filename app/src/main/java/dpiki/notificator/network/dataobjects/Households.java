@@ -1,64 +1,74 @@
-package dpiki.notificator.data.requirements;
+package dpiki.notificator.network.dataobjects;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 /**
- * Created by prog1 on 02.08.2016.
+ * Created by Lenovo on 01.08.2016.
  */
-public class RentReq {
+public class Households {
 
     @SerializedName("")
     Integer id;
 
     @SerializedName("")
-    String name;
-
-    @SerializedName("")
-    List<String> typeApartment;
-
-    @SerializedName("")
-    String city;
-
-    @SerializedName("")
-    List<String> district;
-
-    @SerializedName("")
-    Double costLow;
-
-    @SerializedName("")
-    Double costHigh;
-
-    @SerializedName("")
-    Integer firm; //???
-
-    @SerializedName("")
-    Integer photoOnly;
-
-    @SerializedName("")
-    String objectSelect; //???
-
-    @SerializedName("")
-    Integer floor;
-
-    @SerializedName("")
-    Integer floorAll;
-
-    @SerializedName("")
-    Integer notFirst;
-
-    @SerializedName("")
-    Integer notLast;
+    String materialWall;
 
     @SerializedName("")
     String typeRealestateState;
 
     @SerializedName("")
-    String typeFurniture;
+    String datePuttingHouse;
 
     @SerializedName("")
-    String typeComfort;
+    Integer floorAll;
+
+    @SerializedName("")
+    Integer stead;
+
+    @SerializedName("")
+    Integer isLuxury;
+
+    @SerializedName("")
+    Double totalArea;
+
+    @SerializedName("")
+    Double livingArea;
+
+    @SerializedName("")
+    Double kitchenArea;
+
+    @SerializedName("")
+    Double cost;
+
+    @SerializedName("")
+    Double specialPrice;
+
+    @SerializedName("")
+    String conditions;
+
+    @SerializedName("")
+    Integer roomCount;
+
+    @SerializedName("")
+    String typeRoof;
+
+    @SerializedName("")
+    String materialWindow;
+
+    @SerializedName("")
+    String typeBathroom;
+
+    @SerializedName("")
+    String typeHotWater;
+
+    @SerializedName("")
+    String typeHeating;
+
+    @SerializedName("")
+    String typeCeiling;
+
+    @SerializedName("")
+    String construction;
 
     @SerializedName("")
     String typeYard;
@@ -67,23 +77,11 @@ public class RentReq {
     String typeEntry;
 
     @SerializedName("")
-    String typeRent;
+    Integer hasGarage;
 
     @SerializedName("")
-    Double prepayment;
+    String typeSewerage;
 
     @SerializedName("")
-    Integer hasPhone;
-
-    @SerializedName("")
-    Integer roomCountLow;
-
-    @SerializedName("")
-    Integer roomCountHigh;
-
-    @SerializedName("")
-    String dateLow;
-
-    @SerializedName("")
-    String dateHigh;
+    String srcLayout;
 }
