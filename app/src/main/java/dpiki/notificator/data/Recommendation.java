@@ -4,11 +4,11 @@ package dpiki.notificator.data;
  * Created by Lenovo on 26.07.2016.
  */
 public class Recommendation {
-    public Client client;
-    public Product product;
+    public Requirement requirement;
+    public Realty realty;
 
-    public Recommendation(Client client, Product product) {
-        this.client = client;
-        this.product = product;
+    public Recommendation(Requirement requirement, Realty realty) {
+        this.requirement = requirement;
+        this.realty = realty;
     }
 }

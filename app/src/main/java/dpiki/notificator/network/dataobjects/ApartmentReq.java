@@ -7,71 +7,71 @@ import com.google.gson.annotations.SerializedName;
  */
 public class ApartmentReq {
     @SerializedName("")
-    Integer id;
+    public Integer id;
 
     @SerializedName("")
-    String typeApartment;
+    public String typeApartment;
 
     @SerializedName("")
-    Boolean buildingOption;
+    public Boolean buildingOption;
 
     @SerializedName("")
-    Boolean finished;
+    public Boolean finished;
 
     @SerializedName("")
-    String address;
+    public String address;
 
     @SerializedName("")
-    Float costFrom;
+    public Float costFrom;
 
     @SerializedName("")
-    Float costTo;
+    public Float costTo;
 
     @SerializedName("")
-    Boolean firm;
+    public Boolean firm;
 
     @SerializedName("")
-    Boolean withPhoto;
+    public Boolean withPhoto;
 
     @SerializedName("")
-    String variant;
+    public String variant;
 
     @SerializedName("")
-    Double totalAreaFrom;
+    public Double totalAreaFrom;
 
     @SerializedName("")
-    Double totalAreaTo;
+    public Double totalAreaTo;
 
     @SerializedName("")
-    Double livingAreaFrom;
+    public Double livingAreaFrom;
 
     @SerializedName("")
-    Double livingAreaTo;
+    public Double livingAreaTo;
 
     @SerializedName("")
-    Double kitchenAreaFrom;
+    public Double kitchenAreaFrom;
 
     @SerializedName("")
-    Double kitchenAreaTo;
+    public Double kitchenAreaTo;
 
     @SerializedName("")
-    Integer floor;
+    public Integer floor;
 
     @SerializedName("")
-    Integer floorAll;
+    public Integer floorAll;
 
     @SerializedName("")
-    Integer notFirst;
+    public Integer notFirst;
 
     @SerializedName("")
-    Integer notLast;
+    public Integer notLast;
 
     @SerializedName("")
-    String fund;
+    public String fund;
 
     @SerializedName("")
-    String state;
+    public String state;
 
     @SerializedName("")
-    String wallMaterial;
+    public String wallMaterial;
 }

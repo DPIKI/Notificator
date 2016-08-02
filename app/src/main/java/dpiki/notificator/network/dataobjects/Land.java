@@ -8,38 +8,38 @@ import com.google.gson.annotations.SerializedName;
 public class Land {
 
     @SerializedName("")
-    Integer id;
+    public Integer id;
 
     @SerializedName("")
-    Integer stead;
+    public Integer stead;
 
     @SerializedName("")
-    Integer steadX;
+    public Integer steadX;
 
     @SerializedName("")
-    Integer steadY;
+    public Integer steadY;
 
     @SerializedName("")
-    Integer isLuxury;
+    public Integer isLuxury;
 
     @SerializedName("")
-    Integer isGarden;
+    public Integer isGarden;
 
     @SerializedName("")
-    Double cost;
+    public Double cost;
 
     @SerializedName("")
-    Double specialPrice;
+    public Double specialPrice;
 
     @SerializedName("")
-    String conditions;
+    public String conditions;
 
     @SerializedName("")
-    String materialWindow;
+    public String materialWindow;
 
     @SerializedName("")
-    String typeSewerage;
+    public String typeSewerage;
 
     @SerializedName("")
-    String srcLayout;
+    public String srcLayout;
 }

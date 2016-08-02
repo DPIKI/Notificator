@@ -8,83 +8,83 @@ import com.google.gson.annotations.SerializedName;
 public class Commercial {
 
     @SerializedName("")
-    Integer id;
+    public Integer id;
 
     @SerializedName("")
-    String materialWall;
+    public String materialWall;
 
     @SerializedName("")
-    String typeRealestateState;
+    public String typeRealestateState;
 
     @SerializedName("")
-    String dateFinishBuild;
+    public String dateFinishBuild;
 
     @SerializedName("")
-    Double totalArea;
+    public Double totalArea;
 
     @SerializedName("")
-    Double hallArea;
+    public Double hallArea;
 
     @SerializedName("")
-    Double landArea;
+    public Double landArea;
 
     @SerializedName("")
-    Double rentArea;
+    public Double rentArea;
 
     @SerializedName("")
-    Integer isUrgentSale;
+    public Integer isUrgentSale;
 
     @SerializedName("")
-    Integer isMorgage;
+    public Integer isMorgage;
 
     @SerializedName("")
-    Float sellPrice;
+    public Float sellPrice;
 
     @SerializedName("")
-    Float sellPriceSquareMeter;
+    public Float sellPriceSquareMeter;
 
     @SerializedName("")
-    Float rentalPrice;
+    public Float rentalPrice;
 
     @SerializedName("")
-    Float rentalPriceSquareMeter;
+    public Float rentalPriceSquareMeter;
 
     @SerializedName("")
-    String materialWindow;
+    public String materialWindow;
 
     @SerializedName("")
-    String typeOwnership;
+    public String typeOwnership;
 
     @SerializedName("")
-    String typeHeating;
+    public String typeHeating;
 
     @SerializedName("")
-    Integer hasElevator;
+    public Integer hasElevator;
 
     @SerializedName("")
-    Float elevatorTonnage;
+    public Float elevatorTonnage;
 
     @SerializedName("")
-    String ceiling;
+    public String ceiling;
 
     @SerializedName("")
-    String typeSecurity;
+    public String typeSecurity;
 
     @SerializedName("")
-    String typeNumberStoreys;
+    public String typeNumberStoreys;
 
     @SerializedName("")
-    Integer isStation;
+    public Integer isStation;
 
     @SerializedName("")
-    String typeStation;
+    public String typeStation;
 
     @SerializedName("")
-    Integer isLeasedLine;
+    public Integer isLeasedLine;
 
     @SerializedName("")
-    Integer countNumbers;
+    public Integer countNumbers;
 
     @SerializedName("")
-    Integer countFreePairs;
+    public Integer countFreePairs;
 }

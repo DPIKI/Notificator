@@ -1,88 +1,61 @@
 package dpiki.notificator.network;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dpiki.notificator.App;
+import dpiki.notificator.PrefManager;
 import dpiki.notificator.data.Recommendation;
-import dpiki.notificator.data.ServerResponse;
-import retrofit2.Call;
-import retrofit2.Response;
 
 /**
  * Created by Lenovo on 07.07.2016.
  */
-public abstract class DataFetcher<
-        Product extends dpiki.notificator.data.Product,
-        Client extends dpiki.notificator.data.Client> {
-    public static final String PREF_NAME = "DataFetcherPreference";
-    public static final String PREF_KEY_LAST_FETCH_DATE = "lastFetchDate";
+public abstract class DataFetcher<Realty, Requirement> {
+    private String mClassName;
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    Context mContext;
-    String mClassName;
+    @Inject
+    public PrefManager mPrefManager;
 
-    public DataFetcher(Context context, String className) {
-        this.mContext = context;
+    @Inject
+    public ServerApi api;
+
+    public DataFetcher(String className) {
         this.mClassName = className;
+        App.getInstance().inject(this);
     }
 
-    public void fetch(List<Client> clients, List<Recommendation> r) {
-        if (clients.isEmpty())
+    public void fetch(List<Recommendation> r) {
+        String strLastDate = mPrefManager.getLastFetchDate(mClassName);
+        mPrefManager.putLastFetchDate(mClassName, strLastDate);
+
+        List<Requirement> requirements = getRequirements(0); // TODO: replace with real agentId
+        if (requirements == null || requirements.isEmpty())
             return;
 
-        Date currDate = new Date();
-        String strCurrDate = sdf.format(currDate);
-        SharedPreferences pref = mContext.getSharedPreferences(PREF_NAME, 0);
-        String strLastDate = pref.getString(PREF_KEY_LAST_FETCH_DATE + mClassName, strCurrDate);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(PREF_KEY_LAST_FETCH_DATE + mClassName, strLastDate);
-        editor.apply();
-
-        Call<ServerResponse<Product>> productRequest = getProducts(strLastDate);
-        Response<ServerResponse<Product>> productResponse;
-        try {
-            productResponse = productRequest.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        ServerResponse<Product> products = productResponse.body();
-        if (products == null)
+        List<Realty> realty = getRealty(strLastDate);
+        if (realty == null || realty.isEmpty())
             return;
 
-        if (!products.success)
-            return;
-
-        if (products.products.isEmpty())
-            return;
-
-        for (Product i : products.products) {
-            for (Client j : clients) {
+        for (Requirement i : requirements) {
+            for (Realty j : realty) {
                 if (isMatch(i, j)) {
-                    r.add(new Recommendation(j, i));
+                    r.add(makeRecommendation(i, j));
                 }
             }
         }
 
-        Product lastProduct = Collections.max(products.products, new Comparator<Product>() {
-            @Override
-            public int compare(Product lhs, Product rhs) {
-                return lhs.creationDate.compareTo(rhs.creationDate);
-            }
-        });
-
-        editor.putString(PREF_KEY_LAST_FETCH_DATE + mClassName, lastProduct.creationDate);
-        editor.apply();
+        mPrefManager.putLastFetchDate(mClassName, newLastDate(realty));
     }
 
-    protected abstract Call<ServerResponse<Product>> getProducts(String date);
-    protected abstract boolean isMatch(Product product, Client client);
+    protected abstract List<Requirement> getRequirements(Integer agentId);
+    protected abstract List<Realty> getRealty(String date);
+    protected abstract Recommendation makeRecommendation(Requirement requirement, Realty realty);
+    protected abstract boolean isMatch(Requirement requirement, Realty realty);
+    protected abstract String newLastDate(List<Realty> realty);
 }

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import dpiki.notificator.data.Client;
 import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.network.SyncMarketService;
 
@@ -23,32 +22,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "Notificator";
     public static final Integer DATABASE_VERSION = 1;
 
-    public static final String TABLE_CLIENTS = "Clients";
-    public static final String FIELD_ID_CLIENT = "id_client";
-    public static final String FIELD_FIO = "fio";
-    public static final String FIELD_TYPE_CLIENT = "type_client";
-    public static final String FIELD_UNREAD_NOTIFICATIONS = "unread_notifications";
-    public static final String QUERY_CREATE_TABLE_CLIENTS =
-            "CREATE TABLE " + TABLE_CLIENTS + " ("
-                    + FIELD_ID_CLIENT + " INTEGER, "
-                    + FIELD_FIO + " TEXT NOT NULL, "
-                    + FIELD_TYPE_CLIENT + " TEXT, "
-                    + FIELD_UNREAD_NOTIFICATIONS + " INTEGER);";
-    public static final String QUERY_DROP_TABLE_CLIENTS =
-            "DROP TABLE IF EXISTS " + TABLE_CLIENTS + ";";
+    public static final String TABLE_REQUIREMENTS = "Requirements";
+    public static final String FIELD_REQUIREMENTS_ID = "id_requirement";
+    public static final String FIELD_REQUIREMENTS_FIO = "fio";
+    public static final String FIELD_REQUIREMENTS_TYPE = "type";
+    public static final String FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS = "unread_recommendations";
+    public static final String QUERY_CREATE_TABLE_REQUIREMENTS =
+            "CREATE TABLE " + TABLE_REQUIREMENTS + " ("
+                    + FIELD_REQUIREMENTS_ID + " INTEGER PRIMARY KEY, "
+                    + FIELD_REQUIREMENTS_FIO + " TEXT, "
+                    + FIELD_REQUIREMENTS_TYPE + " TEXT, "
+                    + FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS + " INTEGER);";
+    public static final String QUERY_DROP_TABLE_REQUIREMENTS =
+            "DROP TABLE IF EXISTS " + TABLE_REQUIREMENTS + ";";
     public static final String QUERY_CLIENT_BY_ID =
-            "SELECT " + FIELD_UNREAD_NOTIFICATIONS + " FROM " + TABLE_CLIENTS + " WHERE "
-                    + FIELD_ID_CLIENT + " = ";
+            "SELECT " + FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS
+                    + " FROM " + TABLE_REQUIREMENTS + " WHERE "
+                    + FIELD_REQUIREMENTS_ID + " = ";
 
     public static final String TABLE_RECOMMENDATIONS = "Recommendations";
-    public static final String FIELD_ID_RECOMMENDATION = "id_recommendation";
-    public static final String FIELD_ID_PRODUCT = "id_product";
+    public static final String FIELD_RECOMMENDATIONS_ID = "id_recommendation";
+    public static final String FIELD_RECOMMENDATIONS_ID_REALTY = "id_product";
+    public static final String FIELD_RECOMMENDATIONS_ID_REQUIREMENT = "id_requirement";
+    public static final String FIELD_RECOMMENDATIONS_TYPE = "type";
     public static final String QUERY_CREATE_TABLE_RECOMMENDATIONS =
             "CREATE TABLE " + TABLE_RECOMMENDATIONS + " ("
-                    + FIELD_ID_RECOMMENDATION + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + FIELD_ID_CLIENT + " INTEGER, "
-                    + FIELD_ID_PRODUCT + " INTEGER, "
-                    + FIELD_TYPE_CLIENT + " TEXT);";
+                    + FIELD_RECOMMENDATIONS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + FIELD_RECOMMENDATIONS_ID_REALTY + " INTEGER, "
+                    + FIELD_RECOMMENDATIONS_ID_REQUIREMENT + " INTEGER, "
+                    + FIELD_RECOMMENDATIONS_TYPE + " TEXT);";
     public static final String QUERY_DROP_TABLE_RECOMMENDATIONS =
             "DROP TABLE IF EXIST " + TABLE_RECOMMENDATIONS + ";";
 
@@ -56,150 +58,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public static List<Client> readClients(Context context) {
-        List<Client> clients = new ArrayList<>();
-
-        DatabaseHelper helper = new DatabaseHelper(context);
-        SQLiteDatabase db = helper.getReadableDatabase();
-
-        if (db == null)
-            return clients;
-
-        try {
-            String[] columns = {
-                    FIELD_ID_CLIENT,
-                    FIELD_FIO,
-                    FIELD_TYPE_CLIENT,
-                    FIELD_UNREAD_NOTIFICATIONS
-            };
-            Cursor cursor = db.query(TABLE_CLIENTS, columns, null, null, null, null,
-                    FIELD_UNREAD_NOTIFICATIONS);
-
-            if (cursor == null)
-                return clients;
-
-            try {
-                while (cursor.moveToNext()) {
-                    Client client = new Client();
-                    client.id = cursor.getInt(0);
-                    client.fio = cursor.getString(1);
-                    client.type = cursor.getString(2);
-                    client.notifCount = cursor.getInt(3);
-                    Log.d(SyncMarketService.TAG, "notifCount=" + client.notifCount);
-                    clients.add(client);
-                }
-            } finally {
-                cursor.close();
-            }
-        } finally {
-            db.close();
-        }
-
-        return clients;
-    }
-
-    public static void updateClients(Context context, List<Client> clients) {
-        DatabaseHelper helper = new DatabaseHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
-
-        if (db == null)
-            return;
-
-        try {
-            db.delete(TABLE_CLIENTS, null, null);
-
-            String query = "DELETE FROM " + TABLE_RECOMMENDATIONS + " WHERE ";
-            for (Client client : clients) {
-                ContentValues values = new ContentValues();
-                values.put(FIELD_ID_CLIENT, client.id);
-                values.put(FIELD_FIO, client.fio);
-                values.put(FIELD_TYPE_CLIENT, client.type);
-                values.put(FIELD_UNREAD_NOTIFICATIONS, client.notifCount);
-                db.insertWithOnConflict(TABLE_CLIENTS, "", values, SQLiteDatabase.CONFLICT_IGNORE);
-                query += "AND " + FIELD_ID_CLIENT + " <> " + client.id + " AND "
-                        + FIELD_TYPE_CLIENT + " <> " + "'" + client.type + "'";
-            }
-            db.execSQL(query.replaceFirst("AND ", ""));
-        } finally {
-            db.close();
-        }
-    }
-
-    public static void addRecommendations(Context context, List<Recommendation> recommendations) {
-        DatabaseHelper helper = new DatabaseHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
-
-        if (db == null)
-            return;
-
-        try {
-            Map<String, Integer> newRecommendationsCount = new TreeMap<>();
-            for (Recommendation rec : recommendations) {
-                Log.d(SyncMarketService.TAG, "notifC = " + rec.client.notifCount);
-                ContentValues notifValues = new ContentValues();
-                notifValues.put(FIELD_ID_CLIENT, rec.client.id);
-                notifValues.put(FIELD_TYPE_CLIENT, rec.client.type);
-                notifValues.put(FIELD_ID_PRODUCT, rec.product.id);
-                db.insert(TABLE_RECOMMENDATIONS, null, notifValues);
-
-                String clientString = rec.client.type + "pizdos" + rec.client.id;
-                if (!newRecommendationsCount.containsKey(clientString)) {
-                    newRecommendationsCount.put(clientString, rec.client.notifCount);
-                }
-                newRecommendationsCount.put(clientString,
-                        newRecommendationsCount.get(clientString) + 1);
-            }
-
-            for (Map.Entry<String, Integer> i : newRecommendationsCount.entrySet()) {
-                String[] pair = i.getKey().split("pizdos");
-
-                Log.d(SyncMarketService.TAG, i.getKey());
-                Log.d(SyncMarketService.TAG, "" + pair.length);
-
-                int id = Integer.parseInt(pair[1]);
-                String type = pair[0];
-                ContentValues clientValues = new ContentValues();
-                clientValues.put(FIELD_UNREAD_NOTIFICATIONS, i.getValue());
-                db.update(TABLE_CLIENTS, clientValues,
-                        FIELD_ID_CLIENT + " = " + id + " AND "
-                                + FIELD_TYPE_CLIENT + " = '" + type + "'",
-                        null);
-            }
-
-        } finally {
-            db.close();
-        }
-    }
-
-    public static void clearNotifications(Context context, int clientId, String clientType) {
-        DatabaseHelper helper = new DatabaseHelper(context);
-        SQLiteDatabase db = helper.getWritableDatabase();
-
-        if (db == null)
-            return;
-
-        try {
-            ContentValues values = new ContentValues();
-            values.put(FIELD_UNREAD_NOTIFICATIONS, 0);
-            db.update(
-                    TABLE_CLIENTS,
-                    values,
-                    FIELD_ID_CLIENT + " = " + clientId + " AND " + FIELD_TYPE_CLIENT + " = '" + clientType + "'",
-                    null);
-        } finally {
-            db.close();
-        }
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(QUERY_CREATE_TABLE_CLIENTS);
+        db.execSQL(QUERY_CREATE_TABLE_REQUIREMENTS);
         db.execSQL(QUERY_CREATE_TABLE_RECOMMENDATIONS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(QUERY_DROP_TABLE_CLIENTS);
+        db.execSQL(QUERY_DROP_TABLE_REQUIREMENTS);
         db.execSQL(QUERY_DROP_TABLE_RECOMMENDATIONS);
         onCreate(db);
     }

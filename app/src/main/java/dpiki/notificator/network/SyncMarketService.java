@@ -13,37 +13,22 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.util.Pair;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
-import dpiki.notificator.DatabaseHelper;
-import dpiki.notificator.data.Client;
-import dpiki.notificator.data.ClientResponse;
+import javax.inject.Inject;
+
+import dpiki.notificator.App;
+import dpiki.notificator.DatabaseUtils;
+import dpiki.notificator.PrefManager;
 import dpiki.notificator.data.Recommendation;
-import dpiki.notificator.data.laptop.Laptop;
-import dpiki.notificator.data.phone.Phone;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SyncMarketService extends Service {
     public static final String TAG = "SyncMS";
-
-    public static final String PREF_KEY_RECEIVE_NOTIFICATIONS = "receive_notifications";
-    public static final String PREF_KEY_CREATOR = "DataFetcherCreator";
-    public static final String PREF_NAME = "SyncMarketService";
 
     public static int FOREGROUND_NOTIFICATION_ID = 1;
     public static int RECOMMENDATION_NOTIFICATION_ID = 2;
@@ -52,9 +37,19 @@ public class SyncMarketService extends Service {
     public static final String ACTION_STOP_RECEIVE = "dpiki.notificator.action.STOP_RECEIVE";
     public static final String ACTION_NEW_RECOMMENDATIONS = "dpiki.notificator.action.NEW_RECOMMENDATION";
 
-    Handler mBackgroundHandler;
-    PowerManager.WakeLock mWakeLock;
-    boolean mIsThreadRunning;
+    @Inject
+    public DatabaseUtils mDatabaseUtils;
+
+    @Inject
+    public PrefManager mPrefManager;
+
+    private Handler mBackgroundHandler;
+    private PowerManager.WakeLock mWakeLock;
+    private boolean mIsThreadRunning;
+
+    public SyncMarketService() {
+        App.getInstance().inject(this);
+    }
 
     Runnable initBackgroundThread = new Runnable() {
         @Override
@@ -76,36 +71,19 @@ public class SyncMarketService extends Service {
     };
 
     Runnable fetchData = new Runnable() {
-        private ServerApi api;
-
         @Override
         public void run() {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(ServerApi.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            api = retrofit.create(ServerApi.class);
-
-            try {
-                ClientResponse clients = fetchClients();
-                List<Recommendation> recommendations = new ArrayList<>();
-
-                Log.d(TAG, "laptop client size : " + clients.laptops.size());
-                Log.d(TAG, "phone client size : " + clients.phones.size());
-
-                new LaptopDataFetcher(SyncMarketService.this, Laptop.class.getName(), api)
-                        .fetch(clients.laptops, recommendations);
-                new PhoneDataFetcher(SyncMarketService.this, Phone.class.getName(), api)
-                        .fetch(clients.phones, recommendations);
-                handleRecommendations(recommendations);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            List<Recommendation> recommendations = new ArrayList<>();
+            new DataFetcherRent().fetch(recommendations);
+            new DataFetcherLand().fetch(recommendations);
+            new DataFetcherApartment().fetch(recommendations);
+            new DataFetcherHousehold().fetch(recommendations);
+            new DataFetcherCommercial().fetch(recommendations);
+            handleRecommendations(recommendations);
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);
         }
 
-        private ClientResponse fetchClients() throws IOException {
+        /*private ClientResponse fetchClients() throws IOException {
             Log.d(TAG, "Sending request...");
 
             Call<ClientResponse> clientsRequest = api.getClients(0);
@@ -145,20 +123,20 @@ public class SyncMarketService extends Service {
             DatabaseHelper.updateClients(SyncMarketService.this, cl);
 
             return clients;
-        }
+        }*/
 
         private void handleRecommendations(List<Recommendation> r) {
             if (r.isEmpty())
                 return;
 
-            DatabaseHelper.addRecommendations(SyncMarketService.this, r);
+            mDatabaseUtils.addRecommendations(r);
 
             Set<String> uniqueClients = new TreeSet<>();
             Set<Integer> uniqueProducts = new TreeSet<>();
 
             for (Recommendation i : r) {
-                uniqueClients.add(i.client.type + i.client.id);
-                uniqueProducts.add(i.product.id);
+                uniqueClients.add(i.realty.type + i.realty.id);
+                uniqueProducts.add(i.requirement.id);
             }
 
             Notification n = new NotificationCompat.Builder(SyncMarketService.this)
@@ -211,26 +189,14 @@ public class SyncMarketService extends Service {
 
     private void startReceiveNotifications() {
         startBackgroundThread();
-
-        SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, true);
-        editor.apply();
-
+        mPrefManager.putReceiveNotificationsFlag(true);
         Intent intent = new Intent(ACTION_START_RECEIVE);
         sendBroadcast(intent);
     }
 
     private void stopReceiveNotifications() {
-        Log.d(TAG, "stop isThreadRunning : " + mIsThreadRunning);
-
         stopBackgroundThread();
-
-        SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, false);
-        editor.apply();
-
+        mPrefManager.putReceiveNotificationsFlag(false);
         Intent intent = new Intent(ACTION_STOP_RECEIVE);
         sendBroadcast(intent);
     }

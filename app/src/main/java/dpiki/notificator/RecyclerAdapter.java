@@ -7,12 +7,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import dpiki.notificator.data.Client;
 
 /**
  * Created by prog1 on 07.07.2016.

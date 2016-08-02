@@ -18,7 +18,6 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
-import dpiki.notificator.data.Client;
 import dpiki.notificator.network.SyncMarketService;
 
 @EActivity(R.layout.activity_main)

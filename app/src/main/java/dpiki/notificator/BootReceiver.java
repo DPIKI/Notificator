@@ -1,9 +1,11 @@
-package dpiki.notificator.network;
+package dpiki.notificator;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
+
+import dpiki.notificator.network.SyncMarketService;
 
 public class BootReceiver extends BroadcastReceiver {
     public BootReceiver() {

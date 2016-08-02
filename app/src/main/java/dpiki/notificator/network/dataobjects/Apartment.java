@@ -8,107 +8,107 @@ import com.google.gson.annotations.SerializedName;
 public class Apartment {
 
     @SerializedName("")
-    Integer id;
+    public Integer id;
 
     @SerializedName("")
-    String typeApartment;
+    public String typeApartment;
 
     @SerializedName("")
-    Integer floor;
+    public Integer floor;
 
     @SerializedName("")
-    Integer floorAll;
+    public Integer floorAll;
 
     @SerializedName("")
-    String typeWallMaterialApartment;
+    public String typeWallMaterialApartment;
 
     @SerializedName("")
-    String state;
+    public String state;
 
     @SerializedName("")
-    Double cost;
+    public Double cost;
 
     @SerializedName("")
-    String typeFund;
+    public String typeFund;
 
     @SerializedName("")
-    Integer isBuildFinished; // 0 or 1
+    public Integer isBuildFinished; // 0 or 1
 
     @SerializedName("")
-    String typeBuildFinished; // if isBuildFinished == true
+    public String typeBuildFinished; // if isBuildFinished == true
 
     @SerializedName("")
-    String dateBuildFinished;
+    public String dateBuildFinished;
 
     @SerializedName("")
-    Integer isLuxury; // 0 or 1
+    public Integer isLuxury; // 0 or 1
 
     @SerializedName("")
-    Double totalArea;
+    public Double totalArea;
 
     @SerializedName("")
-    Double livingArea;
+    public Double livingArea;
 
     @SerializedName("")
-    Double kitchenArea;
+    public Double kitchenArea;
 
     @SerializedName("")
-    Float specialPrice;
+    public Float specialPrice;
 
     @SerializedName("")
-    Float terms;
+    public Float terms;
 
     @SerializedName("")
-    String conditions;
+    public String conditions;
 
     @SerializedName("")
-    Integer isUrgentSale; // 0 or 1
+    public Integer isUrgentSale; // 0 or 1
 
     @SerializedName("")
-    Integer isMortgage; // 0 or 1
+    public Integer isMortgage; // 0 or 1
 
     @SerializedName("")
-    String materialFloor;
+    public String materialFloor;
 
     @SerializedName("")
-    String materialWindow;
+    public String materialWindow;
 
     @SerializedName("")
-    String typeBathroom;
+    public String typeBathroom;
 
     @SerializedName("")
-    String typeComfort;
+    public String typeComfort;
 
     @SerializedName("")
-    String typeHotWater;
+    public String typeHotWater;
 
     @SerializedName("")
-    String typeHeating;
+    public String typeHeating;
 
     @SerializedName("")
-    String typeLoggia;
+    public String typeLoggia;
 
     @SerializedName("")
-    String typeBalcon;
+    public String typeBalcon;
 
     @SerializedName("")
-    Integer hasElevator;
+    public Integer hasElevator;
 
     @SerializedName("")
-    String typeCeiling;
+    public String typeCeiling;
 
     @SerializedName("")
-    String isAdjacent;
+    public String isAdjacent;
 
     @SerializedName("")
-    String renting;
+    public String renting;
 
     @SerializedName("")
-    String construction;
+    public String construction;
 
     @SerializedName("")
-    String getTypeLocation;
+    public String getTypeLocation;
 
     @SerializedName("")
-    String srcLayout;
+    public String srcLayout;
 }

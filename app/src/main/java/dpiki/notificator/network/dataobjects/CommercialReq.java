@@ -8,71 +8,71 @@ import com.google.gson.annotations.SerializedName;
 public class CommercialReq {
 
     @SerializedName("")
-    Integer id;
+    public Integer id;
 
     @SerializedName("")
-    String address;
+    public String address;
 
     @SerializedName("")
-    Boolean firm;
+    public Boolean firm;
 
     @SerializedName("")
-    Boolean withPhoto;
+    public Boolean withPhoto;
 
     @SerializedName("")
-    String variant;
+    public String variant;
 
     @SerializedName("")
-    Float totalAreaFrom;
+    public Float totalAreaFrom;
 
     @SerializedName("")
-    Float totalAreaTo;
+    public Float totalAreaTo;
 
     @SerializedName("")
-    Float hallAreaFrom;
+    public Float hallAreaFrom;
 
     @SerializedName("")
-    Float hallAreaTo;
+    public Float hallAreaTo;
 
     @SerializedName("")
-    Float landAreaFrom;
+    public Float landAreaFrom;
 
     @SerializedName("")
-    Float landAreaTo;
+    public Float landAreaTo;
 
     @SerializedName("")
-    Float rentAreaFrom;
+    public Float rentAreaFrom;
 
     @SerializedName("")
-    Float rentAreaTo;
+    public Float rentAreaTo;
 
     @SerializedName("")
-    Float sellPriceFrom;
+    public Float sellPriceFrom;
 
     @SerializedName("")
-    Float sellPriceTo;
+    public Float sellPriceTo;
 
     @SerializedName("")
-    Float sellPriceSquareMeterFrom;
+    public Float sellPriceSquareMeterFrom;
 
     @SerializedName("")
-    Float sellPriceSquareMeterTo;
+    public Float sellPriceSquareMeterTo;
 
     @SerializedName("")
-    Float rentalPriceFrom;
+    public Float rentalPriceFrom;
 
     @SerializedName("")
-    Float rentalPriceTo;
+    public Float rentalPriceTo;
 
     @SerializedName("")
-    Float rentalPriceSquareMeterFrom;
+    public Float rentalPriceSquareMeterFrom;
 
     @SerializedName("")
-    Float rentalPriceSquareMeterTo;
+    public Float rentalPriceSquareMeterTo;
 
     @SerializedName("")
-    String liftingEquipment;
+    public String liftingEquipment;
 
     @SerializedName("")
-    String communication;
+    public String communication;
 }

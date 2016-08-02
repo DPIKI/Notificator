@@ -8,74 +8,74 @@ import com.google.gson.annotations.SerializedName;
 public class RentReq {
 
     @SerializedName("")
-    Integer id;
+    public Integer id;
 
     @SerializedName("")
-    String typeApartment;
+    public String typeApartment;
 
     @SerializedName("")
-    String address;
+    public String address;
 
     @SerializedName("")
-    Float costFrom;
+    public Float costFrom;
 
     @SerializedName("")
-    Float costTo;
+    public Float costTo;
 
     @SerializedName("")
-    Boolean firm;
+    public Boolean firm;
 
     @SerializedName("")
-    Boolean withPhoto;
+    public Boolean withPhoto;
 
     @SerializedName("")
-    String variant;
+    public String variant;
 
     @SerializedName("")
-    Integer floor;
+    public Integer floor;
 
     @SerializedName("")
-    Integer floorAll;
+    public Integer floorAll;
 
     @SerializedName("")
-    Integer notFirst;
+    public Integer notFirst;
 
     @SerializedName("")
-    Integer notLast;
+    public Integer notLast;
 
     @SerializedName("")
-    String state;
+    public String state;
 
     @SerializedName("")
-    Integer roomCountFrom;
+    public Integer roomCountFrom;
 
     @SerializedName("")
-    Integer roomCountTo;
+    public Integer roomCountTo;
 
     @SerializedName("")
-    Integer prepayment;
+    public Integer prepayment;
 
     @SerializedName("")
-    String comfort;
+    public String comfort;
 
     @SerializedName("")
-    String furniture;
+    public String furniture;
 
     @SerializedName("")
-    String yard;
+    public String yard;
 
     @SerializedName("")
-    String entry;
+    public String entry;
 
     @SerializedName("")
-    String phone;
+    public String phone;
 
     @SerializedName("")
-    String dateFreedFrom;
+    public String dateFreedFrom;
 
     @SerializedName("")
-    String dateFreedTo;
+    public String dateFreedTo;
 
     @SerializedName("")
-    String rent;
+    public String rent;
 }

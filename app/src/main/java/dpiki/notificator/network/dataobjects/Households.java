@@ -8,80 +8,80 @@ import com.google.gson.annotations.SerializedName;
 public class Households {
 
     @SerializedName("")
-    Integer id;
+    public Integer id;
 
     @SerializedName("")
-    String materialWall;
+    public String materialWall;
 
     @SerializedName("")
-    String typeRealestateState;
+    public String typeRealestateState;
 
     @SerializedName("")
-    String datePuttingHouse;
+    public String datePuttingHouse;
 
     @SerializedName("")
-    Integer floorAll;
+    public Integer floorAll;
 
     @SerializedName("")
-    Integer stead;
+    public Integer stead;
 
     @SerializedName("")
-    Integer isLuxury;
+    public Integer isLuxury;
 
     @SerializedName("")
-    Double totalArea;
+    public Double totalArea;
 
     @SerializedName("")
-    Double livingArea;
+    public Double livingArea;
 
     @SerializedName("")
-    Double kitchenArea;
+    public Double kitchenArea;
 
     @SerializedName("")
-    Double cost;
+    public Double cost;
 
     @SerializedName("")
-    Double specialPrice;
+    public Double specialPrice;
 
     @SerializedName("")
-    String conditions;
+    public String conditions;
 
     @SerializedName("")
-    Integer roomCount;
+    public Integer roomCount;
 
     @SerializedName("")
-    String typeRoof;
+    public String typeRoof;
 
     @SerializedName("")
-    String materialWindow;
+    public String materialWindow;
 
     @SerializedName("")
-    String typeBathroom;
+    public String typeBathroom;
 
     @SerializedName("")
-    String typeHotWater;
+    public String typeHotWater;
 
     @SerializedName("")
-    String typeHeating;
+    public String typeHeating;
 
     @SerializedName("")
-    String typeCeiling;
+    public String typeCeiling;
 
     @SerializedName("")
-    String construction;
+    public String construction;
 
     @SerializedName("")
-    String typeYard;
+    public String typeYard;
 
     @SerializedName("")
-    String typeEntry;
+    public String typeEntry;
 
     @SerializedName("")
-    Integer hasGarage;
+    public Integer hasGarage;
 
     @SerializedName("")
-    String typeSewerage;
+    public String typeSewerage;
 
     @SerializedName("")
-    String srcLayout;
+    public String srcLayout;
 }

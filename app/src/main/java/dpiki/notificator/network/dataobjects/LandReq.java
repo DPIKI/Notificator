@@ -8,59 +8,59 @@ import com.google.gson.annotations.SerializedName;
 public class LandReq {
 
     @SerializedName("")
-    Integer id;
+    public Integer id;
 
     @SerializedName("")
-    String address;
+    public String address;
 
     @SerializedName("")
-    Float costFrom;
+    public Float costFrom;
 
     @SerializedName("")
-    Float costTo;
+    public Float costTo;
 
     @SerializedName("")
-    Boolean firm;
+    public Boolean firm;
 
     @SerializedName("")
-    Boolean withPhoto;
+    public Boolean withPhoto;
 
     @SerializedName("")
-    String variant;
+    public String variant;
 
     @SerializedName("")
-    Float totalAreaFrom;
+    public Float totalAreaFrom;
 
     @SerializedName("")
-    Float totalAreaTo;
+    public Float totalAreaTo;
 
     @SerializedName("")
-    Float livingAreaFrom;
+    public Float livingAreaFrom;
 
     @SerializedName("")
-    Float livingAreaTo;
+    public Float livingAreaTo;
 
     @SerializedName("")
-    Float kitchenAreaFrom;
+    public Float kitchenAreaFrom;
 
     @SerializedName("")
-    Float kitchenAreaTo;
+    public Float kitchenAreaTo;
 
     @SerializedName("")
-    Float steadFrom;
+    public Float steadFrom;
 
     @SerializedName("")
-    Float steadTo;
+    public Float steadTo;
 
     @SerializedName("")
-    String state;
+    public String state;
 
     @SerializedName("")
-    String wallMaterial;
+    public String wallMaterial;
 
     @SerializedName("")
-    String entry;
+    public String entry;
 
     @SerializedName("")
-    String furniture;
+    public String furniture;
 }
