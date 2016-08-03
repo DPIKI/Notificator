@@ -1,9 +1,13 @@
 package dpiki.notificator.network;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import dpiki.notificator.App;
 import dpiki.notificator.data.Realty;
+import dpiki.notificator.data.RealtyTypes;
 import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.dataobjects.Rent;
 import dpiki.notificator.network.dataobjects.RentReq;
@@ -20,36 +24,50 @@ public class DataFetcherRent extends DataFetcher<Rent, RentReq> {
 
     @Override
     protected List<RentReq> getRequirements(Integer agentId) {
-        return null;
+        return mApi.getRentRequirements(agentId);
     }
 
     @Override
     protected List<Rent> getRealty(String date) {
-        return null;
+        return mApi.getRents(date);
     }
 
     @Override
     protected Requirement mapRequirement(RentReq rentReq) {
-        return null;
+        Requirement requirement = new Requirement();
+        requirement.id = rentReq.id;
+        requirement.type = getType();
+        requirement.unreadRecommendations =
+                mDbUtils.getUnreadRecommendationsCount(requirement.id, requirement.type);
+        return requirement;
     }
 
     @Override
     protected Realty mapRealty(Rent rent) {
-        return null;
+        Realty realty = new Realty();
+        realty.id = rent.id;
+        realty.type = getType();
+        return realty;
     }
 
     @Override
     protected String getType() {
-        return null;
+        return RealtyTypes.TYPE_RENT;
     }
 
     @Override
     protected boolean isMatch(RentReq rentReq, Rent rent) {
-        return false;
+        return true;
     }
 
     @Override
     protected String newLastDate(List<Rent> realty) {
-        return null;
+        Rent lastAdded = Collections.max(realty, new Comparator<Rent>() {
+            @Override
+            public int compare(Rent lhs, Rent rhs) {
+                return lhs.createdAt.compareTo(rhs.createdAt);
+            }
+        });
+        return lastAdded.createdAt;
     }
 }

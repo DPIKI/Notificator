@@ -23,4 +23,5 @@ public interface AppComponent {
     void inject(DataFetcherCommercial fetcher);
     void inject(DataFetcherLand fetcher);
     void inject(SyncMarketService utils);
+    void inject(MainActivity utils);
 }

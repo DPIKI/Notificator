@@ -42,7 +42,7 @@ public class SyncMarketService extends Service {
     public DatabaseUtils mDatabaseUtils;
 
     @Inject
-    public static PrefManager mPrefManager;
+    public PrefManager mPrefManager;
 
     private Handler mBackgroundHandler;
     private PowerManager.WakeLock mWakeLock;

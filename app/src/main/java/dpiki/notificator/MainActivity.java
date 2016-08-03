@@ -18,10 +18,17 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.SyncMarketService;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
+
+    @Inject
+    public DatabaseUtils mDatabaseUtils;
+
     @ViewById(R.id.activity_main_rv)
     protected RecyclerView recyclerView;
     @ViewById(R.id.toolbar)
@@ -31,12 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerAdapter recyclerAdapter;
     private BroadcastReceiver broadcastReceiver;
-    private Context contextActivity = this;
 
     @AfterViews
     protected void initRecyclerView() {
-        List<Client> clients = DatabaseHelper.readClients(this);
-        recyclerAdapter = new RecyclerAdapter(clients, new ItemClickListener());
+        App.getInstance().inject(this);
+        List<Requirement> requirements = mDatabaseUtils.readRequirements();
+        recyclerAdapter = new RecyclerAdapter(requirements, new ItemClickListener());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -67,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         intentFilter = new IntentFilter(SyncMarketService.ACTION_STOP_RECEIVE);
         registerReceiver(broadcastReceiver, intentFilter);
 
-        recyclerAdapter.update(DatabaseHelper.readClients(contextActivity));
+        recyclerAdapter.update(mDatabaseUtils.readRequirements());
     }
 
     @Override
@@ -78,14 +85,14 @@ public class MainActivity extends AppCompatActivity {
 
     public class ItemClickListener implements OnViewClickListener {
         @Override
-        public void onViewClicked(Client client, int position) {
-            if (client == null)
+        public void onViewClicked(Requirement requirement, int position) {
+            if (requirement == null)
                 return;
 
-            if (client.notifCount == 0)
+            if (requirement.unreadRecommendations == 0)
                 return;
 
-            DatabaseHelper.clearNotifications(contextActivity, client.id, client.type);
+            mDatabaseUtils.clearUnreadRecommendationsCount(requirement.id, requirement.type);
             recyclerAdapter.clearUnreadNotifications(position);
         }
     }
@@ -94,12 +101,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(SyncMarketService.ACTION_START_RECEIVE)) {
-                Toast.makeText(contextActivity, "Receiver:Started...", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Receiver:Started...", Toast.LENGTH_LONG).show();
             } else if (intent.getAction().equals(SyncMarketService.ACTION_STOP_RECEIVE)) {
-                Toast.makeText(contextActivity, "Receiver:Stopped...", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Receiver:Stopped...", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(contextActivity, "Receiver:Update...", Toast.LENGTH_LONG).show();
-                recyclerAdapter.update(DatabaseHelper.readClients(contextActivity));
+                Toast.makeText(MainActivity.this, "Receiver:Update...", Toast.LENGTH_LONG).show();
+                recyclerAdapter.update(mDatabaseUtils.readRequirements());
             }
         }
     }

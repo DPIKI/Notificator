@@ -1,9 +1,12 @@
 package dpiki.notificator.network;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import dpiki.notificator.App;
 import dpiki.notificator.data.Realty;
+import dpiki.notificator.data.RealtyTypes;
 import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.dataobjects.Commercial;
 import dpiki.notificator.network.dataobjects.CommercialReq;
@@ -20,36 +23,50 @@ public class DataFetcherCommercial extends DataFetcher<Commercial, CommercialReq
 
     @Override
     protected List<CommercialReq> getRequirements(Integer agentId) {
-        return null;
+        return mApi.getCommercialRequirements(agentId);
     }
 
     @Override
     protected List<Commercial> getRealty(String date) {
-        return null;
+        return mApi.getCommercials(date);
     }
 
     @Override
     protected Requirement mapRequirement(CommercialReq commercialReq) {
-        return null;
+        Requirement requirement = new Requirement();
+        requirement.id = commercialReq.id;
+        requirement.type = getType();
+        requirement.unreadRecommendations =
+                mDbUtils.getUnreadRecommendationsCount(requirement.id, requirement.type);
+        return requirement;
     }
 
     @Override
     protected Realty mapRealty(Commercial commercial) {
-        return null;
+        Realty realty = new Realty();
+        realty.id = commercial.id;
+        realty.type = getType();
+        return realty;
     }
 
     @Override
     protected String getType() {
-        return null;
+        return RealtyTypes.TYPE_COMMERCIAL;
     }
 
     @Override
     protected boolean isMatch(CommercialReq commercialReq, Commercial commercial) {
-        return false;
+        return true;
     }
 
     @Override
     protected String newLastDate(List<Commercial> realty) {
-        return null;
+        Commercial lastAdded = Collections.max(realty, new Comparator<Commercial>() {
+            @Override
+            public int compare(Commercial lhs, Commercial rhs) {
+                return lhs.createdAt.compareTo(rhs.createdAt);
+            }
+        });
+        return lastAdded.createdAt;
     }
 }

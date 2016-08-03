@@ -11,21 +11,23 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import dpiki.notificator.data.Requirement;
+
 /**
  * Created by prog1 on 07.07.2016.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    public List<Client> mDataset;
+    public List<Requirement> mDataset;
     private OnViewClickListener mItemClickListener;
 
-    public RecyclerAdapter(List<Client> dataset,
+    public RecyclerAdapter(List<Requirement> dataset,
                            OnViewClickListener listener) {
         mItemClickListener = listener;
         update(dataset);
     }
 
-    public void update(List<Client> marketClients) {
+    public void update(List<Requirement> marketClients) {
         mDataset = marketClients;
         Collections.reverse(mDataset);
         this.notifyDataSetChanged();
@@ -33,10 +35,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     public void clearUnreadNotifications(int position) {
         int newPos = position;
-        Iterator<Client> i = this.mDataset.listIterator(position);
+        Iterator<Requirement> i = this.mDataset.listIterator(position);
         while (i.hasNext()) {
-            Client curr = i.next();
-            if (curr.notifCount == 0)
+            Requirement curr = i.next();
+            if (curr.unreadRecommendations == 0)
                 break;
             newPos++;
         }
@@ -44,8 +46,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         newPos--;
         newPos = newPos > position ? newPos : position;
 
-        Client curr = this.mDataset.get(position);
-        curr.notifCount = 0;
+        Requirement curr = this.mDataset.get(position);
+        curr.unreadRecommendations = 0;
         this.notifyItemChanged(position);
 
         this.mDataset.remove(position);
@@ -64,15 +66,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Client client = mDataset.get(position);
+        Requirement requirement = mDataset.get(position);
 
-        holder.tvNameClient.setText(client.fio);
-        holder.tvNotifCount.setText(client.notifCount.toString());
-        holder.tvNotifCount.setVisibility(client.notifCount == 0 ? View.INVISIBLE : View.VISIBLE);
-        holder.rlCircle.setVisibility(client.notifCount == 0 ? View.INVISIBLE : View.VISIBLE);
-        holder.tvType.setText(client.type);
+        holder.tvNameClient.setText("id = " + requirement.id);
+        holder.tvNotifCount.setText(requirement.unreadRecommendations.toString());
+        holder.tvNotifCount.setVisibility(requirement.unreadRecommendations == 0 ? View.INVISIBLE : View.VISIBLE);
+        holder.rlCircle.setVisibility(requirement.unreadRecommendations == 0 ? View.INVISIBLE : View.VISIBLE);
+        holder.tvType.setText(requirement.type);
 
-        holder.currClient = client;
+        holder.requirement = requirement;
     }
 
     @Override
@@ -87,7 +89,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public TextView tvType;
         public RelativeLayout rlCircle;
         public RelativeLayout relativeLayout;
-        public Client currClient;
+        public Requirement requirement;
 
         OnViewClickListener listener;
 
@@ -99,14 +101,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             relativeLayout = (RelativeLayout) v.findViewById(R.id.recycler_item_rl_general);
             rlCircle = (RelativeLayout) v.findViewById(R.id.recycler_item_rl_circle);
 
-            currClient = null;
+            requirement = null;
             relativeLayout.setOnClickListener(this);
             this.listener = listener;
         }
 
         @Override
         public void onClick(View v) {
-            listener.onViewClicked(currClient, getAdapterPosition());
+            listener.onViewClicked(requirement, getAdapterPosition());
         }
     }
 }
