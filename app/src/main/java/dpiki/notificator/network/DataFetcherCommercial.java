@@ -2,7 +2,9 @@ package dpiki.notificator.network;
 
 import java.util.List;
 
-import dpiki.notificator.data.Recommendation;
+import dpiki.notificator.App;
+import dpiki.notificator.data.Realty;
+import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.dataobjects.Commercial;
 import dpiki.notificator.network.dataobjects.CommercialReq;
 
@@ -13,10 +15,11 @@ public class DataFetcherCommercial extends DataFetcher<Commercial, CommercialReq
 
     public DataFetcherCommercial() {
         super(DataFetcherCommercial.class.getName());
+        App.getInstance().inject(this);
     }
 
     @Override
-    protected List<CommercialReq> getRequirements() {
+    protected List<CommercialReq> getRequirements(Integer agentId) {
         return null;
     }
 
@@ -26,7 +29,17 @@ public class DataFetcherCommercial extends DataFetcher<Commercial, CommercialReq
     }
 
     @Override
-    protected Recommendation makeRecommendation(CommercialReq commercialReq, Commercial commercial) {
+    protected Requirement mapRequirement(CommercialReq commercialReq) {
+        return null;
+    }
+
+    @Override
+    protected Realty mapRealty(Commercial commercial) {
+        return null;
+    }
+
+    @Override
+    protected String getType() {
         return null;
     }
 

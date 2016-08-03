@@ -111,4 +111,7 @@ public class Apartment {
 
     @SerializedName("")
     public String srcLayout;
+
+    @SerializedName("")
+    public String createdAt;
 }

@@ -87,4 +87,7 @@ public class Commercial {
 
     @SerializedName("")
     public Integer countFreePairs;
+
+    @SerializedName("")
+    public String createdAt;
 }

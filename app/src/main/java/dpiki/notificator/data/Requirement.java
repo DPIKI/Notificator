@@ -6,6 +6,5 @@ package dpiki.notificator.data;
 public class Requirement {
     public Integer id;
     public String type;
-    public String clientName;
     public Integer unreadRecommendations;
 }

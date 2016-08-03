@@ -84,4 +84,7 @@ public class Households {
 
     @SerializedName("")
     public String srcLayout;
+
+    @SerializedName("")
+    public String createdAt;
 }

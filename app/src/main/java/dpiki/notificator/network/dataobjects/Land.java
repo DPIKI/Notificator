@@ -42,4 +42,7 @@ public class Land {
 
     @SerializedName("")
     public String srcLayout;
+
+    @SerializedName("")
+    public String createdAt;
 }

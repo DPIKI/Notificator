@@ -1,51 +1,60 @@
 package dpiki.notificator.network;
 
-import android.content.Context;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import dpiki.notificator.App;
+import dpiki.notificator.DatabaseUtils;
 import dpiki.notificator.PrefManager;
+import dpiki.notificator.data.Realty;
 import dpiki.notificator.data.Recommendation;
+import dpiki.notificator.data.Requirement;
 
 /**
  * Created by Lenovo on 07.07.2016.
  */
-public abstract class DataFetcher<Realty, Requirement> {
+public abstract class DataFetcher<TRealty, TRequirement> {
     private String mClassName;
 
     @Inject
     public PrefManager mPrefManager;
 
     @Inject
-    public ServerApi api;
+    public ServerApiWrapper mApi;
+
+    @Inject
+    public DatabaseUtils mDbUtils;
 
     public DataFetcher(String className) {
         this.mClassName = className;
-        App.getInstance().inject(this);
     }
 
     public void fetch(List<Recommendation> r) {
         String strLastDate = mPrefManager.getLastFetchDate(mClassName);
         mPrefManager.putLastFetchDate(mClassName, strLastDate);
 
-        List<Requirement> requirements = getRequirements(0); // TODO: replace with real agentId
-        if (requirements == null || requirements.isEmpty())
+        List<TRequirement> tRequirements = getRequirements(0); // TODO: replace with real agentId
+        if (tRequirements == null || tRequirements.isEmpty())
             return;
 
-        List<Realty> realty = getRealty(strLastDate);
+        List<Requirement> requirements = new ArrayList<>();
+        for (TRequirement i : tRequirements) {
+            requirements.add(mapRequirement(i));
+        }
+        mDbUtils.updateRequirements(requirements, getType());
+
+        List<TRealty> realty = getRealty(strLastDate);
         if (realty == null || realty.isEmpty())
             return;
 
-        for (Requirement i : requirements) {
-            for (Realty j : realty) {
+        for (TRequirement i : tRequirements) {
+            for (TRealty j : realty) {
                 if (isMatch(i, j)) {
-                    r.add(makeRecommendation(i, j));
+                    Requirement req = mapRequirement(i);
+                    Realty realEstate = mapRealty(j);
+                    r.add(new Recommendation(req, realEstate));
                 }
             }
         }
@@ -53,9 +62,11 @@ public abstract class DataFetcher<Realty, Requirement> {
         mPrefManager.putLastFetchDate(mClassName, newLastDate(realty));
     }
 
-    protected abstract List<Requirement> getRequirements(Integer agentId);
-    protected abstract List<Realty> getRealty(String date);
-    protected abstract Recommendation makeRecommendation(Requirement requirement, Realty realty);
-    protected abstract boolean isMatch(Requirement requirement, Realty realty);
-    protected abstract String newLastDate(List<Realty> realty);
+    protected abstract List<TRequirement> getRequirements(Integer agentId);
+    protected abstract List<TRealty> getRealty(String date);
+    protected abstract Requirement mapRequirement(TRequirement requirement);
+    protected abstract Realty mapRealty(TRealty realty);
+    protected abstract String getType();
+    protected abstract boolean isMatch(TRequirement requirement, TRealty realty);
+    protected abstract String newLastDate(List<TRealty> realty);
 }
