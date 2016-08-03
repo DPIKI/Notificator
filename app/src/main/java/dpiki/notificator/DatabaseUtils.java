@@ -80,7 +80,6 @@ public class DatabaseUtils {
             return;
 
         try {
-            // TODO : where type = typereq
             db.delete(DatabaseHelper.TABLE_REQUIREMENTS,
                     DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'", null);
 
