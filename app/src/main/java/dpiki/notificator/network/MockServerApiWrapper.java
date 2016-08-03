@@ -3,6 +3,7 @@ package dpiki.notificator.network;
 import java.util.ArrayList;
 import java.util.List;
 
+import dpiki.notificator.Config;
 import dpiki.notificator.network.dataobjects.Apartment;
 import dpiki.notificator.network.dataobjects.ApartmentReq;
 import dpiki.notificator.network.dataobjects.Commercial;
@@ -34,6 +35,27 @@ public class MockServerApiWrapper extends ServerApiWrapper{
         ApartmentReq apartmentReq = new ApartmentReq();
         apartmentReq.id = 8;
         reqList.add(apartmentReq);
+
+        apartmentReq = new ApartmentReq();
+        apartmentReq.id = 3;
+        reqList.add(apartmentReq);
+
+        apartmentReq = new ApartmentReq();
+        apartmentReq.id = 5;
+        reqList.add(apartmentReq);
+
+        apartmentReq = new ApartmentReq();
+        apartmentReq.id = 1;
+        reqList.add(apartmentReq);
+
+        apartmentReq = new ApartmentReq();
+        apartmentReq.id = 888;
+        reqList.add(apartmentReq);
+
+        apartmentReq = new ApartmentReq();
+        apartmentReq.id = 7373;
+        reqList.add(apartmentReq);
+
         return reqList;
     }
 
@@ -44,7 +66,33 @@ public class MockServerApiWrapper extends ServerApiWrapper{
 
     @Override
     List<LandReq> getLandRequirements(Integer agentId) {
-        return new ArrayList<>();
+        List<LandReq> reqList = new ArrayList<>();
+
+        LandReq landReq = new LandReq();
+        landReq.id = 18;
+        reqList.add(landReq);
+
+        landReq = new LandReq();
+        landReq.id = 13;
+        reqList.add(landReq);
+
+        landReq = new LandReq();
+        landReq.id = 15;
+        reqList.add(landReq);
+
+        landReq = new LandReq();
+        landReq.id = 11;
+        reqList.add(landReq);
+
+        landReq = new LandReq();
+        landReq.id = 1888;
+        reqList.add(landReq);
+
+        landReq = new LandReq();
+        landReq.id = 17373;
+        reqList.add(landReq);
+
+        return reqList;
     }
 
     @Override

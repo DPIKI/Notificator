@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.TreeMap;
 
 import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.data.Requirement;
+import dpiki.notificator.network.SyncMarketService;
 
 /**
  * Created by Lenovo on 02.08.2016.
@@ -79,9 +81,10 @@ public class DatabaseUtils {
 
         try {
             // TODO : where type = typereq
-            db.delete(DatabaseHelper.TABLE_REQUIREMENTS, null, null);
+            db.delete(DatabaseHelper.TABLE_REQUIREMENTS,
+                    DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'", null);
 
-            String query = DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = " + "'" + type + "' ";
+            String query = DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = " + "'" + type + "'";
             if (!requirements.isEmpty()) {
                 for (Requirement requirement : requirements) {
                     ContentValues values = new ContentValues();
@@ -91,9 +94,10 @@ public class DatabaseUtils {
                             requirement.unreadRecommendations);
                     db.insertWithOnConflict(DatabaseHelper.TABLE_REQUIREMENTS, "", values,
                             SQLiteDatabase.CONFLICT_IGNORE);
-                    query += "AND " + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT
+                    query += " AND " + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT
                             + " <> " + requirement.id;
                 }
+                Log.d(SyncMarketService.TAG, query);
                 query.replaceFirst("AND ", "");
             }
 

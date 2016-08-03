@@ -71,6 +71,7 @@ public class SyncMarketService extends Service {
         @Override
         public void run() {
             List<Recommendation> recommendations = new ArrayList<>();
+            // TODO: 4toto nepravilno arbeiten.
             new DataFetcherRent().fetch(recommendations);
             new DataFetcherLand().fetch(recommendations);
             new DataFetcherApartment().fetch(recommendations);
