@@ -4,7 +4,6 @@ import java.util.List;
 
 import dpiki.notificator.App;
 import dpiki.notificator.data.Realty;
-import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.dataobjects.Land;
 import dpiki.notificator.network.dataobjects.LandReq;
