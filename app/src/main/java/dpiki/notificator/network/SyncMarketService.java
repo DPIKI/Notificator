@@ -36,12 +36,13 @@ public class SyncMarketService extends Service {
     public static final String ACTION_START_RECEIVE = "dpiki.notificator.action.START_RECEIVE";
     public static final String ACTION_STOP_RECEIVE = "dpiki.notificator.action.STOP_RECEIVE";
     public static final String ACTION_NEW_RECOMMENDATIONS = "dpiki.notificator.action.NEW_RECOMMENDATION";
+    public static final String ACTION_REQUIREMENTS_UPDATED = "dpiki.notificator.action.REQUIREMENTS_UPDATED";
 
     @Inject
     public DatabaseUtils mDatabaseUtils;
 
     @Inject
-    public PrefManager mPrefManager;
+    public static PrefManager mPrefManager;
 
     private Handler mBackgroundHandler;
     private PowerManager.WakeLock mWakeLock;
@@ -79,51 +80,10 @@ public class SyncMarketService extends Service {
             new DataFetcherApartment().fetch(recommendations);
             new DataFetcherHousehold().fetch(recommendations);
             new DataFetcherCommercial().fetch(recommendations);
+            sendBroadcast(new Intent(ACTION_REQUIREMENTS_UPDATED));
             handleRecommendations(recommendations);
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);
         }
-
-        /*private ClientResponse fetchClients() throws IOException {
-            Log.d(TAG, "Sending request...");
-
-            Call<ClientResponse> clientsRequest = api.getClients(0);
-            Response<ClientResponse> clientResponse = clientsRequest.execute();
-
-            Log.d(TAG, "Sending request...");
-
-            ClientResponse clients = clientResponse.body();
-            if (clients == null)
-                throw new IOException("Failed to parse response with clients");
-
-            if (!clients.success)
-                throw new IOException("Imya 505");
-
-            Log.d(TAG, "Response valid.");
-
-            List<Client> cl = new ArrayList<>();
-            if (clients.phones == null)
-                Log.d(TAG, "Phone: Ne poveslo");
-            else
-                Log.d(TAG, "Poveslo");
-
-            cl.addAll(clients.phones);
-            cl.addAll(clients.laptops);
-
-            List<Client> dbClients = DatabaseHelper.readClients(SyncMarketService.this);
-
-            for (Client i : cl) {
-                for (Client j : dbClients) {
-                    if (i.id.equals(j.id) && i.type.equals(j.type)) {
-                        i.notifCount = j.notifCount;
-                        break;
-                    }
-                }
-            }
-
-            DatabaseHelper.updateClients(SyncMarketService.this, cl);
-
-            return clients;
-        }*/
 
         private void handleRecommendations(List<Recommendation> r) {
             if (r.isEmpty())
@@ -243,8 +203,7 @@ public class SyncMarketService extends Service {
     }
 
     public static boolean serverStatus(Context context) {
-        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
-        return pref.getBoolean(PREF_KEY_RECEIVE_NOTIFICATIONS, false);
+        return mPrefManager.getReceiveNotificationsFlag();
     }
 
     @Nullable

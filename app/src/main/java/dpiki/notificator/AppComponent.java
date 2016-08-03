@@ -13,6 +13,5 @@ import dpiki.notificator.network.SyncMarketService;
 @Singleton
 public interface AppComponent {
     void inject(DataFetcher<?, ?> fetcher);
-    void inject(DatabaseUtils utils);
     void inject(SyncMarketService utils);
 }

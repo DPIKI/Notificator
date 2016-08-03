@@ -2,7 +2,9 @@ package dpiki.notificator.network;
 
 import java.util.List;
 
+import dpiki.notificator.data.Realty;
 import dpiki.notificator.data.Recommendation;
+import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.dataobjects.Land;
 import dpiki.notificator.network.dataobjects.LandReq;
 
@@ -16,7 +18,7 @@ public class DataFetcherLand extends DataFetcher<Land, LandReq> {
     }
 
     @Override
-    protected List<LandReq> getRequirements() {
+    protected List<LandReq> getRequirements(Integer agentId) {
         return null;
     }
 
@@ -26,7 +28,17 @@ public class DataFetcherLand extends DataFetcher<Land, LandReq> {
     }
 
     @Override
-    protected Recommendation makeRecommendation(LandReq landReq, Land land) {
+    protected Requirement mapRequirement(LandReq landReq) {
+        return null;
+    }
+
+    @Override
+    protected Realty mapRealty(Land land) {
+        return null;
+    }
+
+    @Override
+    protected String getType() {
         return null;
     }
 

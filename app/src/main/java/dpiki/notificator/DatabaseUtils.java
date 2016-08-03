@@ -10,21 +10,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.inject.Inject;
-
 import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.data.Requirement;
-import dpiki.notificator.network.DataFetcher;
 
 /**
  * Created by Lenovo on 02.08.2016.
  */
 public class DatabaseUtils {
-    @Inject
     Context mContext;
 
-    public DatabaseUtils() {
-        App.getInstance().inject(this);
+    public DatabaseUtils(Context context) {
+        this.mContext = context;
     }
 
     public List<Requirement> readRequirements() {
@@ -66,7 +62,15 @@ public class DatabaseUtils {
         return requirements;
     }
 
-    public void updateRequirements(List<Requirement> requirements) {
+    /**
+     * Method removes requirements with the specified type,
+     * adds new requirements and removes all recommendations
+     * to removed requirements.
+     *
+     * @param requirements - all requirements are same type.
+     * @param type         - type of the requirements.
+     */
+    public void updateRequirements(List<Requirement> requirements, String type) {
         DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -74,27 +78,35 @@ public class DatabaseUtils {
             return;
 
         try {
+            // TODO : where type = typereq
             db.delete(DatabaseHelper.TABLE_REQUIREMENTS, null, null);
 
-            String query = "DELETE FROM " + DatabaseHelper.TABLE_RECOMMENDATIONS + " WHERE ";
-            for (Requirement requirement : requirements) {
-                ContentValues values = new ContentValues();
-                values.put(DatabaseHelper.FIELD_REQUIREMENTS_ID, requirement.id);
-                values.put(DatabaseHelper.FIELD_REQUIREMENTS_TYPE, requirement.type);
-                values.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, requirement.unreadRecommendations);
-                db.insertWithOnConflict(DatabaseHelper.TABLE_REQUIREMENTS, "", values, SQLiteDatabase.CONFLICT_IGNORE);
-                query += "AND "
-                        + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT + " <> " + requirement.id + " AND "
-                        + DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " <> " + "'" + requirement.type + "'";
+            String query = "DELETE FROM " + DatabaseHelper.TABLE_RECOMMENDATIONS + " WHERE "
+                    + DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = " + "'" + type + "'";
+            if (!requirements.isEmpty()) {
+                for (Requirement requirement : requirements) {
+                    ContentValues values = new ContentValues();
+                    values.put(DatabaseHelper.FIELD_REQUIREMENTS_ID, requirement.id);
+                    values.put(DatabaseHelper.FIELD_REQUIREMENTS_TYPE, requirement.type);
+                    values.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, requirement.unreadRecommendations);
+                    db.insertWithOnConflict(DatabaseHelper.TABLE_REQUIREMENTS, "", values, SQLiteDatabase.CONFLICT_IGNORE);
+                    query += "AND " + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT + " <> " + requirement.id;
+                }
             }
 
             // TODO: need test
-            db.execSQL(query.replaceFirst("AND ", ""));
+            db.delete(DatabaseHelper.TABLE_RECOMMENDATIONS, query.replaceFirst("AND ", ""), null);
         } finally {
             db.close();
         }
     }
 
+    /**
+     * Method adds new recommendations and updates unreadRecommendationsCount
+     * field in Requirements table.
+     *
+     * @param recommendations - list of new recommendations.
+     */
     public void addRecommendations(List<Recommendation> recommendations) {
         DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -127,16 +139,21 @@ public class DatabaseUtils {
                 clientValues.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, i.getValue());
                 db.update(DatabaseHelper.TABLE_REQUIREMENTS, clientValues,
                         DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
-                        DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'",
+                                DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'",
                         null);
             }
-
         } finally {
             db.close();
         }
     }
 
-    public void clearUnreadRecommendationsCount(int clientId, String clientType) {
+    /**
+     * Clears unreadRecommendationsCount of specified requirement.
+     *
+     * @param id
+     * @param type
+     */
+    public void clearUnreadRecommendationsCount(int id, String type) {
         DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -148,13 +165,49 @@ public class DatabaseUtils {
             values.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, 0);
             db.update(
                     DatabaseHelper.TABLE_REQUIREMENTS,
-                    values, DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + clientId + " AND " +
-                            DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + clientType + "'",
+                    values, DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
+                            DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'",
                     null);
         } finally {
             db.close();
         }
     }
 
-    public int getUnreadNotificationsCount;
+    /**
+     * Returns unreadRecommendationsCount of specified requirement.
+     *
+     * @param id
+     * @param type
+     */
+    public int getUnreadRecommendationsCount(Integer id, String type) {
+        DatabaseHelper helper = new DatabaseHelper(mContext);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        if (db == null)
+            return 0;
+
+        try {
+            Cursor c = db.query(DatabaseHelper.TABLE_REQUIREMENTS,
+                    new String[] { DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS },
+                    DatabaseHelper.FIELD_REQUIREMENTS_ID + " = ? AND " +
+                    DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '?'",
+                    new String[] { id.toString(), type },
+                    null, null, null);
+
+            if (c == null)
+                return 0;
+
+            try {
+                if (c.moveToNext()) {
+                    return c.getInt(0);
+                } else {
+                    return 0;
+                }
+            } finally {
+                c.close();
+            }
+        } finally {
+            db.close();
+        }
+    }
 }

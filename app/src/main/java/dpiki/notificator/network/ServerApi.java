@@ -5,6 +5,7 @@ import android.provider.ContactsContract;
 import dpiki.notificator.network.dataobjects.Apartment;
 import dpiki.notificator.network.dataobjects.ApartmentReq;
 import dpiki.notificator.network.dataobjects.Commercial;
+import dpiki.notificator.network.dataobjects.CommercialReq;
 import dpiki.notificator.network.dataobjects.Households;
 import dpiki.notificator.network.dataobjects.HouseholdsReq;
 import dpiki.notificator.network.dataobjects.Land;
@@ -50,6 +51,5 @@ public interface ServerApi {
     Call<ServerResponse<Commercial>> getCommercials(@Query("date") String date);
 
     @GET("get_commercial_requirements.php")
-    Call<ServerResponse<Commercial>> getCommercialRequirements(@Query("agent_id") Integer agentId);
-
+    Call<ServerResponse<CommercialReq>> getCommercialRequirements(@Query("agent_id") Integer agentId);
 }

@@ -69,4 +69,7 @@ public class Rent {
 
     @SerializedName("")
     public Integer hasPhone;
+
+    @SerializedName("")
+    public String createdAt;
 }

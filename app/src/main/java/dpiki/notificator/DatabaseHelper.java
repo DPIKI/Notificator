@@ -35,10 +35,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS + " INTEGER);";
     public static final String QUERY_DROP_TABLE_REQUIREMENTS =
             "DROP TABLE IF EXISTS " + TABLE_REQUIREMENTS + ";";
-    public static final String QUERY_CLIENT_BY_ID =
-            "SELECT " + FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS
-                    + " FROM " + TABLE_REQUIREMENTS + " WHERE "
-                    + FIELD_REQUIREMENTS_ID + " = ";
 
     public static final String TABLE_RECOMMENDATIONS = "Recommendations";
     public static final String FIELD_RECOMMENDATIONS_ID = "id_recommendation";
