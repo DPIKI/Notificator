@@ -48,10 +48,6 @@ public class SyncMarketService extends Service {
     private PowerManager.WakeLock mWakeLock;
     private boolean mIsThreadRunning;
 
-    public SyncMarketService() {
-        App.getInstance().inject(this);
-    }
-
     Runnable initBackgroundThread = new Runnable() {
         @Override
         public void run() {
@@ -128,6 +124,7 @@ public class SyncMarketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        App.get(SyncMarketService.this).getInstance().inject(this);
         rerunNotificationService(this);
     }
 

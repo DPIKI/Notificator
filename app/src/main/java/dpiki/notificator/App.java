@@ -1,6 +1,7 @@
 package dpiki.notificator;
 
 import android.app.Application;
+import android.content.Context;
 
 /**
  * Created by Lenovo on 02.08.2016.
@@ -10,6 +11,10 @@ public class App extends Application{
 
     public static AppComponent getInstance() {
         return appComponent;
+    }
+
+    public static App get(Context context) {
+        return (App) context.getApplicationContext();
     }
 
     @Override
