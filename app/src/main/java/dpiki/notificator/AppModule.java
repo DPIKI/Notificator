@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dpiki.notificator.network.MockServerApiWrapper;
 import dpiki.notificator.network.ServerApiWrapper;
 
 /**
@@ -39,7 +40,11 @@ public class AppModule {
     @NonNull
     @Singleton
     ServerApiWrapper provideServerApi() {
-        return new ServerApiWrapper();
+        if(Config.isDebug()){
+            return new MockServerApiWrapper();
+        } else {
+            return new ServerApiWrapper();
+        }
     }
 
     @Provides
