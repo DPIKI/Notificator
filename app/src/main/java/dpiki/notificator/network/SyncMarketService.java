@@ -124,7 +124,7 @@ public class SyncMarketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        App.get(SyncMarketService.this).getInstance().inject(this);
+        App.getInstance().inject(this);
         rerunNotificationService(this);
     }
 

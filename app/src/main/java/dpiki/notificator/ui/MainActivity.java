@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     @AfterViews
     protected void initRecyclerView() {
-        App.get(this).getInstance().inject(MainActivity.this);
+        App.getInstance().inject(MainActivity.this);
         List<Requirement> requirements = mDatabaseUtils.readRequirements();
         recyclerAdapter = new RecyclerAdapter(requirements, new ItemClickListener());
         recyclerView.setHasFixedSize(true);

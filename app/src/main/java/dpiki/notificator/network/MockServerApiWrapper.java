@@ -25,7 +25,12 @@ public class MockServerApiWrapper extends ServerApiWrapper{
 
     @Override
     List<Apartment> getApartments(String date) {
-        return new ArrayList<>();
+        List<Apartment> list = new ArrayList<>();
+        Apartment apartment = new Apartment();
+        apartment.id = 900;
+        apartment.createdAt = "2016-09-08 20:20:20";
+        list.add(apartment);
+        return list;
     }
 
     @Override
