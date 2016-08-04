@@ -36,7 +36,7 @@ public class DataFetcherLand extends DataFetcher<Land, LandReq> {
     @Override
     protected Requirement mapRequirement(LandReq landReq) {
         Requirement requirement = new Requirement();
-        requirement.id = landReq.id;
+        requirement.id = landReq.idRequirements;
         requirement.type = getType();
         requirement.unreadRecommendations =
                 mDbUtils.getUnreadRecommendationsCount(requirement.id, requirement.type);

@@ -1,4 +1,4 @@
-package dpiki.notificator;
+package dpiki.notificator.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,6 +20,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dpiki.notificator.App;
+import dpiki.notificator.DatabaseUtils;
+import dpiki.notificator.R;
 import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.SyncMarketService;
 

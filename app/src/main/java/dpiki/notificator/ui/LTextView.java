@@ -1,4 +1,4 @@
-package dpiki.notificator;
+package dpiki.notificator.ui;
 
 import android.content.Context;
 import android.graphics.Typeface;

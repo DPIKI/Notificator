@@ -3,13 +3,13 @@ package dpiki.notificator;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import dpiki.notificator.network.DataFetcher;
 import dpiki.notificator.network.DataFetcherApartment;
 import dpiki.notificator.network.DataFetcherCommercial;
 import dpiki.notificator.network.DataFetcherHousehold;
 import dpiki.notificator.network.DataFetcherLand;
 import dpiki.notificator.network.DataFetcherRent;
 import dpiki.notificator.network.SyncMarketService;
+import dpiki.notificator.ui.MainActivity;
 
 /**
  * Created by Lenovo on 02.08.2016.

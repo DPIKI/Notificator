@@ -1,4 +1,4 @@
-package dpiki.notificator;
+package dpiki.notificator.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import dpiki.notificator.R;
 import dpiki.notificator.data.Requirement;
 
 /**

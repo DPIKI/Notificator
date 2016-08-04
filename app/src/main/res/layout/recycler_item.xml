@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <dpiki.notificator.LTextView
+    <dpiki.notificator.ui.LTextView
         android:id="@+id/recycler_item_tv_name_client"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
         android:layout_toLeftOf="@+id/recycler_item_rl_circle"
         android:layout_toStartOf="@+id/recycler_item_rl_circle" />
 
-    <dpiki.notificator.LTextView
+    <dpiki.notificator.ui.LTextView
         android:id="@+id/recycler_item_tv_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         android:layout_below="@id/recycler_item_tv_name_client"
         android:layout_toLeftOf="@+id/recycler_item_rl_circle"
         android:layout_toStartOf="@+id/recycler_item_rl_circle">
-    </dpiki.notificator.LTextView>
+    </dpiki.notificator.ui.LTextView>
 
     <RelativeLayout
         android:id="@+id/recycler_item_rl_circle"
@@ -42,7 +42,7 @@
         android:layout_alignParentEnd="true"
         android:background="@drawable/abc_btn_radio_to_on_mtrl_000"
         android:layout_alignParentTop="true">
-        <dpiki.notificator.LTextView
+        <dpiki.notificator.ui.LTextView
             android:id="@+id/recycler_item_tv_notif_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

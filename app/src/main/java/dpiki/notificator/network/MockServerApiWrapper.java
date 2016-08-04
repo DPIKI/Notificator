@@ -68,27 +68,27 @@ public class MockServerApiWrapper extends ServerApiWrapper{
         List<LandReq> reqList = new ArrayList<>();
 
         LandReq landReq = new LandReq();
-        landReq.id = 18;
+        landReq.idRequirements = 18;
         reqList.add(landReq);
 
         landReq = new LandReq();
-        landReq.id = 13;
+        landReq.idRequirements = 13;
         reqList.add(landReq);
 
         landReq = new LandReq();
-        landReq.id = 15;
+        landReq.idRequirements = 15;
         reqList.add(landReq);
 
         landReq = new LandReq();
-        landReq.id = 11;
+        landReq.idRequirements = 11;
         reqList.add(landReq);
 
         landReq = new LandReq();
-        landReq.id = 1888;
+        landReq.idRequirements = 1888;
         reqList.add(landReq);
 
         landReq = new LandReq();
-        landReq.id = 17373;
+        landReq.idRequirements = 17373;
         reqList.add(landReq);
 
         return reqList;
