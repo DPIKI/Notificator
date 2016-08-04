@@ -7,60 +7,60 @@ import com.google.gson.annotations.SerializedName;
  */
 public class HouseholdsReq {
 
-    @SerializedName("")
-    public Integer id;
+    @SerializedName("id_requirements")
+    public Integer idRequirements;
 
-    @SerializedName("")
-    public String address;
+    @SerializedName("id_address")
+    public Integer idAddress;
 
-    @SerializedName("")
+    @SerializedName("cost_from")
     public Float costFrom;
 
-    @SerializedName("")
+    @SerializedName("cost_to")
     public Float costTo;
 
-    @SerializedName("")
+    @SerializedName("firm")
     public Boolean firm;
 
-    @SerializedName("")
+    @SerializedName("with_photo")
     public Boolean withPhoto;
 
-    @SerializedName("")
-    public String variant;
+    @SerializedName("id_variant")
+    public Integer idVariant;
 
-    @SerializedName("")
+    @SerializedName("total_area_from")
     public Float totalAreaFrom;
 
-    @SerializedName("")
+    @SerializedName("total_area_to")
     public Float totalAreaTo;
 
-    @SerializedName("")
+    @SerializedName("living_area_from")
     public Float livingAreaFrom;
 
-    @SerializedName("")
+    @SerializedName("living_area_to")
     public Float livingAreaTo;
 
-    @SerializedName("")
+    @SerializedName("kitchen_area_from")
     public Float kitchenAreaFrom;
 
-    @SerializedName("")
+    @SerializedName("kitchen_area_to")
     public Float kitchenAreaTo;
 
-    @SerializedName("")
+    @SerializedName("stead_from")
     public Float steadFrom;
 
-    @SerializedName("")
+    @SerializedName("stead_to")
     public Float steadTo;
 
-    @SerializedName("")
-    public String state;
+    @SerializedName("id_state")
+    public Integer idState;
 
-    @SerializedName("")
-    public String wallMaterial;
+    @SerializedName("id_wall_material")
+    public Integer idWallMaterial;
 
-    @SerializedName("")
-    public String entry;
+    @SerializedName("idEntry")
+    public Integer idEntry;
 
-    @SerializedName("")
-    public String furniture;
+    @SerializedName("id_furniture")
+    public Integer idFurniture;
 }

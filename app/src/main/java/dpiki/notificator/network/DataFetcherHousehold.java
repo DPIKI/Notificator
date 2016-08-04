@@ -34,7 +34,7 @@ public class DataFetcherHousehold extends DataFetcher<Households, HouseholdsReq>
     @Override
     protected Requirement mapRequirement(HouseholdsReq householdsReq) {
         Requirement requirement = new Requirement();
-        requirement.id = householdsReq.id;
+        requirement.id = householdsReq.idRequirements;
         requirement.type = getType();
         requirement.unreadRecommendations =
                 mDbUtils.getUnreadRecommendationsCount(requirement.id, requirement.type);
