@@ -34,7 +34,7 @@ public class ServerApiWrapper {
         this.mApi = retrofit.create(ServerApi.class);
     }
 
-    List<Apartment> getApartments(String date) {
+    public List<Apartment> getApartments(String date) {
         Call<ServerResponse<Apartment>> call = mApi.getApartments(date);
         Response<ServerResponse<Apartment>> response;
 
@@ -51,7 +51,7 @@ public class ServerApiWrapper {
         return response.body().response;
     }
 
-    List<ApartmentReq> getApartmentRequirements(Integer agentId) {
+    public List<ApartmentReq> getApartmentRequirements(Integer agentId) {
         Call<ServerResponse<ApartmentReq>> call = mApi.getApartmentRequirements(agentId);
         Response<ServerResponse<ApartmentReq>> response;
 
@@ -68,7 +68,7 @@ public class ServerApiWrapper {
         return response.body().response;
     }
 
-    List<Land> getLands(String date) {
+    public List<Land> getLands(String date) {
         Call<ServerResponse<Land>> call = mApi.getLands(date);
         Response<ServerResponse<Land>> response;
 
@@ -85,7 +85,7 @@ public class ServerApiWrapper {
         return response.body().response;
     }
 
-    List<LandReq> getLandRequirements(Integer agentId) {
+    public List<LandReq> getLandRequirements(Integer agentId) {
         Call<ServerResponse<LandReq>> call = mApi.getLandRequirements(agentId);
         Response<ServerResponse<LandReq>> response;
 
@@ -102,7 +102,7 @@ public class ServerApiWrapper {
         return response.body().response;
     }
 
-    List<Rent> getRents(String date) {
+    public List<Rent> getRents(String date) {
         Call<ServerResponse<Rent>> call = mApi.getRents(date);
         Response<ServerResponse<Rent>> response;
 
@@ -119,7 +119,7 @@ public class ServerApiWrapper {
         return response.body().response;
     }
 
-    List<RentReq> getRentRequirements(Integer agentId) {
+    public List<RentReq> getRentRequirements(Integer agentId) {
         Call<ServerResponse<RentReq>> call = mApi.getRentRequirements(agentId);
         Response<ServerResponse<RentReq>> response;
 
@@ -136,7 +136,7 @@ public class ServerApiWrapper {
         return response.body().response;
     }
 
-    List<Households> getHouseholds(String date) {
+    public List<Households> getHouseholds(String date) {
         Call<ServerResponse<Households>> call = mApi.getHouseholds(date);
         Response<ServerResponse<Households>> response;
 
@@ -153,7 +153,7 @@ public class ServerApiWrapper {
         return response.body().response;
     }
 
-    List<HouseholdsReq> getHouseholdRequirements(Integer agentId) {
+    public List<HouseholdsReq> getHouseholdRequirements(Integer agentId) {
         Call<ServerResponse<HouseholdsReq>> call = mApi.getHouseholdRequirements(agentId);
         Response<ServerResponse<HouseholdsReq>> response;
 
@@ -170,7 +170,7 @@ public class ServerApiWrapper {
         return response.body().response;
     }
 
-    List<Commercial> getCommercials(String date) {
+    public List<Commercial> getCommercials(String date) {
         Call<ServerResponse<Commercial>> call = mApi.getCommercials(date);
         Response<ServerResponse<Commercial>> response;
 
@@ -187,7 +187,7 @@ public class ServerApiWrapper {
         return response.body().response;
     }
 
-    List<CommercialReq> getCommercialRequirements(Integer agentId) {
+    public List<CommercialReq> getCommercialRequirements(Integer agentId) {
         Call<ServerResponse<CommercialReq>> call = mApi.getCommercialRequirements(agentId);
         Response<ServerResponse<CommercialReq>> response;
 

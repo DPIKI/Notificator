@@ -24,7 +24,7 @@ public class MockServerApiWrapper extends ServerApiWrapper{
     }
 
     @Override
-    List<Apartment> getApartments(String date) {
+    public List<Apartment> getApartments(String date) {
         List<Apartment> list = new ArrayList<>();
         Apartment apartment = new Apartment();
         apartment.id = 900;
@@ -34,8 +34,9 @@ public class MockServerApiWrapper extends ServerApiWrapper{
     }
 
     @Override
-    List<ApartmentReq> getApartmentRequirements(Integer agentId) {
+    public List<ApartmentReq> getApartmentRequirements(Integer agentId) {
         List<ApartmentReq> reqList = new ArrayList<>();
+
         ApartmentReq apartmentReq = new ApartmentReq();
         apartmentReq.idRequirements = 8;
         reqList.add(apartmentReq);
@@ -64,12 +65,12 @@ public class MockServerApiWrapper extends ServerApiWrapper{
     }
 
     @Override
-    List<Land> getLands(String date) {
+    public List<Land> getLands(String date) {
         return new ArrayList<>();
     }
 
     @Override
-    List<LandReq> getLandRequirements(Integer agentId) {
+    public List<LandReq> getLandRequirements(Integer agentId) {
         List<LandReq> reqList = new ArrayList<>();
 
         LandReq landReq = new LandReq();
@@ -100,32 +101,32 @@ public class MockServerApiWrapper extends ServerApiWrapper{
     }
 
     @Override
-    List<Rent> getRents(String date) {
+    public List<Rent> getRents(String date) {
         return new ArrayList<>();
     }
 
     @Override
-    List<RentReq> getRentRequirements(Integer agentId) {
+    public List<RentReq> getRentRequirements(Integer agentId) {
         return new ArrayList<>();
     }
 
     @Override
-    List<Households> getHouseholds(String date) {
+    public List<Households> getHouseholds(String date) {
         return new ArrayList<>();
     }
 
     @Override
-    List<HouseholdsReq> getHouseholdRequirements(Integer agentId) {
+    public List<HouseholdsReq> getHouseholdRequirements(Integer agentId) {
         return new ArrayList<>();
     }
 
     @Override
-    List<Commercial> getCommercials(String date) {
+    public List<Commercial> getCommercials(String date) {
         return new ArrayList<>();
     }
 
     @Override
-    List<CommercialReq> getCommercialRequirements(Integer agentId) {
+    public List<CommercialReq> getCommercialRequirements(Integer agentId) {
         return new ArrayList<>();
     }
 }
