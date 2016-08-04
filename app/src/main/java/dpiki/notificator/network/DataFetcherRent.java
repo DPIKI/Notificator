@@ -1,6 +1,5 @@
 package dpiki.notificator.network;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -35,7 +34,7 @@ public class DataFetcherRent extends DataFetcher<Rent, RentReq> {
     @Override
     protected Requirement mapRequirement(RentReq rentReq) {
         Requirement requirement = new Requirement();
-        requirement.id = rentReq.id;
+        requirement.id = rentReq.idRequirements;
         requirement.type = getType();
         requirement.unreadRecommendations =
                 mDbUtils.getUnreadRecommendationsCount(requirement.id, requirement.type);

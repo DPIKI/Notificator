@@ -7,75 +7,75 @@ import com.google.gson.annotations.SerializedName;
  */
 public class RentReq {
 
-    @SerializedName("")
-    public Integer id;
+    @SerializedName("id_requirements")
+    public Integer idRequirements;
 
-    @SerializedName("")
-    public String typeApartment;
+    @SerializedName("id_type_apartment")
+    public Integer idTypeApartment;
 
-    @SerializedName("")
-    public String address;
+    @SerializedName("id_address")
+    public Integer idAddress;
 
-    @SerializedName("")
+    @SerializedName("cost_from")
     public Float costFrom;
 
-    @SerializedName("")
+    @SerializedName("cost_to")
     public Float costTo;
 
-    @SerializedName("")
+    @SerializedName("firm")
     public Boolean firm;
 
-    @SerializedName("")
+    @SerializedName("with_photo")
     public Boolean withPhoto;
 
-    @SerializedName("")
-    public String variant;
+    @SerializedName("id_variant")
+    public Integer idVariant;
 
-    @SerializedName("")
+    @SerializedName("floor")
     public Integer floor;
 
-    @SerializedName("")
+    @SerializedName("floor_all")
     public Integer floorAll;
 
-    @SerializedName("")
-    public Integer notFirst;
+    @SerializedName("not_first")
+    public Boolean notFirst;
 
-    @SerializedName("")
-    public Integer notLast;
+    @SerializedName("not_last")
+    public Boolean notLast;
 
-    @SerializedName("")
-    public String state;
+    @SerializedName("id_state")
+    public Integer idState;
 
-    @SerializedName("")
+    @SerializedName("room_count_from")
     public Integer roomCountFrom;
 
-    @SerializedName("")
+    @SerializedName("room_count_to")
     public Integer roomCountTo;
 
-    @SerializedName("")
+    @SerializedName("prepayment")
     public Integer prepayment;
 
-    @SerializedName("")
-    public String comfort;
+    @SerializedName("id_comfort")
+    public Integer idComfort;
 
-    @SerializedName("")
-    public String furniture;
+    @SerializedName("id_furniture")
+    public Integer idFurniture;
 
-    @SerializedName("")
-    public String yard;
+    @SerializedName("id_yard")
+    public Integer idYard;
 
-    @SerializedName("")
-    public String entry;
+    @SerializedName("id_entry")
+    public Integer idEntry;
 
-    @SerializedName("")
-    public String phone;
+    @SerializedName("id_phone")
+    public Integer idPhone;
 
-    @SerializedName("")
+    @SerializedName("date_freed_from")
     public String dateFreedFrom;
 
-    @SerializedName("")
+    @SerializedName("date_freed_to")
     public String dateFreedTo;
 
-    @SerializedName("")
-    public String rent;
+    @SerializedName("id_rent")
+    public Integer idRent;
 }
