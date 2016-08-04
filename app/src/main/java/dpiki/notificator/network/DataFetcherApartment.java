@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import dpiki.notificator.App;
+import dpiki.notificator.DatabaseUtils;
+import dpiki.notificator.PrefManager;
 import dpiki.notificator.data.Realty;
 import dpiki.notificator.data.RealtyTypes;
 import dpiki.notificator.data.Requirement;
@@ -16,9 +18,8 @@ import dpiki.notificator.network.dataobjects.ApartmentReq;
  */
 public class DataFetcherApartment extends DataFetcher<Apartment, ApartmentReq> {
 
-    public DataFetcherApartment() {
-        super(DataFetcherApartment.class.getName());
-        App.getInstance().inject(this);
+    public DataFetcherApartment(PrefManager mPrefManager, ServerApiWrapper mApi, DatabaseUtils mDbUtils) {
+        super(DataFetcherApartment.class.getName(), mPrefManager, mApi, mDbUtils);
     }
 
     @Override

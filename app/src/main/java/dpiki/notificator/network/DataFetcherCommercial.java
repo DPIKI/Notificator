@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import dpiki.notificator.App;
+import dpiki.notificator.DatabaseUtils;
+import dpiki.notificator.PrefManager;
 import dpiki.notificator.data.Realty;
 import dpiki.notificator.data.RealtyTypes;
 import dpiki.notificator.data.Requirement;
@@ -16,9 +18,8 @@ import dpiki.notificator.network.dataobjects.CommercialReq;
  */
 public class DataFetcherCommercial extends DataFetcher<Commercial, CommercialReq> {
 
-    public DataFetcherCommercial() {
-        super(DataFetcherCommercial.class.getName());
-        App.getInstance().inject(this);
+    public DataFetcherCommercial(PrefManager mPrefManager, ServerApiWrapper mApi, DatabaseUtils mDbUtils) {
+        super(DataFetcherCommercial.class.getName(), mPrefManager, mApi, mDbUtils);
     }
 
     @Override

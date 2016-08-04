@@ -7,6 +7,7 @@ import java.util.List;
 import dpiki.notificator.App;
 import dpiki.notificator.DatabaseHelper;
 import dpiki.notificator.DatabaseUtils;
+import dpiki.notificator.PrefManager;
 import dpiki.notificator.data.Realty;
 import dpiki.notificator.data.RealtyTypes;
 import dpiki.notificator.data.Requirement;
@@ -18,9 +19,8 @@ import dpiki.notificator.network.dataobjects.LandReq;
  */
 public class DataFetcherLand extends DataFetcher<Land, LandReq> {
 
-    public DataFetcherLand() {
-        super(DataFetcherLand.class.getName());
-        App.getInstance().inject(this);
+    public DataFetcherLand(PrefManager mPrefManager, ServerApiWrapper mApi, DatabaseUtils mDbUtils) {
+        super(DataFetcherCommercial.class.getName(), mPrefManager, mApi, mDbUtils);
     }
 
     @Override

@@ -44,6 +44,9 @@ public class SyncMarketService extends Service {
     @Inject
     public PrefManager mPrefManager;
 
+    @Inject
+    public ServerApiWrapper mServerApiWrapper;
+
     private Handler mBackgroundHandler;
     private PowerManager.WakeLock mWakeLock;
     private boolean mIsThreadRunning;
@@ -68,14 +71,16 @@ public class SyncMarketService extends Service {
     };
 
     Runnable fetchData = new Runnable() {
+
         @Override
         public void run() {
             List<Recommendation> recommendations = new ArrayList<>();
-            new DataFetcherRent().fetch(recommendations);
-            new DataFetcherLand().fetch(recommendations);
-            new DataFetcherApartment().fetch(recommendations);
-            new DataFetcherHousehold().fetch(recommendations);
-            new DataFetcherCommercial().fetch(recommendations);
+            new DataFetcherRent(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
+            new DataFetcherLand(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
+            new DataFetcherApartment(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
+            new DataFetcherHousehold(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
+            new DataFetcherCommercial(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
+
             sendBroadcast(new Intent(ACTION_REQUIREMENTS_UPDATED));
             handleRecommendations(recommendations);
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);

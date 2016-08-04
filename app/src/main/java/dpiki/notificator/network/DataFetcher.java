@@ -17,18 +17,15 @@ import dpiki.notificator.data.Requirement;
  */
 public abstract class DataFetcher<TRealty, TRequirement> {
     private String mClassName;
-
-    @Inject
     public PrefManager mPrefManager;
-
-    @Inject
     public ServerApiWrapper mApi;
-
-    @Inject
     public DatabaseUtils mDbUtils;
 
-    public DataFetcher(String className) {
-        this.mClassName = className;
+    public DataFetcher(String mClassName, PrefManager mPrefManager, ServerApiWrapper mApi, DatabaseUtils mDbUtils) {
+        this.mClassName = mClassName;
+        this.mPrefManager = mPrefManager;
+        this.mApi = mApi;
+        this.mDbUtils = mDbUtils;
     }
 
     public void fetch(List<Recommendation> r) {
