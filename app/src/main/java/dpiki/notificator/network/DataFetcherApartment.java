@@ -34,7 +34,7 @@ public class DataFetcherApartment extends DataFetcher<Apartment, ApartmentReq> {
     @Override
     protected Requirement mapRequirement(ApartmentReq apartmentReq) {
         Requirement retVal = new Requirement();
-        retVal.id = apartmentReq.id;
+        retVal.id = apartmentReq.idRequirements;
         retVal.type = getType();
         retVal.unreadRecommendations =
                 mDbUtils.getUnreadRecommendationsCount(retVal.id, retVal.type);

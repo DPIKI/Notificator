@@ -68,7 +68,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         Requirement requirement = mDataset.get(position);
 
-        holder.tvNameClient.setText("id = " + requirement.id);
+        holder.tvNameClient.setText("idRequirements = " + requirement.id);
         holder.tvNotifCount.setText(requirement.unreadRecommendations.toString());
         holder.tvNotifCount.setVisibility(requirement.unreadRecommendations == 0 ? View.INVISIBLE : View.VISIBLE);
         holder.rlCircle.setVisibility(requirement.unreadRecommendations == 0 ? View.INVISIBLE : View.VISIBLE);

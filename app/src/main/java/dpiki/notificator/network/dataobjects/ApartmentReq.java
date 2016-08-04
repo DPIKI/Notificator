@@ -6,72 +6,72 @@ import com.google.gson.annotations.SerializedName;
  * Created by prog1 on 02.08.2016.
  */
 public class ApartmentReq {
-    @SerializedName("")
-    public Integer id;
+    @SerializedName("id_requirements")
+    public Integer idRequirements;
 
-    @SerializedName("")
-    public String typeApartment;
+    @SerializedName("id_type_apartment")
+    public Integer idTypeApartment;
 
-    @SerializedName("")
+    @SerializedName("building_option")
     public Boolean buildingOption;
 
-    @SerializedName("")
+    @SerializedName("finished")
     public Boolean finished;
 
-    @SerializedName("")
-    public String address;
+    @SerializedName("id_address")
+    public Integer idAddress;
 
-    @SerializedName("")
+    @SerializedName("cost_from")
     public Float costFrom;
 
-    @SerializedName("")
+    @SerializedName("cost_to")
     public Float costTo;
 
-    @SerializedName("")
+    @SerializedName("firm")
     public Boolean firm;
 
-    @SerializedName("")
+    @SerializedName("with_photo")
     public Boolean withPhoto;
 
-    @SerializedName("")
-    public String variant;
+    @SerializedName("id_variant")
+    public Integer idVariant;
 
-    @SerializedName("")
-    public Double totalAreaFrom;
+    @SerializedName("total_area_from")
+    public Float totalAreaFrom;
 
-    @SerializedName("")
-    public Double totalAreaTo;
+    @SerializedName("total_area_to")
+    public Float totalAreaTo;
 
-    @SerializedName("")
-    public Double livingAreaFrom;
+    @SerializedName("living_area_from")
+    public Float livingAreaFrom;
 
-    @SerializedName("")
-    public Double livingAreaTo;
+    @SerializedName("living_area_to")
+    public Float livingAreaTo;
 
-    @SerializedName("")
-    public Double kitchenAreaFrom;
+    @SerializedName("kitchen_area_from")
+    public Float kitchenAreaFrom;
 
-    @SerializedName("")
-    public Double kitchenAreaTo;
+    @SerializedName("kitchen_area_to")
+    public Float kitchenAreaTo;
 
-    @SerializedName("")
+    @SerializedName("floor")
     public Integer floor;
 
-    @SerializedName("")
+    @SerializedName("floor_all")
     public Integer floorAll;
 
-    @SerializedName("")
-    public Integer notFirst;
+    @SerializedName("not_first")
+    public Boolean notFirst;
 
-    @SerializedName("")
-    public Integer notLast;
+    @SerializedName("not_last")
+    public Boolean notLast;
 
-    @SerializedName("")
-    public String fund;
+    @SerializedName("id_fund")
+    public Integer idFund;
 
-    @SerializedName("")
-    public String state;
+    @SerializedName("id_state")
+    public Integer idState;
 
-    @SerializedName("")
-    public String wallMaterial;
+    @SerializedName("id_wall_material")
+    public Integer idWallMaterial;
 }

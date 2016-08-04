@@ -3,7 +3,6 @@ package dpiki.notificator.network;
 import java.util.ArrayList;
 import java.util.List;
 
-import dpiki.notificator.Config;
 import dpiki.notificator.network.dataobjects.Apartment;
 import dpiki.notificator.network.dataobjects.ApartmentReq;
 import dpiki.notificator.network.dataobjects.Commercial;
@@ -33,27 +32,27 @@ public class MockServerApiWrapper extends ServerApiWrapper{
     List<ApartmentReq> getApartmentRequirements(Integer agentId) {
         List<ApartmentReq> reqList = new ArrayList<>();
         ApartmentReq apartmentReq = new ApartmentReq();
-        apartmentReq.id = 8;
+        apartmentReq.idRequirements = 8;
         reqList.add(apartmentReq);
 
         apartmentReq = new ApartmentReq();
-        apartmentReq.id = 3;
+        apartmentReq.idRequirements = 3;
         reqList.add(apartmentReq);
 
         apartmentReq = new ApartmentReq();
-        apartmentReq.id = 5;
+        apartmentReq.idRequirements = 5;
         reqList.add(apartmentReq);
 
         apartmentReq = new ApartmentReq();
-        apartmentReq.id = 1;
+        apartmentReq.idRequirements = 1;
         reqList.add(apartmentReq);
 
         apartmentReq = new ApartmentReq();
-        apartmentReq.id = 888;
+        apartmentReq.idRequirements = 888;
         reqList.add(apartmentReq);
 
         apartmentReq = new ApartmentReq();
-        apartmentReq.id = 7373;
+        apartmentReq.idRequirements = 7373;
         reqList.add(apartmentReq);
 
         return reqList;
