@@ -34,7 +34,7 @@ public class DataFetcherCommercial extends DataFetcher<Commercial, CommercialReq
     @Override
     protected Requirement mapRequirement(CommercialReq commercialReq) {
         Requirement requirement = new Requirement();
-        requirement.id = commercialReq.id;
+        requirement.id = commercialReq.idRequirements;
         requirement.type = getType();
         requirement.unreadRecommendations =
                 mDbUtils.getUnreadRecommendationsCount(requirement.id, requirement.type);

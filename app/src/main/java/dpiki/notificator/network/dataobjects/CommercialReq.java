@@ -7,72 +7,72 @@ import com.google.gson.annotations.SerializedName;
  */
 public class CommercialReq {
 
-    @SerializedName("")
-    public Integer id;
+    @SerializedName("id_requirements")
+    public Integer idRequirements;
 
-    @SerializedName("")
-    public String address;
+    @SerializedName("id_address")
+    public Integer idAddress;
 
-    @SerializedName("")
+    @SerializedName("firm")
     public Boolean firm;
 
-    @SerializedName("")
+    @SerializedName("with_photo")
     public Boolean withPhoto;
 
-    @SerializedName("")
-    public String variant;
+    @SerializedName("id_variant")
+    public Integer idVariant;
 
-    @SerializedName("")
+    @SerializedName("total_area_from")
     public Float totalAreaFrom;
 
-    @SerializedName("")
+    @SerializedName("total_area_to")
     public Float totalAreaTo;
 
-    @SerializedName("")
+    @SerializedName("hall_area_from")
     public Float hallAreaFrom;
 
-    @SerializedName("")
+    @SerializedName("hall_area_to")
     public Float hallAreaTo;
 
-    @SerializedName("")
+    @SerializedName("land_area_from")
     public Float landAreaFrom;
 
-    @SerializedName("")
+    @SerializedName("land_area_to")
     public Float landAreaTo;
 
-    @SerializedName("")
+    @SerializedName("rent_area_from")
     public Float rentAreaFrom;
 
-    @SerializedName("")
+    @SerializedName("rent_area_to")
     public Float rentAreaTo;
 
-    @SerializedName("")
+    @SerializedName("sell_price_from")
     public Float sellPriceFrom;
 
-    @SerializedName("")
+    @SerializedName("sell_price_to")
     public Float sellPriceTo;
 
-    @SerializedName("")
+    @SerializedName("sell_price_square_meter_from")
     public Float sellPriceSquareMeterFrom;
 
-    @SerializedName("")
+    @SerializedName("sell_price_square_meter_to")
     public Float sellPriceSquareMeterTo;
 
-    @SerializedName("")
+    @SerializedName("rental_price_from")
     public Float rentalPriceFrom;
 
-    @SerializedName("")
+    @SerializedName("rental_price_to")
     public Float rentalPriceTo;
 
-    @SerializedName("")
+    @SerializedName("rental_price_square_meter_from")
     public Float rentalPriceSquareMeterFrom;
 
-    @SerializedName("")
+    @SerializedName("rental_price_square_meter_to")
     public Float rentalPriceSquareMeterTo;
 
-    @SerializedName("")
-    public String liftingEquipment;
+    @SerializedName("id_lifting_equipment")
+    public Integer idLiftingEquipment;
 
-    @SerializedName("")
-    public String communication;
+    @SerializedName("id_communication")
+    public Integer idCommunication;
 }
