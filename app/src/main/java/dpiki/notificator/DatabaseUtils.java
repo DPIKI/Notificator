@@ -13,18 +13,28 @@ import java.util.TreeMap;
 
 import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.data.Requirement;
-import dpiki.notificator.network.SyncMarketService;
 
 /**
  * Created by Lenovo on 02.08.2016.
  */
 public class DatabaseUtils {
     Context mContext;
+    /**
+     * Key - type:id
+     */
+    Map<String, Integer> mCacheRecommendations;
+    public static final String TAG = "DatabaseUtils";
 
     public DatabaseUtils(Context context) {
         this.mContext = context;
+        this.mCacheRecommendations = new TreeMap<>();
     }
 
+    /**
+     * Returns all Requirement.
+     *
+     * @return List<Requirement>
+     */
     public List<Requirement> readRequirements() {
         List<Requirement> requirements = new ArrayList<>();
 
@@ -40,7 +50,8 @@ public class DatabaseUtils {
                     DatabaseHelper.FIELD_REQUIREMENTS_TYPE,
                     DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS
             };
-            Cursor cursor = db.query(DatabaseHelper.TABLE_REQUIREMENTS, columns, null, null, null, null,
+            Cursor cursor = db.query(DatabaseHelper.TABLE_REQUIREMENTS,
+                    columns, null, null, null, null,
                     DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS);
 
             if (cursor == null)
@@ -82,8 +93,9 @@ public class DatabaseUtils {
         try {
             db.delete(DatabaseHelper.TABLE_REQUIREMENTS,
                     DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'", null);
+            mCacheRecommendations = new TreeMap<>();
 
-            String query = DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = " + "'" + type + "'";
+            String condition = DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = " + "'" + type + "'";
             if (!requirements.isEmpty()) {
                 for (Requirement requirement : requirements) {
                     ContentValues values = new ContentValues();
@@ -93,15 +105,18 @@ public class DatabaseUtils {
                             requirement.unreadRecommendations);
                     db.insertWithOnConflict(DatabaseHelper.TABLE_REQUIREMENTS, "", values,
                             SQLiteDatabase.CONFLICT_IGNORE);
-                    query += " AND " + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT
+                    condition += " AND " + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT
                             + " <> " + requirement.id;
+
+                    mCacheRecommendations.put(requirement.type + ":" + requirement.id,
+                            requirement.unreadRecommendations);
                 }
-                Log.d(SyncMarketService.TAG, query);
-                query.replaceFirst("AND ", "");
+                Log.d(TAG, "DELETE FROM " + DatabaseHelper.TABLE_RECOMMENDATIONS
+                        + "WHERE" + condition);
             }
 
             // TODO: need test
-            db.delete(DatabaseHelper.TABLE_RECOMMENDATIONS, query, null);
+            db.delete(DatabaseHelper.TABLE_RECOMMENDATIONS, condition, null);
         } finally {
             db.close();
         }
@@ -145,8 +160,8 @@ public class DatabaseUtils {
                 clientValues.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, i.getValue());
                 db.update(DatabaseHelper.TABLE_REQUIREMENTS, clientValues,
                         DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
-                                DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'",
-                        null);
+                                DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'", null);
+                mCacheRecommendations.put(type + ":" + id, i.getValue());
             }
         } finally {
             db.close();
@@ -154,14 +169,55 @@ public class DatabaseUtils {
     }
 
     /**
+     * Returns id recommendations of specified typeRequirement and idRequirement.
+     *
+     * @param id - id of the requirement.
+     * @param type - type of the requirement.
+     * @return List<Integer>
+     */
+    public List<Integer> readRecommendation(Integer id, String type) {
+        List<Integer> idRecommendations = new ArrayList<>();
+
+        DatabaseHelper helper = new DatabaseHelper(mContext);
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        if (db == null)
+            return idRecommendations;
+
+        try {
+            String[] columns = { DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REALTY };
+            Cursor cursor = db.query(DatabaseHelper.TABLE_RECOMMENDATIONS, columns,
+                    DatabaseHelper.FIELD_RECOMMENDATIONS_ID + " = " + id
+                            + " AND " + DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = " + type,
+                    null, null, null, null);
+
+            if (cursor == null)
+                return idRecommendations;
+
+            try {
+                while (cursor.moveToNext()) {
+                    idRecommendations.add(cursor.getInt(0));
+                }
+            } finally {
+                cursor.close();
+            }
+        } finally {
+            db.close();
+        }
+
+        return idRecommendations;
+    }
+
+    /**
      * Clears unreadRecommendationsCount of specified requirement.
      *
-     * @param id
-     * @param type
+     * @param id - id of the requirement.
+     * @param type - type of the requirement.
      */
     public void clearUnreadRecommendationsCount(int id, String type) {
         DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
+        mCacheRecommendations.clear();
 
         if (db == null)
             return;
@@ -182,37 +238,47 @@ public class DatabaseUtils {
     /**
      * Returns unreadRecommendationsCount of specified requirement.
      *
-     * @param id
-     * @param type
+     * @return int
+     * @param id - id of the requirement.
+     * @param type - type of the requirement.
      */
     public int getUnreadRecommendationsCount(Integer id, String type) {
-        DatabaseHelper helper = new DatabaseHelper(mContext);
-        SQLiteDatabase db = helper.getWritableDatabase();
+        String key = type + ":" + id;
+        if (mCacheRecommendations.containsKey(key)) {
+            return mCacheRecommendations.get(key);
+        } else {
+            DatabaseHelper helper = new DatabaseHelper(mContext);
+            SQLiteDatabase db = helper.getWritableDatabase();
 
-        if (db == null)
-            return 0;
-
-        try {
-            Cursor c = db.query(DatabaseHelper.TABLE_REQUIREMENTS,
-                    new String[] { DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS },
-                    DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
-                    DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'",
-                    null, null, null, null);
-
-            if (c == null)
+            if (db == null)
                 return 0;
 
             try {
-                if (c.moveToNext()) {
-                    return c.getInt(0);
-                } else {
+                Cursor c = db.query(DatabaseHelper.TABLE_REQUIREMENTS,
+                        new String[]{DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS},
+                        DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
+                                DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'",
+                        null, null, null, null);
+
+                if (c == null)
                     return 0;
+
+                try {
+                    if (c.moveToNext()) {
+                        Integer unreadNotificationCount = c.getInt(0);
+                        mCacheRecommendations.put(type + ":" + id, unreadNotificationCount);
+                        return unreadNotificationCount;
+                    } else {
+                        return 0;
+                    }
+                } finally {
+                    c.close();
                 }
             } finally {
-                c.close();
+                db.close();
             }
-        } finally {
-            db.close();
         }
+
     }
+
 }
