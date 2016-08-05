@@ -1,14 +1,8 @@
 package dpiki.notificator;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +22,17 @@ import dpiki.notificator.network.dataobjects.CommercialReq;
 import dpiki.notificator.network.dataobjects.RealtyBase;
 import dpiki.notificator.network.dataobjects.RequirementBase;
 
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 /**
  * Created by Lenovo on 04.08.2016.
  */
@@ -44,22 +49,22 @@ public class DataFetcherTest {
 
         PrefManager manager = mock(PrefManager.class);
         when(manager.getLastFetchDate(adapter.getType()))
-            .thenReturn("2016-01-01 12:00:00");
+                .thenReturn("2016-01-01 12:00:00");
 
         DatabaseUtils dbUtils = mock(DatabaseUtils.class);
         final Map<Integer, Integer> unread = dataSetUnreadRecommendations1();
         when(dbUtils.getUnreadRecommendationsCount(anyInt(), anyString())).then(
                 new Answer<Integer>() {
-            @Override
-            public Integer answer(InvocationOnMock invocation) throws Throwable {
-                Integer id = (Integer) invocation.getArguments()[0];
-                if (!unread.containsKey(id)) {
-                    return 0;
-                } else {
-                    return unread.get(id);
-                }
-            }
-        });
+                    @Override
+                    public Integer answer(InvocationOnMock invocation) throws Throwable {
+                        Integer id = (Integer) invocation.getArguments()[0];
+                        if (!unread.containsKey(id)) {
+                            return 0;
+                        } else {
+                            return unread.get(id);
+                        }
+                    }
+                });
 
         DataFetcher fetcher = new DataFetcher(manager, dbUtils);
         List<Recommendation> r = fetcher.fetch(adapter);
@@ -70,6 +75,7 @@ public class DataFetcherTest {
 
         assertThat(r, new ListMatcher<>(dataSetRecommendations1(adapter.getType())));
     }
+
     @Test
     public void testReceiveBothRealtyAndRequirementsCommercial() {
         DataFetcherCommercialAdapter adapter = mock(DataFetcherCommercialAdapter.class);
@@ -79,22 +85,22 @@ public class DataFetcherTest {
 
         PrefManager manager = mock(PrefManager.class);
         when(manager.getLastFetchDate(adapter.getType()))
-            .thenReturn("2016-01-01 12:00:00");
+                .thenReturn("2016-01-01 12:00:00");
 
         DatabaseUtils dbUtils = mock(DatabaseUtils.class);
         final Map<Integer, Integer> unread = dataSetUnreadRecommendations2();
         when(dbUtils.getUnreadRecommendationsCount(anyInt(), anyString())).then(
                 new Answer<Integer>() {
-            @Override
-            public Integer answer(InvocationOnMock invocation) throws Throwable {
-                Integer id = (Integer) invocation.getArguments()[0];
-                if (!unread.containsKey(id)) {
-                    return 0;
-                } else {
-                    return unread.get(id);
-                }
-            }
-        });
+                    @Override
+                    public Integer answer(InvocationOnMock invocation) throws Throwable {
+                        Integer id = (Integer) invocation.getArguments()[0];
+                        if (!unread.containsKey(id)) {
+                            return 0;
+                        } else {
+                            return unread.get(id);
+                        }
+                    }
+                });
 
         DataFetcher fetcher = new DataFetcher(manager, dbUtils);
         List<Recommendation> r = fetcher.fetch(adapter);
@@ -118,22 +124,22 @@ public class DataFetcherTest {
 
         PrefManager manager = mock(PrefManager.class);
         when(manager.getLastFetchDate(adapter.getType()))
-            .thenReturn("2016-01-01 12:00:00");
+                .thenReturn("2016-01-01 12:00:00");
 
         DatabaseUtils dbUtils = mock(DatabaseUtils.class);
         final Map<Integer, Integer> unread = dataSetUnreadRecommendations1();
         when(dbUtils.getUnreadRecommendationsCount(anyInt(), anyString())).then(
                 new Answer<Integer>() {
-            @Override
-            public Integer answer(InvocationOnMock invocation) throws Throwable {
-                Integer id = (Integer) invocation.getArguments()[0];
-                if (!unread.containsKey(id)) {
-                    return 0;
-                } else {
-                    return unread.get(id);
-                }
-            }
-        });
+                    @Override
+                    public Integer answer(InvocationOnMock invocation) throws Throwable {
+                        Integer id = (Integer) invocation.getArguments()[0];
+                        if (!unread.containsKey(id)) {
+                            return 0;
+                        } else {
+                            return unread.get(id);
+                        }
+                    }
+                });
 
         DataFetcher fetcher = new DataFetcher(manager, dbUtils);
         List<Recommendation> r = fetcher.fetch(adapter);
@@ -153,7 +159,7 @@ public class DataFetcherTest {
 
         PrefManager manager = mock(PrefManager.class);
         when(manager.getLastFetchDate(adapter.getType()))
-            .thenReturn("2016-01-01 12:00:00");
+                .thenReturn("2016-01-01 12:00:00");
 
         DatabaseUtils dbUtils = mock(DatabaseUtils.class);
 
@@ -170,6 +176,7 @@ public class DataFetcherTest {
 
     /**
      * DataSet 1
+     *
      * @return
      */
 
@@ -212,6 +219,7 @@ public class DataFetcherTest {
 
     /**
      * DataSet 2
+     *
      * @param <T>
      */
 
@@ -267,42 +275,4 @@ public class DataFetcherTest {
         return retVal;
     }
 
-    class ListMatcher<T> extends BaseMatcher<List<T>> {
-        List<T> toCompare;
-
-        public ListMatcher(List<T> toCompare) {
-            this.toCompare = toCompare;
-        }
-
-        @Override
-        public boolean matches(Object item) {
-            if (!(item instanceof List))
-                return false;
-
-
-            List<T> testList = (List<T>) item;
-            if (testList.size() != toCompare.size())
-                return false;
-
-            for (T i : testList) {
-                boolean flag = false;
-                for (T j : toCompare) {
-                    if (j.equals(i)) {
-                        flag = true;
-                        break;
-                    }
-                }
-
-                if (!flag)
-                    return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public void describeTo(Description description) {
-            description.appendText(toCompare.toString());
-        }
-    }
 }

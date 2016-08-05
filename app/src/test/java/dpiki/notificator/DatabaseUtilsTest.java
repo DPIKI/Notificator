@@ -1,7 +1,9 @@
 package dpiki.notificator;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +48,10 @@ public class DatabaseUtilsTest {
         databaseUtils.updateRequirements(listRequirements1, RealtyTypes.TYPE_APARTMENT);
 
         List<Integer> list = databaseUtils.readRecommendation(0, RealtyTypes.TYPE_APARTMENT);
+        Assert.assertThat(list, new ListMatcher<>(new ArrayList<Integer>()));
+
+        list = databaseUtils.readRecommendation(1, RealtyTypes.TYPE_APARTMENT);
+        Assert.assertThat(list, new ListMatcher<Integer>(new ArrayList<Integer>()));
 
     }
 

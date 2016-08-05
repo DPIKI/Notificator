@@ -188,8 +188,8 @@ public class DatabaseUtils {
         try {
             String[] columns = { DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REALTY };
             Cursor cursor = db.query(DatabaseHelper.TABLE_RECOMMENDATIONS, columns,
-                    DatabaseHelper.FIELD_RECOMMENDATIONS_ID + " = " + id
-                            + " AND " + DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = " + type,
+                    DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT + " = " + id + " AND "
+                            + DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = '" + type + "'",
                     null, null, null, null);
 
             if (cursor == null)
