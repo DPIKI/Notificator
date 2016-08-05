@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -75,12 +74,12 @@ public class SyncMarketService extends Service {
         @Override
         public void run() {
             List<Recommendation> recommendations = new ArrayList<>();
-            new DataFetcherRent(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
-            new DataFetcherLand(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
-            new DataFetcherApartment(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
-            new DataFetcherHousehold(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
-            new DataFetcherCommercial(mPrefManager, mServerApiWrapper, mDatabaseUtils).fetch(recommendations);
-
+            DataFetcher fetcher = new DataFetcher(mPrefManager, mDatabaseUtils);
+            recommendations.addAll(fetcher.fetch(new DataFetcherApartmentAdapter(mServerApiWrapper)));
+            recommendations.addAll(fetcher.fetch(new DataFetcherHouseholdAdapter(mServerApiWrapper)));
+            recommendations.addAll(fetcher.fetch(new DataFetcherLandAdapter(mServerApiWrapper)));
+            recommendations.addAll(fetcher.fetch(new DataFetcherRentAdapter(mServerApiWrapper)));
+            recommendations.addAll(fetcher.fetch(new DataFetcherCommercialAdapter(mServerApiWrapper)));
             sendBroadcast(new Intent(ACTION_REQUIREMENTS_UPDATED));
             handleRecommendations(recommendations);
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);

@@ -15,6 +15,14 @@ public class Commercial extends RealtyBase {
         super(id, createdAt);
     }
 
+    @Override
+    public boolean isMatch(RequirementBase reqBase) {
+        if (!(reqBase instanceof CommercialReq))
+            return false;
+        CommercialReq requirement = (CommercialReq) reqBase;
+        return true;
+    }
+
     @SerializedName("")
     public String materialWall;
 

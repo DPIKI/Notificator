@@ -1,6 +1,7 @@
 package dpiki.notificator.network;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import dpiki.notificator.network.dataobjects.Apartment;
@@ -11,8 +12,10 @@ import dpiki.notificator.network.dataobjects.Households;
 import dpiki.notificator.network.dataobjects.HouseholdsReq;
 import dpiki.notificator.network.dataobjects.Land;
 import dpiki.notificator.network.dataobjects.LandReq;
+import dpiki.notificator.network.dataobjects.RealtyBase;
 import dpiki.notificator.network.dataobjects.Rent;
 import dpiki.notificator.network.dataobjects.RentReq;
+import dpiki.notificator.network.dataobjects.RequirementBase;
 import dpiki.notificator.network.dataobjects.ServerResponse;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -202,5 +205,6 @@ public class ServerApiWrapper {
             return null;
 
         return response.body().response;
+
     }
 }

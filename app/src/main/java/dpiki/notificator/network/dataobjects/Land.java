@@ -15,6 +15,14 @@ public class Land extends RealtyBase {
         super(id, createdAt);
     }
 
+    @Override
+    public boolean isMatch(RequirementBase reqBase) {
+       if (!(reqBase instanceof LandReq))
+          return false;
+       LandReq requirement = (LandReq) reqBase;
+       return true;
+    }
+
     @SerializedName("")
     public Integer stead;
 

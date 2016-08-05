@@ -15,6 +15,14 @@ public class Households extends RealtyBase {
         super(id, createdAt);
     }
 
+    @Override
+    public boolean isMatch(RequirementBase reqBase) {
+        if (!(reqBase instanceof HouseholdsReq))
+            return false;
+        HouseholdsReq requirement = (HouseholdsReq) reqBase;
+        return true;
+    }
+
     @SerializedName("")
     public String materialWall;
 

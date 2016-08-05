@@ -15,6 +15,14 @@ public class Rent extends RealtyBase {
         super(id, createdAt);
     }
 
+    @Override
+    public boolean isMatch(RequirementBase reqBase) {
+        if (!(reqBase instanceof RentReq))
+            return false;
+        RentReq requirement = (RentReq) reqBase;
+        return true;
+    }
+
     @SerializedName("")
     public String typeApartment;
 

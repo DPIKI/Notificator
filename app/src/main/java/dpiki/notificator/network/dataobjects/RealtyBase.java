@@ -16,5 +16,5 @@ public abstract class RealtyBase {
         this.createdAt = createdAt;
     }
 
-    protected abstract boolean isMatch()
+    public abstract boolean isMatch(RequirementBase reqBase);
 }

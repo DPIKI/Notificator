@@ -2,14 +2,14 @@ package dpiki.notificator.network;
 
 import java.util.List;
 
-import dpiki.notificator.data.Realty;
-import dpiki.notificator.data.Requirement;
+import dpiki.notificator.network.dataobjects.RealtyBase;
+import dpiki.notificator.network.dataobjects.RequirementBase;
 
 /**
  * Created by Lenovo on 05.08.2016.
  */
-public interface DataFetcherAdapter<TRealty, TRequirement> {
-    List<TRequirement> getRequirements(Integer agentId);
-    List<TRealty> getRealty(String date);
+public interface DataFetcherAdapter {
+    List<RequirementBase> getRequirements(Integer agentId);
+    List<RealtyBase> getRealty(String date);
     String getType();
 }
