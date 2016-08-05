@@ -79,5 +79,4 @@ public class DataFetcher {
         retVal.type = type;
         return retVal;
     }
-
 }

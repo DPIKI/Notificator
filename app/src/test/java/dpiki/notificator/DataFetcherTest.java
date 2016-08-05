@@ -2,17 +2,22 @@ package dpiki.notificator;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import dpiki.notificator.data.RealtyTypes;
+import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.DataFetcher;
 import dpiki.notificator.network.DataFetcherApartmentAdapter;
@@ -30,42 +35,47 @@ public class DataFetcherTest {
 
     @Test
     public void firstTest() {
-        DataFetcherApartmentAdapter adapter = Mockito.mock(DataFetcherApartmentAdapter.class);
-        Mockito.when(adapter.getRealty("2016-01-01 12:00:00")).thenReturn(dataSetApartment1());
-        Mockito.when(adapter.getRequirements(Matchers.anyInt())).thenReturn(dataSetApartmentReq1());
-        Mockito.when(adapter.getType()).thenCallRealMethod();
+    }
 
-        PrefManager manager = Mockito.mock(PrefManager.class);
-        Mockito.when(manager.getLastFetchDate(adapter.getType()))
-            .thenReturn("2016-01-01 12:00:00");
+    void testFetcher(String dateRead, String dateWrite1, String dateWrite2,
+                     List<RequirementBase> reqBases, List<RealtyBase> realtyBases,
+                     List<Requirement> requirement, List<Recommendation> recommendations,
+                     final Map<Integer, Integer> unread) {
+        DataFetcherApartmentAdapter adapter = mock(DataFetcherApartmentAdapter.class);
+        when(adapter.getRealty(dateRead)).thenReturn(realtyBases);
+        when(adapter.getRequirements(anyInt())).thenReturn(reqBases);
+        when(adapter.getType()).thenCallRealMethod();
 
-        final Map<Integer, Integer> unreadRecommendations = dataSetUnreadRecommendations1();
-        DatabaseUtils dbUtils = Mockito.mock(DatabaseUtils.class);
-        Mockito.when(dbUtils.getUnreadRecommendationsCount(0, adapter.getType())).then(new Answer<Integer>() {
+        PrefManager manager = mock(PrefManager.class);
+        when(manager.getLastFetchDate(adapter.getType()))
+            .thenReturn(dateRead);
+
+        DatabaseUtils dbUtils = mock(DatabaseUtils.class);
+        when(dbUtils.getUnreadRecommendationsCount(anyInt(), anyString())).then(
+                new Answer<Integer>() {
             @Override
             public Integer answer(InvocationOnMock invocation) throws Throwable {
                 Integer id = (Integer) invocation.getArguments()[0];
-                if (!unreadRecommendations.containsKey(id)) {
+                if (!unread.containsKey(id)) {
                     return 0;
                 } else {
-                    return unreadRecommendations.get(id);
+                    return unread.get(id);
                 }
             }
         });
 
         DataFetcher fetcher = new DataFetcher(manager, dbUtils);
-        fetcher.fetch(adapter);
+        List<Recommendation> r = fetcher.fetch(adapter);
 
-        Mockito.verify(manager).putLastFetchDate(Matchers.eq(adapter.getType()), Matchers.eq("2016-01-01 12:00:00"));
-        Mockito.verify(manager).putLastFetchDate(Matchers.eq(adapter.getType()), Matchers.eq("2016-01-01 12:30:00"));
-        Mockito.verify(dbUtils).updateRequirements(Matchers.argThat(new ListMatcher<>(dataSetRequirement1(adapter.getType()))), Matchers.eq(adapter.getType()));
+        verify(manager).putLastFetchDate(eq(adapter.getType()), eq("2016-01-01 12:00:00"));
+        verify(manager).putLastFetchDate(eq(adapter.getType()), eq("2016-01-01 12:30:00"));
+        verify(dbUtils).updateRequirements(argThat(new ListMatcher<>(dataSetRequirement1(adapter.getType()))), eq(RealtyTypes.TYPE_APARTMENT));
+
+        assertThat(r, new ListMatcher<Recommendation>())
     }
 
     List<RequirementBase> dataSetApartmentReq1() {
         List<RequirementBase> retVal = new ArrayList<>();
-        retVal.add(new ApartmentReq(0));
-        retVal.add(new ApartmentReq(2));
-        retVal.add(new ApartmentReq(1));
         retVal.add(new ApartmentReq(3));
         retVal.add(new ApartmentReq(4));
         return retVal;
@@ -73,9 +83,6 @@ public class DataFetcherTest {
 
     List<Requirement> dataSetRequirement1(String type) {
         List<Requirement> retVal = new ArrayList<>();
-        retVal.add(new Requirement(0, type, 0));
-        retVal.add(new Requirement(1, type, 1));
-        retVal.add(new Requirement(2, type, 2));
         retVal.add(new Requirement(3, type, 3));
         retVal.add(new Requirement(4, type, 4));
         return retVal;
@@ -83,9 +90,6 @@ public class DataFetcherTest {
 
     Map<Integer, Integer> dataSetUnreadRecommendations1() {
         Map<Integer, Integer> retVal = new TreeMap<>();
-        retVal.put(0, 0);
-        retVal.put(1, 1);
-        retVal.put(2, 2);
         retVal.put(3, 3);
         retVal.put(4, 4);
         return retVal;
@@ -94,13 +98,14 @@ public class DataFetcherTest {
     List<RealtyBase> dataSetApartment1() {
         List<RealtyBase> retVal = new ArrayList<>();
         retVal.add(new Apartment(0, "2016-01-01 12:01:00"));
-        retVal.add(new Apartment(1, "2016-01-01 12:02:00"));
-        retVal.add(new Apartment(2, "2016-01-01 12:04:00"));
-        retVal.add(new Apartment(3, "2016-01-01 12:03:00"));
-        retVal.add(new Apartment(4, "2016-01-01 12:06:00"));
-        retVal.add(new Apartment(5, "2016-01-01 12:06:00"));
         retVal.add(new Apartment(6, "2016-01-01 12:30:00"));
         return retVal;
+    }
+
+    List<Recommendation> dataSetRecommendations1(String type) {
+        List<Recommendation> retVal = new ArrayList<>();
+        retVal.add(new Recommendation(new Requirement(3, type, 3), ))
+
     }
 
     class ListMatcher<T> extends BaseMatcher<List<T>> {
