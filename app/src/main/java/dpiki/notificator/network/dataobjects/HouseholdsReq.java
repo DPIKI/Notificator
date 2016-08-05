@@ -5,10 +5,15 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by prog1 on 02.08.2016.
  */
-public class HouseholdsReq {
+public class HouseholdsReq extends RequirementBase {
 
-    @SerializedName("id_requirements")
-    public Integer idRequirements;
+    public HouseholdsReq() {
+
+    }
+
+    public HouseholdsReq(Integer idRequirements) {
+        super(idRequirements);
+    }
 
     @SerializedName("id_address")
     public Integer idAddress;

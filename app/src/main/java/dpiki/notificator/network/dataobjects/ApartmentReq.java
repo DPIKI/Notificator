@@ -5,9 +5,11 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by prog1 on 02.08.2016.
  */
-public class ApartmentReq {
-    @SerializedName("id_requirements")
-    public Integer idRequirements;
+public class ApartmentReq extends RequirementBase {
+
+    public ApartmentReq(Integer idRequirements) {
+        super(idRequirements);
+    }
 
     @SerializedName("id_type_apartment")
     public Integer idTypeApartment;
