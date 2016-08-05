@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import dpiki.notificator.App;
 import dpiki.notificator.DatabaseUtils;
 import dpiki.notificator.PrefManager;
 import dpiki.notificator.data.Realty;
@@ -16,24 +15,27 @@ import dpiki.notificator.network.dataobjects.ApartmentReq;
 /**
  * Created by Lenovo on 02.08.2016.
  */
-public class DataFetcherApartment extends DataFetcher<Apartment, ApartmentReq> {
+public class DataFetcherApartment implements DataFetcherAdapter<Apartment, ApartmentReq> {
+    private ServerApiWrapper mWrapper;
+    private DatabaseUtils mDbUtils;
 
-    public DataFetcherApartment(PrefManager mPrefManager, ServerApiWrapper mApi, DatabaseUtils mDbUtils) {
-        super(DataFetcherApartment.class.getName(), mPrefManager, mApi, mDbUtils);
+    public DataFetcherApartment(ServerApiWrapper wrapper, DatabaseUtils utils) {
+        this.mWrapper = wrapper;
+        this.mDbUtils = utils;
     }
 
     @Override
-    protected List<ApartmentReq> getRequirements(Integer agentId) {
-        return mApi.getApartmentRequirements(agentId);
+    public List<ApartmentReq> getRequirements(Integer agentId) {
+        return mWrapper.getApartmentRequirements(agentId);
     }
 
     @Override
-    protected List<Apartment> getRealty(String date) {
-        return mApi.getApartments(date);
+    public List<Apartment> getRealty(String date) {
+        return mWrapper.getApartments(date);
     }
 
     @Override
-    protected Requirement mapRequirement(ApartmentReq apartmentReq) {
+    public Requirement mapRequirement(ApartmentReq apartmentReq) {
         Requirement retVal = new Requirement();
         retVal.id = apartmentReq.idRequirements;
         retVal.type = getType();
@@ -43,7 +45,7 @@ public class DataFetcherApartment extends DataFetcher<Apartment, ApartmentReq> {
     }
 
     @Override
-    protected Realty mapRealty(Apartment apartment) {
+    public Realty mapRealty(Apartment apartment) {
         Realty retVal = new Realty();
         retVal.id = apartment.id;
         retVal.type = getType();
@@ -51,17 +53,17 @@ public class DataFetcherApartment extends DataFetcher<Apartment, ApartmentReq> {
     }
 
     @Override
-    protected String getType() {
+    public String getType() {
         return RealtyTypes.TYPE_APARTMENT;
     }
 
     @Override
-    protected boolean isMatch(ApartmentReq apartmentReq, Apartment apartment) {
+    public boolean isMatch(ApartmentReq apartmentReq, Apartment apartment) {
         return true;
     }
 
     @Override
-    protected String newLastDate(List<Apartment> realty) {
+    public String newLastDate(List<Apartment> realty) {
         Apartment lastAdded = Collections.max(realty, new Comparator<Apartment>() {
             @Override
             public int compare(Apartment lhs, Apartment rhs) {

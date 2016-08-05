@@ -6,6 +6,13 @@ import com.google.gson.annotations.SerializedName;
  * Created by prog1 on 02.08.2016.
  */
 public class ApartmentReq {
+    public ApartmentReq() {
+    }
+
+    public ApartmentReq(int id) {
+        this.idRequirements = id;
+    }
+
     @SerializedName("id_requirements")
     public Integer idRequirements;
 

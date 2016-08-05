@@ -5,10 +5,15 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by Lenovo on 01.08.2016.
  */
-public class Land {
+public class Land extends RealtyBase {
 
-    @SerializedName("")
-    public Integer id;
+    public Land() {
+
+    }
+
+    public Land(Integer id, String createdAt) {
+        super(id, createdAt);
+    }
 
     @SerializedName("")
     public Integer stead;
@@ -42,7 +47,4 @@ public class Land {
 
     @SerializedName("")
     public String srcLayout;
-
-    @SerializedName("")
-    public String createdAt;
 }

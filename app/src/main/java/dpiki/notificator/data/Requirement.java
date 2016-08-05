@@ -8,6 +8,16 @@ public class Requirement {
     public String type;
     public Integer unreadRecommendations;
 
+    public Requirement() {
+
+    }
+
+    public Requirement(Integer id, String type, Integer unreadRecommendations) {
+        this.id = id;
+        this.type = type;
+        this.unreadRecommendations = unreadRecommendations;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof Requirement) {

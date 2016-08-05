@@ -5,10 +5,15 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by prog1 on 01.08.2016.
  */
-public class Apartment {
+public class Apartment extends RealtyBase {
 
-    @SerializedName("")
-    public Integer id;
+    public Apartment() {
+
+    }
+
+    public Apartment(Integer id, String createdAt) {
+        super(id, createdAt);
+    }
 
     @SerializedName("")
     public String typeApartment;
@@ -111,7 +116,4 @@ public class Apartment {
 
     @SerializedName("")
     public String srcLayout;
-
-    @SerializedName("")
-    public String createdAt;
 }
