@@ -95,8 +95,8 @@ public class SyncMarketService extends Service {
             Set<Integer> uniqueProducts = new TreeSet<>();
 
             for (Recommendation i : r) {
-                uniqueClients.add(i.realty.type + i.realty.id);
-                uniqueProducts.add(i.requirement.id);
+                uniqueClients.add(i.type + i.idRequirement);
+                uniqueProducts.add(i.idRealty);
             }
 
             Notification n = new NotificationCompat.Builder(SyncMarketService.this)

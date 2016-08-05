@@ -139,14 +139,15 @@ public class DatabaseUtils {
             Map<String, Integer> newRecommendationsCount = new TreeMap<>();
             for (Recommendation rec : recommendations) {
                 ContentValues recValues = new ContentValues();
-                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT, rec.requirement.id);
-                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REALTY, rec.realty.id);
-                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE, rec.requirement.type);
+                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT, rec.idRequirement);
+                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REALTY, rec.idRealty);
+                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE, rec.type);
                 db.insert(DatabaseHelper.TABLE_RECOMMENDATIONS, null, recValues);
 
-                String requirementString = rec.requirement.type + ":" + rec.requirement.id;
+                String requirementString = rec.type + ":" + rec.idRequirement;
                 if (!newRecommendationsCount.containsKey(requirementString)) {
-                    newRecommendationsCount.put(requirementString, rec.requirement.unreadRecommendations);
+                    newRecommendationsCount.put(requirementString,
+                            getUnreadRecommendationsCount(rec.idRealty, rec.type));
                 }
                 newRecommendationsCount.put(requirementString,
                         newRecommendationsCount.get(requirementString) + 1);

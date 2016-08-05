@@ -55,9 +55,7 @@ public class DataFetcher {
         for (RequirementBase i : tRequirements) {
             for (RealtyBase j : realty) {
                 if (j.isMatch(i)) {
-                    Requirement req = mapRequirement(i, adapter.getType());
-                    Realty realEstate = mapRealty(j, adapter.getType());
-                    retVal.add(new Recommendation(req, realEstate));
+                    retVal.add(new Recommendation(i.idRequirements, j.id, adapter.getType()));
                 }
             }
         }
