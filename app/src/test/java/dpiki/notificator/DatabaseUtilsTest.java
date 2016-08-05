@@ -46,7 +46,7 @@ public class DatabaseUtilsTest {
         databaseUtils.updateRequirements(listRequirements1, RealtyTypes.TYPE_APARTMENT);
 
         List<Integer> list = databaseUtils.readRecommendation(0, RealtyTypes.TYPE_APARTMENT);
-        
+
     }
 
     public List<Requirement> dataSetRequirements1(){
