@@ -36,8 +36,6 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Lenovo on 04.08.2016.
  */
-//@RunWith(RobolectricGradleTestRunner.class)
-//@Config(constants = BuildConfig.class, sdk = 21, manifest = "src/main/AndroidManifest.xml")
 public class DataFetcherTest {
 
     @Test

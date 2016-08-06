@@ -108,6 +108,7 @@ public class DatabaseUtils {
                     condition += " AND " + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT
                             + " <> " + requirement.id;
 
+                    // TODO : cache updates only with requirements with one type
                     mCacheRecommendations.put(requirement.type + ":" + requirement.id,
                             requirement.unreadRecommendations);
                 }

@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS = "unread_recommendations";
     public static final String QUERY_CREATE_TABLE_REQUIREMENTS =
             "CREATE TABLE " + TABLE_REQUIREMENTS + " ("
-                    + FIELD_REQUIREMENTS_ID + " INTEGER PRIMARY KEY, "
+                    + FIELD_REQUIREMENTS_ID + " INTEGER, "
                     + FIELD_REQUIREMENTS_FIO + " TEXT, "
                     + FIELD_REQUIREMENTS_TYPE + " TEXT, "
                     + FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS + " INTEGER);";
