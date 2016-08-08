@@ -1,5 +1,6 @@
 package dpiki.notificator.network.dataobjects;
 
+import com.google.gson.LongSerializationPolicy;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -18,14 +19,8 @@ public class ApartmentReq extends RequirementBase {
     @SerializedName("id_type_apartment")
     public Integer idTypeApartment;
 
-    @SerializedName("building_option")
-    public Boolean buildingOption;
-
-    @SerializedName("finished")
-    public Boolean finished;
-
     @SerializedName("id_address")
-    public Integer idAddress;
+    public Long idAddress;
 
     @SerializedName("cost_from")
     public Float costFrom;
@@ -38,9 +33,6 @@ public class ApartmentReq extends RequirementBase {
 
     @SerializedName("with_photo")
     public Boolean withPhoto;
-
-    @SerializedName("id_variant")
-    public Integer idVariant;
 
     @SerializedName("total_area_from")
     public Float totalAreaFrom;

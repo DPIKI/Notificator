@@ -29,7 +29,17 @@ public class Commercial extends RealtyBase {
     public boolean isMatch(RequirementBase reqBase) {
         if (!(reqBase instanceof CommercialReq))
             return false;
-        CommercialReq requirement = (CommercialReq) reqBase;
+        CommercialReq req = (CommercialReq) reqBase;
+
+        if (!req.idAddress.equals(this.idAddress))
+            return false;
+        if (!req.firm.equals(this.firm)) //TODO: necessarily?
+            return false;
+        if (req.withPhoto && !this.withPhoto)
+            return false;
+        if (!(req.totalAreaFrom <= this.totalArea && req.totalAreaTo >= this.totalArea))
+            return false;
+
         return true;
     }
 }
