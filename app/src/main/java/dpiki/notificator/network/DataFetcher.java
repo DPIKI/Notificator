@@ -26,11 +26,12 @@ public class DataFetcher {
         this.mDbUtils = mDbUtils;
     }
 
-    public List<Recommendation> fetch(DataFetcherAdapter adapter) {
-        List<Recommendation> retVal = new ArrayList<>();
+    public void fetchRealty() {
 
-        String strLastDate = mPrefManager.getLastFetchDate(adapter.getType());
-        mPrefManager.putLastFetchDate(adapter.getType(), strLastDate);
+    }
+
+    public List<Recommendation> fetchRequirements(DataFetcherAdapter adapter) {
+        List<Recommendation> retVal = new ArrayList<>();
 
         List<RequirementBase> tRequirements = adapter.getRequirements(0); // TODO: replace with real agentId
         if (tRequirements == null || tRequirements.isEmpty())

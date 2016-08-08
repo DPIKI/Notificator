@@ -6,18 +6,16 @@ package dpiki.notificator.network.dataobjects;
 public abstract class RealtyBase {
     public Long id;
     public Long idAddress;
-    public Boolean firm;
-    public Boolean withPhoto;
+    public Integer firm;
 
     public RealtyBase() {
 
     }
 
-    public RealtyBase(Long id, Long idAddress, Boolean firm, Boolean withPhoto) {
+    public RealtyBase(Long id, Long idAddress, Integer firm) {
         this.id = id;
         this.idAddress = idAddress;
         this.firm = firm;
-        this.withPhoto = withPhoto;
     }
 
     public abstract boolean isMatch(RequirementBase reqBase);

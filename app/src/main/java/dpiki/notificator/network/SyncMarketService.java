@@ -75,11 +75,11 @@ public class SyncMarketService extends Service {
         public void run() {
             List<Recommendation> recommendations = new ArrayList<>();
             DataFetcher fetcher = new DataFetcher(mPrefManager, mDatabaseUtils);
-            recommendations.addAll(fetcher.fetch(new DataFetcherApartmentAdapter(mServerApiWrapper)));
-            recommendations.addAll(fetcher.fetch(new DataFetcherHouseholdAdapter(mServerApiWrapper)));
-            recommendations.addAll(fetcher.fetch(new DataFetcherLandAdapter(mServerApiWrapper)));
-            recommendations.addAll(fetcher.fetch(new DataFetcherRentAdapter(mServerApiWrapper)));
-            recommendations.addAll(fetcher.fetch(new DataFetcherCommercialAdapter(mServerApiWrapper)));
+            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherApartmentAdapter(mServerApiWrapper)));
+            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherHouseholdAdapter(mServerApiWrapper)));
+            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherLandAdapter(mServerApiWrapper)));
+            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherRentAdapter(mServerApiWrapper)));
+            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherCommercialAdapter(mServerApiWrapper)));
             sendBroadcast(new Intent(ACTION_REQUIREMENTS_UPDATED));
             handleRecommendations(recommendations);
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);

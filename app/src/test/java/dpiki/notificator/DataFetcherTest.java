@@ -65,7 +65,7 @@ public class DataFetcherTest {
                 });
 
         DataFetcher fetcher = new DataFetcher(manager, dbUtils);
-        List<Recommendation> r = fetcher.fetch(adapter);
+        List<Recommendation> r = fetcher.fetchRequirements(adapter);
 
         verify(manager).putLastFetchDate(eq(adapter.getType()), eq("2016-01-01 12:00:00"));
         verify(manager).putLastFetchDate(eq(adapter.getType()), eq("2016-01-01 12:30:00"));
@@ -101,7 +101,7 @@ public class DataFetcherTest {
                 });
 
         DataFetcher fetcher = new DataFetcher(manager, dbUtils);
-        List<Recommendation> r = fetcher.fetch(adapter);
+        List<Recommendation> r = fetcher.fetchRequirements(adapter);
 
         String adapterType = adapter.getType();
         verify(manager).putLastFetchDate(eq(adapter.getType()), eq("2016-01-01 12:00:00"));
@@ -140,7 +140,7 @@ public class DataFetcherTest {
                 });
 
         DataFetcher fetcher = new DataFetcher(manager, dbUtils);
-        List<Recommendation> r = fetcher.fetch(adapter);
+        List<Recommendation> r = fetcher.fetchRequirements(adapter);
 
         verify(manager).putLastFetchDate(eq(adapter.getType()), eq("2016-01-01 12:00:00"));
         verify(dbUtils).updateRequirements(argThat(new ListMatcher<>(dataSetRequirement1(adapter.getType()))), eq(RealtyTypes.TYPE_APARTMENT));
@@ -162,7 +162,7 @@ public class DataFetcherTest {
         DatabaseUtils dbUtils = mock(DatabaseUtils.class);
 
         DataFetcher fetcher = new DataFetcher(manager, dbUtils);
-        List<Recommendation> r = fetcher.fetch(adapter);
+        List<Recommendation> r = fetcher.fetchRequirements(adapter);
 
         verify(manager).putLastFetchDate(eq(adapter.getType()), eq("2016-01-01 12:00:00"));
         verify(dbUtils, never()).updateRequirements(anyList(), anyString());

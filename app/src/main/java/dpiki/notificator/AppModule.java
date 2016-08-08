@@ -39,11 +39,11 @@ public class AppModule {
     @Provides
     @NonNull
     @Singleton
-    ServerApiWrapper provideServerApi() {
+    ServerApiWrapper provideServerApi(PrefManager prefManager) {
         if(Config.isDebug()){
             return new MockServerApiWrapper();
         } else {
-            return new ServerApiWrapper();
+            return new ServerApiWrapper(prefManager);
         }
     }
 
