@@ -6,13 +6,22 @@ import com.google.gson.annotations.SerializedName;
  * Created by Lenovo on 01.08.2016.
  */
 public class Land extends RealtyBase {
+    public Integer stead;
+    public Double cost;
+    public Double totalArea;
+    public Double livingArea;
+    public Double kitchenArea;
+    public Long idState;
+    public Long idWallMaterial;
+    public Long idEntry;
+    public Long idFurniture;
 
     public Land() {
 
     }
 
-    public Land(Integer id, String createdAt) {
-        super(id, createdAt);
+    public Land(Long id, Long idAddress, Boolean firm, Boolean withPhoto) {
+        super(id, idAddress, firm, withPhoto);
     }
 
     @Override
@@ -22,37 +31,4 @@ public class Land extends RealtyBase {
        LandReq requirement = (LandReq) reqBase;
        return true;
     }
-
-    @SerializedName("")
-    public Integer stead;
-
-    @SerializedName("")
-    public Integer steadX;
-
-    @SerializedName("")
-    public Integer steadY;
-
-    @SerializedName("")
-    public Integer isLuxury;
-
-    @SerializedName("")
-    public Integer isGarden;
-
-    @SerializedName("")
-    public Double cost;
-
-    @SerializedName("")
-    public Double specialPrice;
-
-    @SerializedName("")
-    public String conditions;
-
-    @SerializedName("")
-    public String materialWindow;
-
-    @SerializedName("")
-    public String typeSewerage;
-
-    @SerializedName("")
-    public String srcLayout;
 }

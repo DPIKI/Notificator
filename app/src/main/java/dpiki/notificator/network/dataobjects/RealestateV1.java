@@ -31,9 +31,7 @@ public class RealestateV1 {
     public Integer roomCount;
     public Integer prepayment;
     public Long idComfort;
-    public Long idFurniture;
     public Long idYard;
-    public Long idEntry;
     public Boolean hasPhone;
     public String dateFreed; // TODO : where?
     public Long[] idRent;
