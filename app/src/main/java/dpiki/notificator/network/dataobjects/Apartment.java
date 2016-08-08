@@ -7,14 +7,6 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Apartment extends RealtyBase {
 
-    public Apartment() {
-
-    }
-
-    public Apartment(Integer id, String createdAt) {
-        super(id, createdAt);
-    }
-
     @Override
     public boolean isMatch(RequirementBase reqBase) {
         if (!(reqBase instanceof ApartmentReq))
@@ -23,105 +15,24 @@ public class Apartment extends RealtyBase {
         return true;
     }
 
-    @SerializedName("")
-    public String typeApartment;
+    public Integer idTypeApartment;
 
-    @SerializedName("")
-    public Integer floor;
-
-    @SerializedName("")
-    public Integer floorAll;
-
-    @SerializedName("")
-    public String typeWallMaterialApartment;
-
-    @SerializedName("")
-    public String state;
-
-    @SerializedName("")
     public Double cost;
 
-    @SerializedName("")
-    public String typeFund;
-
-    @SerializedName("")
-    public Integer isBuildFinished; // 0 or 1
-
-    @SerializedName("")
-    public String typeBuildFinished; // if isBuildFinished == true
-
-    @SerializedName("")
-    public String dateBuildFinished;
-
-    @SerializedName("")
-    public Integer isLuxury; // 0 or 1
-
-    @SerializedName("")
     public Double totalArea;
 
-    @SerializedName("")
     public Double livingArea;
 
-    @SerializedName("")
     public Double kitchenArea;
 
-    @SerializedName("")
-    public Float specialPrice;
+    public Integer floor;
 
-    @SerializedName("")
-    public Float terms;
+    public Integer floorAll;
 
-    @SerializedName("")
-    public String conditions;
+    public Integer idFund;
 
-    @SerializedName("")
-    public Integer isUrgentSale; // 0 or 1
+    public Integer idState;
 
-    @SerializedName("")
-    public Integer isMortgage; // 0 or 1
+    public Integer idWallMaterial;
 
-    @SerializedName("")
-    public String materialFloor;
-
-    @SerializedName("")
-    public String materialWindow;
-
-    @SerializedName("")
-    public String typeBathroom;
-
-    @SerializedName("")
-    public String typeComfort;
-
-    @SerializedName("")
-    public String typeHotWater;
-
-    @SerializedName("")
-    public String typeHeating;
-
-    @SerializedName("")
-    public String typeLoggia;
-
-    @SerializedName("")
-    public String typeBalcon;
-
-    @SerializedName("")
-    public Integer hasElevator;
-
-    @SerializedName("")
-    public String typeCeiling;
-
-    @SerializedName("")
-    public String isAdjacent;
-
-    @SerializedName("")
-    public String renting;
-
-    @SerializedName("")
-    public String construction;
-
-    @SerializedName("")
-    public String getTypeLocation;
-
-    @SerializedName("")
-    public String srcLayout;
 }
