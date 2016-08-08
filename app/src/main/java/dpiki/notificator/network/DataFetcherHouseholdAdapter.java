@@ -29,14 +29,20 @@ public class DataFetcherHouseholdAdapter implements DataFetcherAdapter {
     @Override
     public List<RequirementBase> getRequirements(Integer agentId) {
         List<RequirementBase> retVal = new ArrayList<>();
-        retVal.addAll(mWrapper.getHouseholdRequirements(agentId));
+        List<HouseholdsReq> r = mWrapper.getHouseholdRequirements(agentId);
+        if (r != null) {
+            retVal.addAll(r);
+        }
         return retVal;
     }
 
     @Override
     public List<RealtyBase> getRealty(String date) {
         List<RealtyBase> retVal = new ArrayList<>();
-        retVal.addAll(mWrapper.getHouseholds(date));
+        List<Households> r = mWrapper.getHouseholds(date);
+        if (r != null) {
+            retVal.addAll(r);
+        }
         return retVal;
     }
 

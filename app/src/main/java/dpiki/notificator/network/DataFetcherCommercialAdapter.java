@@ -29,14 +29,20 @@ public class DataFetcherCommercialAdapter implements DataFetcherAdapter {
     @Override
     public List<RequirementBase> getRequirements(Integer agentId) {
         List<RequirementBase> retVal = new ArrayList<>();
-        retVal.addAll(mWrapper.getCommercialRequirements(agentId));
+        List<CommercialReq> r = mWrapper.getCommercialRequirements(agentId);
+        if (r != null) {
+            retVal.addAll(r);
+        }
         return retVal;
     }
 
     @Override
     public List<RealtyBase> getRealty(String date) {
         List<RealtyBase> retVal = new ArrayList<>();
-        retVal.addAll(mWrapper.getCommercials(date));
+        List<Commercial> r = mWrapper.getCommercials(date);
+        if (r != null) {
+            retVal.addAll(r);
+        }
         return retVal;
     }
 

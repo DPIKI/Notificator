@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dpiki.notificator.data.RealtyTypes;
+import dpiki.notificator.network.dataobjects.Apartment;
+import dpiki.notificator.network.dataobjects.ApartmentReq;
 import dpiki.notificator.network.dataobjects.RealtyBase;
 import dpiki.notificator.network.dataobjects.RequirementBase;
 
@@ -20,14 +22,20 @@ public class DataFetcherApartmentAdapter implements DataFetcherAdapter {
     @Override
     public List<RequirementBase> getRequirements(Integer agentId) {
         List<RequirementBase> retVal = new ArrayList<>();
-        retVal.addAll(mWrapper.getApartmentRequirements(agentId));
+        List<ApartmentReq> r = mWrapper.getApartmentRequirements(agentId);
+        if (r != null) {
+            retVal.addAll(r);
+        }
         return retVal;
     }
 
     @Override
     public List<RealtyBase> getRealty(String date) {
         List<RealtyBase> retVal = new ArrayList<>();
-        retVal.addAll(mWrapper.getApartments(date));
+        List<Apartment> r = mWrapper.getApartments(date);
+        if (r != null) {
+            retVal.addAll(r);
+        }
         return retVal;
     }
 

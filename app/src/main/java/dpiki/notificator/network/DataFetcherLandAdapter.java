@@ -30,14 +30,20 @@ public class DataFetcherLandAdapter implements DataFetcherAdapter {
     @Override
     public List<RequirementBase> getRequirements(Integer agentId) {
         List<RequirementBase> retVal = new ArrayList<>();
-        retVal.addAll(mWrapper.getLandRequirements(agentId));
+        List<LandReq> r = mWrapper.getLandRequirements(agentId);
+        if (r != null) {
+            retVal.addAll(r);
+        }
         return retVal;
     }
 
     @Override
     public List<RealtyBase> getRealty(String date) {
         List<RealtyBase> retVal = new ArrayList<>();
-        retVal.addAll(mWrapper.getLands(date));
+        List<Land> r = mWrapper.getLands(date);
+        if (r != null) {
+            retVal.addAll(r);
+        }
         return retVal;
     }
 
