@@ -1,11 +1,8 @@
 package dpiki.notificator;
 
-import android.content.Context;
-
 import javax.inject.Singleton;
 
 import dagger.Component;
-import dpiki.notificator.network.ServerApiWrapper;
 import dpiki.notificator.network.SyncMarketService;
 import dpiki.notificator.ui.MainActivity;
 

@@ -60,7 +60,7 @@ public class DatabaseUtils {
             try {
                 while (cursor.moveToNext()) {
                     Requirement requirement = new Requirement();
-                    requirement.id = cursor.getInt(0);
+                    requirement.id = cursor.getLong(0);
                     requirement.type = cursor.getString(1);
                     requirement.unreadRecommendations = cursor.getInt(2);
                     requirements.add(requirement);
@@ -81,9 +81,8 @@ public class DatabaseUtils {
      * to removed requirements.
      *
      * @param requirements - all requirements are same type.
-     * @param type         - type of the requirements.
      */
-    public void updateRequirements(List<Requirement> requirements, String type) {
+    public void updateRequirements(List<Requirement> requirements) {
         DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -91,11 +90,10 @@ public class DatabaseUtils {
             return;
 
         try {
-            db.delete(DatabaseHelper.TABLE_REQUIREMENTS,
-                    DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'", null);
+            db.delete(DatabaseHelper.TABLE_REQUIREMENTS, null, null);
             mCacheRecommendations = new TreeMap<>();
 
-            String condition = DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = " + "'" + type + "'";
+            String condition = "NOT(";
             if (!requirements.isEmpty()) {
                 for (Requirement requirement : requirements) {
                     ContentValues values = new ContentValues();
@@ -105,10 +103,10 @@ public class DatabaseUtils {
                             requirement.unreadRecommendations);
                     db.insertWithOnConflict(DatabaseHelper.TABLE_REQUIREMENTS, "", values,
                             SQLiteDatabase.CONFLICT_IGNORE);
-                    condition += " AND " + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT
-                            + " <> " + requirement.id;
+                    condition += " OR ("
+                            + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT + " = " + requirement.id + " AND "
+                            + DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = " + requirement.type + ")";
 
-                    // TODO : cache updates only with requirements with one type
                     mCacheRecommendations.put(requirement.type + ":" + requirement.id,
                             requirement.unreadRecommendations);
                 }
@@ -117,7 +115,7 @@ public class DatabaseUtils {
             }
 
             // TODO: need test
-            db.delete(DatabaseHelper.TABLE_RECOMMENDATIONS, condition, null);
+            db.delete(DatabaseHelper.TABLE_RECOMMENDATIONS, condition.replaceFirst(" OR ", ""), null);
         } finally {
             db.close();
         }
@@ -177,7 +175,7 @@ public class DatabaseUtils {
      * @param type - type of the requirement.
      * @return List<Integer>
      */
-    public List<Integer> readRecommendation(Integer id, String type) {
+    public List<Integer> readRecommendation(Long id, String type) {
         List<Integer> idRecommendations = new ArrayList<>();
 
         DatabaseHelper helper = new DatabaseHelper(mContext);
@@ -244,7 +242,7 @@ public class DatabaseUtils {
      * @param id - id of the requirement.
      * @param type - type of the requirement.
      */
-    public int getUnreadRecommendationsCount(Integer id, String type) {
+    public int getUnreadRecommendationsCount(Long id, String type) {
         String key = type + ":" + id;
         if (mCacheRecommendations.containsKey(key)) {
             return mCacheRecommendations.get(key);

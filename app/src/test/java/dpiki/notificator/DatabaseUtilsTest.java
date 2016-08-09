@@ -42,35 +42,27 @@ public class DatabaseUtilsTest {
         List<Requirement> listRequirements1 = dataSetRequirements1();
         List<Requirement> listRequirements2 = dataSetRequirements2();
 
-        databaseUtils.updateRequirements(listRequirements1, RealtyTypes.TYPE_APARTMENT);
+        databaseUtils.updateRequirements(listRequirements1);
         Assert.assertThat(databaseUtils.readRequirements(), new ListMatcher<>(listRequirements1));
 
-        databaseUtils.updateRequirements(listRequirements2, RealtyTypes.TYPE_RENT);
-        List<Requirement> ref = new ArrayList<>();
-        ref.addAll(listRequirements1);
-        ref.addAll(listRequirements2);
-        Assert.assertThat(databaseUtils.readRequirements(), new ListMatcher<>(ref));
-
-        databaseUtils.updateRequirements(new ArrayList<Requirement>(), RealtyTypes.TYPE_APARTMENT);
+        databaseUtils.updateRequirements(listRequirements2);
         Assert.assertThat(databaseUtils.readRequirements(), new ListMatcher<>(listRequirements2));
 
-        databaseUtils.updateRequirements(new ArrayList<Requirement>(), RealtyTypes.TYPE_RENT);
+        databaseUtils.updateRequirements(new ArrayList<Requirement>());
         Assert.assertThat(databaseUtils.readRequirements(), new ListMatcher<>(new ArrayList<Requirement>()));
     }
 
     @Test
     public void testRecommendationsAreAddedSuccessfully() {
         List<Requirement> requirements1 = dataSetRequirements1();
-        List<Requirement> requirements2 = dataSetRequirements2();
-        databaseUtils.updateRequirements(requirements1, RealtyTypes.TYPE_APARTMENT);
-        databaseUtils.updateRequirements(requirements2, RealtyTypes.TYPE_RENT);
+        databaseUtils.updateRequirements(requirements1);
 
         databaseUtils.addRecommendations(dataSetRecommendations1());
-        Assert.assertThat(databaseUtils.readRecommendation(0, RealtyTypes.TYPE_APARTMENT),
+        Assert.assertThat(databaseUtils.readRecommendation(0L, RealtyTypes.TYPE_APARTMENT),
                 new ListMatcher<>(map(dataSetRecommendationsId0TApartment())));
-        Assert.assertThat(databaseUtils.readRecommendation(1, RealtyTypes.TYPE_APARTMENT),
+        Assert.assertThat(databaseUtils.readRecommendation(1L, RealtyTypes.TYPE_APARTMENT),
                 new ListMatcher<>(map(dataSetRecommendationsId1TApartment())));
-        Assert.assertThat(databaseUtils.readRecommendation(2, RealtyTypes.TYPE_RENT),
+        Assert.assertThat(databaseUtils.readRecommendation(2L, RealtyTypes.TYPE_RENT),
                 new ListMatcher<>(map(dataSetRecommendationsId2TApartment())));
 
         requirements1.get(0).unreadRecommendations += 3;

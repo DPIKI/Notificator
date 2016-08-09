@@ -23,5 +23,5 @@ public interface ServerApi {
     Call<List<SearchNearContainer>> getRealEstates(@Query("date") String date);
 
     @GET("get_requirements.php")
-    Call<List<RequirementBase>> getRequirements(@Query("agent_id") Integer agentId);
+    Call<List<RequirementBase>> getRequirements(@Query("agent_id") Long agentId);
 }

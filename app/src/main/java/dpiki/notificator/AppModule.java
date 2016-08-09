@@ -7,8 +7,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import dpiki.notificator.network.MockServerApiWrapper;
-import dpiki.notificator.network.ServerApiWrapper;
+import dpiki.notificator.network.DataFetcher;
+import dpiki.notificator.network.MockDataFetcher;
 
 /**
  * Created by Lenovo on 02.08.2016.
@@ -39,11 +39,11 @@ public class AppModule {
     @Provides
     @NonNull
     @Singleton
-    ServerApiWrapper provideServerApi(PrefManager prefManager) {
+    DataFetcher provideServerApi(PrefManager prefManager, DatabaseUtils utils) {
         if(Config.isDebug()){
-            return new MockServerApiWrapper();
+            return new MockDataFetcher(prefManager, utils);
         } else {
-            return new ServerApiWrapper(prefManager);
+            return new DataFetcher(prefManager, utils);
         }
     }
 

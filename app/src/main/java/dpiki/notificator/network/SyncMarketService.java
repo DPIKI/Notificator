@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,7 +34,6 @@ public class SyncMarketService extends Service {
     public static final String ACTION_START_RECEIVE = "dpiki.notificator.action.START_RECEIVE";
     public static final String ACTION_STOP_RECEIVE = "dpiki.notificator.action.STOP_RECEIVE";
     public static final String ACTION_NEW_RECOMMENDATIONS = "dpiki.notificator.action.NEW_RECOMMENDATION";
-    public static final String ACTION_REQUIREMENTS_UPDATED = "dpiki.notificator.action.REQUIREMENTS_UPDATED";
 
     @Inject
     public DatabaseUtils mDatabaseUtils;
@@ -44,7 +42,7 @@ public class SyncMarketService extends Service {
     public PrefManager mPrefManager;
 
     @Inject
-    public ServerApiWrapper mServerApiWrapper;
+    public DataFetcher mDataFetcher;
 
     private Handler mBackgroundHandler;
     private PowerManager.WakeLock mWakeLock;
@@ -73,14 +71,7 @@ public class SyncMarketService extends Service {
 
         @Override
         public void run() {
-            List<Recommendation> recommendations = new ArrayList<>();
-            DataFetcher fetcher = new DataFetcher(mPrefManager, mDatabaseUtils);
-            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherApartmentAdapter(mServerApiWrapper)));
-            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherHouseholdAdapter(mServerApiWrapper)));
-            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherLandAdapter(mServerApiWrapper)));
-            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherRentAdapter(mServerApiWrapper)));
-            recommendations.addAll(fetcher.fetchRequirements(new DataFetcherCommercialAdapter(mServerApiWrapper)));
-            sendBroadcast(new Intent(ACTION_REQUIREMENTS_UPDATED));
+            List<Recommendation> recommendations = mDataFetcher.fetch();
             handleRecommendations(recommendations);
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);
         }
@@ -92,7 +83,7 @@ public class SyncMarketService extends Service {
             mDatabaseUtils.addRecommendations(r);
 
             Set<String> uniqueClients = new TreeSet<>();
-            Set<Integer> uniqueProducts = new TreeSet<>();
+            Set<Long> uniqueProducts = new TreeSet<>();
 
             for (Recommendation i : r) {
                 uniqueClients.add(i.type + i.idRequirement);
