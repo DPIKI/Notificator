@@ -20,15 +20,69 @@ public class Land extends RealtyBase {
 
     }
 
-    public Land(Long id, Long idAddress, Boolean firm, Boolean withPhoto) {
-        super(id, idAddress, firm, withPhoto);
+    public Land(Long id, Long idAddress, Boolean firm) {
+        super(id, idAddress, firm);
     }
 
     @Override
     public boolean isMatch(RequirementBase reqBase) {
-       if (!(reqBase instanceof LandReq))
-          return false;
-       LandReq requirement = (LandReq) reqBase;
-       return true;
+        if (!(reqBase instanceof LandReq))
+            return false;
+        LandReq req = (LandReq) reqBase;
+
+        if (req.idAddress != null && this.idAddress != null
+                && !req.idAddress.equals(this.idAddress))
+            return false;
+        if (req.firm != null && this.firm != null
+                && !req.firm.equals(this.firm))
+            return false;
+
+        if (req.steadFrom != null && this.stead != null
+                && req.steadFrom > this.stead)
+            return false;
+        if (req.steadTo != null && this.stead != null
+                && req.steadTo < this.stead)
+            return false;
+
+        if (req.costFrom != null && this.cost != null
+                && req.costFrom > this.cost)
+            return false;
+        if (req.costTo != null && this.cost != null
+                && req.costTo < this.cost)
+            return false;
+
+        if (req.totalAreaFrom != null && this.totalArea != null
+                && req.totalAreaFrom > this.totalArea)
+            return false;
+        if (req.totalAreaTo != null && this.totalArea != null
+                && req.totalAreaTo < this.totalArea)
+            return false;
+        if (req.livingAreaFrom != null && this.livingArea != null
+                && req.livingAreaFrom > this.livingArea)
+            return false;
+        if (req.livingAreaTo != null && this.livingArea != null
+                && req.livingAreaTo < this.livingArea)
+            return false;
+        if (req.kitchenAreaFrom != null && this.kitchenArea != null
+                && req.kitchenAreaFrom > this.kitchenArea)
+            return false;
+        if (req.kitchenAreaTo != null && this.kitchenArea != null
+                && req.kitchenAreaTo < this.kitchenArea)
+            return false;
+
+        if (req.idState != null && this.idState != null
+                && !req.idState.equals(this.idState))
+            return false;
+        if (req.idWallMaterial != null && this.idWallMaterial != null
+                && !req.idWallMaterial.equals(this.idWallMaterial))
+            return false;
+        if (req.idEntry != null && this.idEntry != null
+                && !req.idEntry.equals(this.idEntry))
+            return false;
+        if (req.idFurniture != null && this.idFurniture != null
+                && !req.idFurniture.equals(this.idFurniture))
+            return false;
+
+        return true;
     }
 }

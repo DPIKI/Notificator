@@ -7,6 +7,24 @@ import com.google.gson.annotations.SerializedName;
  * Created by prog1 on 02.08.2016.
  */
 public class ApartmentReq extends RequirementBase {
+    public Long idTypeApartment;
+    public Long idAddress;
+    public Float costFrom;
+    public Float costTo;
+    public Boolean firm;
+    public Float totalAreaFrom;
+    public Float totalAreaTo;
+    public Float livingAreaFrom;
+    public Float livingAreaTo;
+    public Float kitchenAreaFrom;
+    public Float kitchenAreaTo;
+    public Integer floor;
+    public Integer floorAll;
+    public Boolean notFirst;
+    public Boolean notLast;
+    public Integer idFund;
+    public Integer idState;
+    public Integer idWallMaterial;
 
     public ApartmentReq() {
 
@@ -16,60 +34,4 @@ public class ApartmentReq extends RequirementBase {
         super(idRequirements);
     }
 
-    @SerializedName("id_type_apartment")
-    public Integer idTypeApartment;
-
-    @SerializedName("id_address")
-    public Long idAddress;
-
-    @SerializedName("cost_from")
-    public Float costFrom;
-
-    @SerializedName("cost_to")
-    public Float costTo;
-
-    @SerializedName("firm")
-    public Boolean firm;
-
-    @SerializedName("with_photo")
-    public Boolean withPhoto;
-
-    @SerializedName("total_area_from")
-    public Float totalAreaFrom;
-
-    @SerializedName("total_area_to")
-    public Float totalAreaTo;
-
-    @SerializedName("living_area_from")
-    public Float livingAreaFrom;
-
-    @SerializedName("living_area_to")
-    public Float livingAreaTo;
-
-    @SerializedName("kitchen_area_from")
-    public Float kitchenAreaFrom;
-
-    @SerializedName("kitchen_area_to")
-    public Float kitchenAreaTo;
-
-    @SerializedName("floor")
-    public Integer floor;
-
-    @SerializedName("floor_all")
-    public Integer floorAll;
-
-    @SerializedName("not_first")
-    public Boolean notFirst;
-
-    @SerializedName("not_last")
-    public Boolean notLast;
-
-    @SerializedName("id_fund")
-    public Integer idFund;
-
-    @SerializedName("id_state")
-    public Integer idState;
-
-    @SerializedName("id_wall_material")
-    public Integer idWallMaterial;
 }
