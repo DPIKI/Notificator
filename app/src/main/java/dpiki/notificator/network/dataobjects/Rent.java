@@ -21,14 +21,14 @@ public class Rent extends RealtyBase {
     public Long idYard;
     public Integer hasPhone;
     public String dateFreed;
-    public Long[] idRents;
+    public Long[] idRent;
     public Long idEntry;
 
     public Rent() {
 
     }
 
-    public Rent(Long id, Long idAddress, Boolean firm) {
+    public Rent(Long id, Long idAddress, Integer firm) {
         super(id, idAddress, firm);
     }
 
@@ -136,8 +136,8 @@ public class Rent extends RealtyBase {
                 return false;
         }
 
-        if (req.idRent != null && this.idRents != null
-                && !Arrays.asList(this.idRents).contains(req.idRent))
+        if (req.idRent != null && this.idRent != null
+                && !Arrays.asList(this.idRent).contains(req.idRent))
             return false;
         if (req.idEntry != null && this.idEntry != null
                 && !req.idEntry.equals(this.idEntry))

@@ -5,22 +5,22 @@ package dpiki.notificator.network.dataobjects;
  * Created by prog1 on 01.08.2016.
  */
 public class Apartment extends RealtyBase {
-    public Integer idTypeApartment;
+    public Long idTypeApartment;
     public Double cost;
     public Double totalArea;
     public Double livingArea;
     public Double kitchenArea;
     public Integer floor;
     public Integer floorAll;
-    public Integer idFund;
-    public Integer idState;
-    public Integer idWallMaterial;
+    public Long idFund;
+    public Long idState;
+    public Long idWallMaterial;
 
     public Apartment() {
 
     }
 
-    public Apartment(Long id, Long idAddress, Boolean firm) {
+    public Apartment(Long id, Long idAddress, Integer firm) {
         super(id, idAddress, firm);
     }
 

@@ -4,15 +4,15 @@ package dpiki.notificator.data;
  * Created by Lenovo on 26.07.2016.
  */
 public class Recommendation {
-    public Integer idRequirement;
-    public Integer idRealty;
+    public Long idRequirement;
+    public Long idRealty;
     public String type;
 
     public Recommendation() {
 
     }
 
-    public Recommendation(Integer idRequirement, Integer idRealty, String type) {
+    public Recommendation(Long idRequirement, Long idRealty, String type) {
         this.idRequirement = idRequirement;
         this.idRealty = idRealty;
         this.type = type;

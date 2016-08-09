@@ -7,14 +7,14 @@ import com.google.gson.annotations.SerializedName;
  */
 public class RentReq extends RequirementBase {
     public Long idTypeApartment;
-    public Integer idAddress;
+    public Long idAddress;
     public Float costFrom;
     public Float costTo;
-    public Boolean firm;
+    public Integer firm;
     public Integer floor;
     public Integer floorAll;
-    public Boolean notFirst;
-    public Boolean notLast;
+    public Integer notFirst;
+    public Integer notLast;
     public Long idState;
     public Integer roomCountFrom;
     public Integer roomCountTo;
@@ -32,7 +32,7 @@ public class RentReq extends RequirementBase {
 
     }
 
-    public RentReq(Integer idRequirements) {
+    public RentReq(Long idRequirements) {
         super(idRequirements);
     }
 

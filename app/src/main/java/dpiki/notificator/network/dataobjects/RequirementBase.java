@@ -7,14 +7,13 @@ import com.google.gson.annotations.SerializedName;
  */
 public class RequirementBase {
 
-    @SerializedName("id_requirements")
-    public Integer idRequirements;
+    public Long idRequirements;
 
     public RequirementBase(){
 
     }
 
-    public RequirementBase(Integer idRequirements) {
+    public RequirementBase(Long idRequirements) {
         this.idRequirements = idRequirements;
     }
 }

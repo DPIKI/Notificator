@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class CommercialReq extends RequirementBase {
     public Long idAddress;
-    public Boolean firm;
+    public Integer firm;
     public Float totalAreaFrom;
     public Float totalAreaTo;
     public Float hallAreaFrom;
@@ -31,7 +31,7 @@ public class CommercialReq extends RequirementBase {
 
     }
 
-    public CommercialReq(Integer idRequirements) {
+    public CommercialReq(Long idRequirements) {
         super(idRequirements);
     }
 

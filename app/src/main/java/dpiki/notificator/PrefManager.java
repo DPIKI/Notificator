@@ -20,18 +20,17 @@ public class PrefManager {
         this.mContext = context;
     }
 
-    public String getLastFetchDate(String realtyName) {
+    public String getLastFetchDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Date currDate = new Date();
         SharedPreferences pref = mContext.getSharedPreferences(PREF_NAME, 0);
-        return pref.getString(PREF_KEY_LAST_FETCH_DATE + realtyName,
-                sdf.format(currDate));
+        return pref.getString(PREF_KEY_LAST_FETCH_DATE, sdf.format(currDate));
     }
 
-    public void putLastFetchDate(String realtyName, String lastFetchDate) {
+    public void putLastFetchDate(String lastFetchDate) {
         SharedPreferences pref = mContext.getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString(PREF_KEY_LAST_FETCH_DATE + realtyName, lastFetchDate);
+        editor.putString(PREF_KEY_LAST_FETCH_DATE, lastFetchDate);
         editor.apply();
     }
 

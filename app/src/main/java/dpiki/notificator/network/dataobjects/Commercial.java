@@ -26,7 +26,7 @@ public class Commercial extends RealtyBase {
 
     }
 
-    public Commercial(Long id, Long idAddress, Boolean firm) {
+    public Commercial(Long id, Long idAddress, Integer firm) {
         super(id, idAddress, firm);
     }
 

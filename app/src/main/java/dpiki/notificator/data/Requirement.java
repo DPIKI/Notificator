@@ -4,7 +4,7 @@ package dpiki.notificator.data;
  * Created by Lenovo on 02.08.2016.
  */
 public class Requirement {
-    public Integer id;
+    public Long id;
     public String type;
     public Integer unreadRecommendations;
 
@@ -12,7 +12,7 @@ public class Requirement {
 
     }
 
-    public Requirement(Integer id, String type, Integer unreadRecommendations) {
+    public Requirement(Long id, String type, Integer unreadRecommendations) {
         this.id = id;
         this.type = type;
         this.unreadRecommendations = unreadRecommendations;

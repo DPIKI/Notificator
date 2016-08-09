@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import dpiki.notificator.network.MockServerApiWrapper;
+import dpiki.notificator.network.DataFetcher;
 import dpiki.notificator.network.ServerApiWrapper;
 
 /**
@@ -39,12 +39,15 @@ public class AppModule {
     @Provides
     @NonNull
     @Singleton
-    ServerApiWrapper provideServerApi() {
-        if(Config.isDebug()){
-            return new MockServerApiWrapper();
-        } else {
-            return new ServerApiWrapper();
-        }
+    DataFetcher provideDataFetcher(PrefManager prefManager, DatabaseUtils utils, ServerApiWrapper wrapper) {
+        return new DataFetcher(prefManager, utils, wrapper);
+    }
+
+    @Provides
+    @NonNull
+    @Singleton
+    ServerApiWrapper provideServerApiWrapper() {
+        return new ServerApiWrapper();
     }
 
     @Provides

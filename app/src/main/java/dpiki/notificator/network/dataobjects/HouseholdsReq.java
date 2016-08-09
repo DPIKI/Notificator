@@ -9,7 +9,7 @@ public class HouseholdsReq extends RequirementBase {
     public Long idAddress;
     public Float costFrom;
     public Float costTo;
-    public Boolean firm;
+    public Integer firm;
     public Float totalAreaFrom;
     public Float totalAreaTo;
     public Float livingAreaFrom;
@@ -27,7 +27,7 @@ public class HouseholdsReq extends RequirementBase {
 
     }
 
-    public HouseholdsReq(Integer idRequirements) {
+    public HouseholdsReq(Long idRequirements) {
         super(idRequirements);
     }
 

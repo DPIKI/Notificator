@@ -20,7 +20,7 @@ public class Land extends RealtyBase {
 
     }
 
-    public Land(Long id, Long idAddress, Boolean firm) {
+    public Land(Long id, Long idAddress, Integer firm) {
         super(id, idAddress, firm);
     }
 

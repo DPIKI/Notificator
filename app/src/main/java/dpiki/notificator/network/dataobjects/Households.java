@@ -20,7 +20,7 @@ public class Households extends RealtyBase {
 
     }
 
-    public Households(Long id, Long idAddress, Boolean firm) {
+    public Households(Long id, Long idAddress, Integer firm) {
         super(id, idAddress, firm);
     }
 
