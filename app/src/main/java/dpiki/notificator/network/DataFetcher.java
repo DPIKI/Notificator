@@ -260,10 +260,10 @@ public class DataFetcher {
                 return retVal;
         }
 
-        if (requirements == null || requirements.isEmpty())
+        if (requirements.isEmpty())
             return retVal;
 
-        if (realty == null || realty.isEmpty())
+        if (realty.isEmpty())
             return retVal;
 
         for (RequirementBase i : requirements) {

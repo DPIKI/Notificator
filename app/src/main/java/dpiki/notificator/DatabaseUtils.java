@@ -214,7 +214,7 @@ public class DatabaseUtils {
      * @param id - id of the requirement.
      * @param type - type of the requirement.
      */
-    public void clearUnreadRecommendationsCount(int id, String type) {
+    public void clearUnreadRecommendationsCount(Long id, String type) {
         DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
         mCacheRecommendations.clear();
