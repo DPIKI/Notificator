@@ -20,8 +20,8 @@ public class Households extends RealtyBase {
 
     }
 
-    public Households(Long id, Long idAddress, Boolean firm, Boolean withPhoto) {
-        super(id, idAddress, firm, withPhoto);
+    public Households(Long id, Long idAddress, Integer firm) {
+        super(id, idAddress, firm);
     }
 
     @Override

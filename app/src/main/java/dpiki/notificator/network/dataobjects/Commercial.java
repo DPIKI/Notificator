@@ -21,8 +21,8 @@ public class Commercial extends RealtyBase {
 
     }
 
-    public Commercial(Long id, Long idAddress, Boolean firm, Boolean withPhoto) {
-        super(id, idAddress, firm, withPhoto);
+    public Commercial(Long id, Long idAddress, Integer firm) {
+        super(id, idAddress, firm);
     }
 
     @Override

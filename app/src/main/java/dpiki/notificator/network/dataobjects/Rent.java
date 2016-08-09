@@ -15,7 +15,7 @@ public class Rent extends RealtyBase {
     public Long idComfort;
     public Long idFurniture;
     public Long idYard;
-    public Boolean hasPhone;
+    public Integer hasPhone;
     public String dateFreed; // TODO : where?
     public Long[] idRent;
 
@@ -23,8 +23,8 @@ public class Rent extends RealtyBase {
 
     }
 
-    public Rent(Long id, Long idAddress, Boolean firm, Boolean withPhoto) {
-        super(id, idAddress, firm, withPhoto);
+    public Rent(Long id, Long idAddress, Integer firm) {
+        super(id, idAddress, firm);
     }
 
     @Override
