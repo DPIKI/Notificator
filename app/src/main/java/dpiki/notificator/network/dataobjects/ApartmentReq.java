@@ -11,7 +11,7 @@ public class ApartmentReq extends RequirementBase {
 
     }
 
-    public ApartmentReq(Integer idRequirements) {
+    public ApartmentReq(Long idRequirements) {
         super(idRequirements);
     }
 

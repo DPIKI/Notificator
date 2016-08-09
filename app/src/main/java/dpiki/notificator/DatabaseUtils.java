@@ -175,8 +175,8 @@ public class DatabaseUtils {
      * @param type - type of the requirement.
      * @return List<Integer>
      */
-    public List<Integer> readRecommendation(Long id, String type) {
-        List<Integer> idRecommendations = new ArrayList<>();
+    public List<Long> readRecommendation(Long id, String type) {
+        List<Long> idRecommendations = new ArrayList<>();
 
         DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -196,7 +196,7 @@ public class DatabaseUtils {
 
             try {
                 while (cursor.moveToNext()) {
-                    idRecommendations.add(cursor.getInt(0));
+                    idRecommendations.add(cursor.getLong(0));
                 }
             } finally {
                 cursor.close();

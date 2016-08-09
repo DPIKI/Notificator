@@ -173,6 +173,8 @@ public class DataFetcher {
         retVal.idYard = container.getRealestateType().getIdYard();
         retVal.roomCount = container.getRealestateType().getRoomCount();
         retVal.prepayment = container.getRealestateType().getPrepayment();
+        retVal.idEntry = container.getRealestateType().getIdEntry();
+        retVal.idTypeApartment = container.getRealestateType().getIdTypeApartment();
         //retVal.dateFreed = container.getRealestateType().getDatePuttingHouse(); //TODO: check
 
         TypeRent[] foo = container.getRealestateType().getTypeRent();

@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Lenovo on 01.08.2016.
  */
 public class Rent extends RealtyBase {
+    public Long idTypeApartment;
     public Double cost;
     public Integer floor;
     public Integer floorAll;
@@ -18,6 +19,7 @@ public class Rent extends RealtyBase {
     public Integer hasPhone;
     public String dateFreed; // TODO : where?
     public Long[] idRent;
+    public Long idEntry;
 
     public Rent() {
 
