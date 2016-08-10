@@ -14,6 +14,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import junit.framework.Assert;
+
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -119,6 +121,11 @@ public class SyncMarketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Assert.assertEquals("\nYou need to use it everywhere : \n"
+                        + "SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\")\n"
+                        + "HH - upperCase : 24h\n"
+                        + "hh - lowerCase : 12h\n",
+                true,false);
         App.getInstance().inject(this);
         rerunNotificationService(this);
     }

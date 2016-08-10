@@ -1,38 +1,39 @@
 package dpiki.notificator;
 
-import static org.junit.Assert.*;
-import static dpiki.notificator.TestUtils.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import dpiki.notificator.network.dataobjects.Apartment;
 import dpiki.notificator.network.dataobjects.ApartmentReq;
 
+import static dpiki.notificator.TestUtils.testId;
+import static dpiki.notificator.TestUtils.testInteger;
+import static dpiki.notificator.TestUtils.testRange;
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by User on 09.08.2016.
  */
 public class IsMatchApartment {
-    Apartment a;
-    ApartmentReq ar;
+    Apartment a = new Apartment();
+    ApartmentReq ar = new ApartmentReq();
 
-    @Before
-    public void before() {
-        a = new Apartment();
+    @Test
+    public void testSuccessMatch() {
         a.id = 0L;
+        a.idAddress = 1L;
         a.firm = 1;
+        a.idTypeApartment = 1L;
         a.cost = 100.0;
+        a.totalArea = 30.0;
+        a.livingArea = 20.0;
+        a.kitchenArea = 10.0;
         a.floor = 1;
         a.floorAll = 4;
-        a.kitchenArea = 10.0;
-        a.livingArea = 20.0;
-        a.totalArea = 30.0;
         a.idFund = 1L;
         a.idState = 1L;
-        a.idTypeApartment = 1L;
         a.idWallMaterial = 1L;
-        a.idAddress = 1L;
 
-        ar = new ApartmentReq();
         ar.costFrom = 50.0;
         ar.costTo = 150.0;
         ar.firm = 1;
@@ -52,11 +53,11 @@ public class IsMatchApartment {
         ar.totalAreaTo = 35.0;
         ar.notFirst = 0;
         ar.notLast = 0;
-    }
 
-    @Test
-    public void testSuccessMatch() {
         assertEquals(true, a.isMatch(ar));
+
+        a = new Apartment();
+        ar = new ApartmentReq();
     }
 
     @Test

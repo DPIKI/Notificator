@@ -8,8 +8,8 @@ import com.google.gson.annotations.SerializedName;
 public class RentReq extends RequirementBase {
     public Long idTypeApartment;
     public Long idAddress;
-    public Float costFrom;
-    public Float costTo;
+    public Double costFrom;
+    public Double costTo;
     public Integer firm;
     public Integer floor;
     public Integer floorAll;

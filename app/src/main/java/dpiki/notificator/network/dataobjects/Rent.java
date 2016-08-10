@@ -70,7 +70,7 @@ public class Rent extends RealtyBase {
                 && req.notLast.equals(1)
                 && this.floor != null
                 && this.floorAll != null
-                && !this.floor.equals(this.floorAll))
+                && this.floor.equals(this.floorAll))
             return false;
 
         if (req.idState != null && this.idState != null
@@ -94,12 +94,14 @@ public class Rent extends RealtyBase {
         if (req.idYard != null && this.idYard != null
                 && !req.idYard.equals(this.idYard))
             return false;
-        if (req.idPhone != null && this.hasPhone != null
+        if (req.idPhone != null
+                && req.idPhone != 0
+                && this.hasPhone != null
                 && !req.idPhone.equals(this.hasPhone))
             return false;
 
         if (req.dateFreedFrom != null && this.dateFreed != null){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date dateFreedFrom = null;
             Date dateFreed = null;
             try {
@@ -118,7 +120,7 @@ public class Rent extends RealtyBase {
         }
 
         if (req.dateFreedTo != null && this.dateFreed != null){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date dateFreedTo = null;
             Date dateFreed = null;
             try {
@@ -145,4 +147,5 @@ public class Rent extends RealtyBase {
 
         return true;
     }
+
 }
