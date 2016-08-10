@@ -30,7 +30,7 @@ public class JSONResponseParser {
             if (snc.getRealestate().getRealestateInstanceType().contains("Land")) {
                 snc.getRealestateType().setTypeInfo(RealestateInfoType.LAND.ordinal());
             }//else
-            if (snc.getRealestate().getRealestateInstanceType().contains("Households")) {
+            if (snc.getRealestate().getRealestateInstanceType().contains("Household")) {
                 snc.getRealestateType().setTypeInfo(RealestateInfoType.HOUSEHOLDS.ordinal());
             }//else
             if (snc.getRealestate().getRealestateInstanceType().contains("Commercial")) {
@@ -58,7 +58,7 @@ public class JSONResponseParser {
             if (snc.getRealestate()[0].getRealestateInstanceType().contains("Land")) {
                 snc.getRealestateType()[0].setTypeInfo(RealestateInfoType.LAND.ordinal());
             }
-            if (snc.getRealestate()[0].getRealestateInstanceType().contains("Households")) {
+            if (snc.getRealestate()[0].getRealestateInstanceType().contains("Household")) {
                 snc.getRealestateType()[0].setTypeInfo(RealestateInfoType.HOUSEHOLDS.ordinal());
             }
             if (snc.getRealestate()[0].getRealestateInstanceType().contains("Commercial")) {

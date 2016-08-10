@@ -2,12 +2,6 @@ package dpiki.notificator.network;
 
 import java.util.List;
 
-import dpiki.notificator.network.dataobjects.ApartmentReq;
-import dpiki.notificator.network.dataobjects.CommercialReq;
-import dpiki.notificator.network.dataobjects.HouseholdsReq;
-import dpiki.notificator.network.dataobjects.LandReq;
-import dpiki.notificator.network.dataobjects.RentReq;
-import dpiki.notificator.network.dataobjects.RequirementBase;
 import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.SearchNearContainer;
 import retrofit2.Call;

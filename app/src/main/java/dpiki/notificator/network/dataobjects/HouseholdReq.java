@@ -3,7 +3,7 @@ package dpiki.notificator.network.dataobjects;
 /**
  * Created by prog1 on 02.08.2016.
  */
-public class HouseholdsReq extends RequirementBase {
+public class HouseholdReq extends RequirementBase {
     public Long idAddress;
     public Double costFrom;
     public Double costTo;
@@ -21,11 +21,11 @@ public class HouseholdsReq extends RequirementBase {
     public Long idEntry;
     public Long idFurniture;
 
-    public HouseholdsReq() {
+    public HouseholdReq() {
 
     }
 
-    public HouseholdsReq(Long idRequirements) {
+    public HouseholdReq(Long idRequirements) {
         super(idRequirements);
     }
 

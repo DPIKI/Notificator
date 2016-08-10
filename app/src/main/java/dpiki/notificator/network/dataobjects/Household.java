@@ -1,11 +1,9 @@
 package dpiki.notificator.network.dataobjects;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by Lenovo on 01.08.2016.
  */
-public class Households extends RealtyBase {
+public class Household extends RealtyBase {
     public Integer stead;
     public Double cost;
     public Double totalArea;
@@ -16,19 +14,19 @@ public class Households extends RealtyBase {
     public Long idEntry;
     public Long idFurniture;
 
-    public Households() {
+    public Household() {
 
     }
 
-    public Households(Long id, Long idAddress, Integer firm) {
+    public Household(Long id, Long idAddress, Integer firm) {
         super(id, idAddress, firm);
     }
 
     @Override
     public boolean isMatch(RequirementBase reqBase) {
-        if (!(reqBase instanceof HouseholdsReq))
+        if (!(reqBase instanceof HouseholdReq))
             return false;
-        HouseholdsReq req = (HouseholdsReq) reqBase;
+        HouseholdReq req = (HouseholdReq) reqBase;
 
         if (req.idAddress != null && this.idAddress != null
                 && !req.idAddress.equals(this.idAddress))

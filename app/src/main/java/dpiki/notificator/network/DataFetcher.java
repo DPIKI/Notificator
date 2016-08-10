@@ -1,7 +1,5 @@
 package dpiki.notificator.network;
 
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,8 +14,8 @@ import dpiki.notificator.network.dataobjects.Apartment;
 import dpiki.notificator.network.dataobjects.ApartmentReq;
 import dpiki.notificator.network.dataobjects.Commercial;
 import dpiki.notificator.network.dataobjects.CommercialReq;
-import dpiki.notificator.network.dataobjects.Households;
-import dpiki.notificator.network.dataobjects.HouseholdsReq;
+import dpiki.notificator.network.dataobjects.Household;
+import dpiki.notificator.network.dataobjects.HouseholdReq;
 import dpiki.notificator.network.dataobjects.Land;
 import dpiki.notificator.network.dataobjects.LandReq;
 import dpiki.notificator.network.dataobjects.RealtyBase;
@@ -89,7 +87,7 @@ public class DataFetcher {
                     rents.add(makeRent(i));
                 } else if (i.getRealestate().getRealestateInstanceType().contains("Land")) {
                     lands.add(makeLand(i));
-                } else if (i.getRealestate().getRealestateInstanceType().contains("Households")) {
+                } else if (i.getRealestate().getRealestateInstanceType().contains("Household")) {
                     households.add(makeHousehold(i));
                 } else if (i.getRealestate().getRealestateInstanceType().contains("Commercial")) {
                     commercials.add(makeCommercial(i));
@@ -153,8 +151,8 @@ public class DataFetcher {
         return req;
     }
 
-    private HouseholdsReq makeHouseholdReqs(RequirementContainer i) {
-        HouseholdsReq req = new HouseholdsReq();
+    private HouseholdReq makeHouseholdReqs(RequirementContainer i) {
+        HouseholdReq req = new HouseholdReq();
 
         return req;
     }
@@ -269,8 +267,8 @@ public class DataFetcher {
         return retVal;
     }
 
-    private Households makeHousehold(SearchNearContainer container) {
-        Households retVal = new Households();
+    private Household makeHousehold(SearchNearContainer container) {
+        Household retVal = new Household();
         retVal.id = container.getRealestate().getId();
         retVal.cost = container.getRealestateType().getCost();
         retVal.idEntry = container.getRealestateType().getIdEntry();
