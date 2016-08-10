@@ -7,17 +7,17 @@ import com.google.gson.annotations.SerializedName;
  */
 public class LandReq extends RequirementBase {
     public Long idAddress;
-    public Float costFrom;
-    public Float costTo;
+    public Double costFrom;
+    public Double costTo;
     public Integer firm;
-    public Float totalAreaFrom;
-    public Float totalAreaTo;
-    public Float livingAreaFrom;
-    public Float livingAreaTo;
-    public Float kitchenAreaFrom;
-    public Float kitchenAreaTo;
-    public Float steadFrom;
-    public Float steadTo;
+    public Double totalAreaFrom;
+    public Double totalAreaTo;
+    public Double livingAreaFrom;
+    public Double livingAreaTo;
+    public Double kitchenAreaFrom;
+    public Double kitchenAreaTo;
+    public Integer steadFrom;
+    public Integer steadTo;
     public Long idState;
     public Long idWallMaterial;
     public Long idEntry;

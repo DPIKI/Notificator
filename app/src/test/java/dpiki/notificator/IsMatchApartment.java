@@ -60,26 +60,8 @@ public class IsMatchApartment {
     }
 
     @Test
-    public void testFirm() {
-        ar.firm = 0;
-        assertEquals(false, a.isMatch(ar));
-        a.firm = 0;
-        assertEquals(true, a.isMatch(ar));
-        ar.firm = 1;
-        assertEquals(false, a.isMatch(ar));
-        a.firm = 1;
-        assertEquals(true, a.isMatch(ar));
-        ar.firm = null;
-        assertEquals(true, a.isMatch(ar));
-        a.firm = 0;
-        assertEquals(true, a.isMatch(ar));
-        a.firm = null;
-        assertEquals(true, a.isMatch(ar));
-        ar.firm = 1;
-        assertEquals(true, a.isMatch(ar));
-
-        ar.firm = 1;
-        a.firm = 1;
+    public void testFirm() throws NoSuchFieldException, IllegalAccessException {
+        testInteger(a, ar, "firm", "firm");
     }
 
     @Test
@@ -128,8 +110,61 @@ public class IsMatchApartment {
     }
 
     @Test
-    public void testFloor() {
-        // TODO : implement
+    public void testFloor() throws NoSuchFieldException, IllegalAccessException {
+        testInteger(a, ar, "floor", "floor");
     }
 
+    @Test
+    public void testFloorAll() throws NoSuchFieldException, IllegalAccessException {
+        testInteger(a, ar, "floorAll", "floorAll");
+    }
+
+    @Test
+    public void testNotFirst() {
+        ar.notFirst = 1;
+        ar.floor = null;
+
+        a.floor = 1;
+        assertEquals(false, a.isMatch(ar));
+        a.floor = 2;
+        assertEquals(true, a.isMatch(ar));
+        a.floor = null;
+        assertEquals(true, a.isMatch(ar));
+
+        ar.notFirst = null;
+        a.floor = 1;
+        assertEquals(true, a.isMatch(ar));
+        a.floor = 2;
+        assertEquals(true, a.isMatch(ar));
+        a.floor = null;
+        assertEquals(true, a.isMatch(ar));
+
+        ar.notFirst = 0;
+        a.floor = 1;
+        ar.floor = 1;
+    }
+
+    @Test
+    public void testNotLast() {
+        ar.floor = null;
+        ar.floorAll = null;
+
+        ar.notLast = 1;
+        a.floor = 1;
+        a.floorAll = 3;
+        assertEquals(true, a.isMatch(ar));
+        a.floor = 3;
+        assertEquals(false, a.isMatch(ar));
+        a.floorAll = null;
+        assertEquals(true, a.isMatch(ar));
+        a.floor = null;
+        a.floorAll = 3;
+        assertEquals(true, a.isMatch(ar));
+
+        ar.floor = 1;
+        ar.floorAll = 1;
+        ar.notLast = 0;
+        a.floor = 1;
+        a.floorAll = 1;
+    }
 }

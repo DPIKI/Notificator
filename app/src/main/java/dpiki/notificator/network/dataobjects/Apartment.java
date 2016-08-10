@@ -83,7 +83,7 @@ public class Apartment extends RealtyBase {
                 && req.notLast.equals(1)
                 && this.floor != null
                 && this.floorAll != null
-                && !this.floor.equals(this.floorAll)) {
+                && this.floor.equals(this.floorAll)) {
             return false;
         }
 
