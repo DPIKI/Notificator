@@ -9,20 +9,20 @@ import java.util.Date;
  * Created by Lenovo on 01.08.2016.
  */
 public class Rent extends RealtyBase {
-    public Long idTypeApartment;
     public Double cost;
     public Integer floor;
     public Integer floorAll;
-    public Long idState;
     public Integer roomCount;
     public Integer prepayment;
-    public Long idComfort;
-    public Long idFurniture;
-    public Long idYard;
     public Integer hasPhone;
     public String dateFreed;
     public Long[] idRent;
     public Long idEntry;
+    public Long idTypeApartment;
+    public Long idComfort;
+    public Long idFurniture;
+    public Long idYard;
+    public Long idState;
 
     public Rent() {
 

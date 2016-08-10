@@ -9,22 +9,22 @@ import com.google.gson.annotations.SerializedName;
 public class ApartmentReq extends RequirementBase {
     public Long idTypeApartment;
     public Long idAddress;
-    public Float costFrom;
-    public Float costTo;
-    public Boolean firm;
-    public Float totalAreaFrom;
-    public Float totalAreaTo;
-    public Float livingAreaFrom;
-    public Float livingAreaTo;
-    public Float kitchenAreaFrom;
-    public Float kitchenAreaTo;
+    public Double costFrom;
+    public Double costTo;
+    public Integer firm;
+    public Double totalAreaFrom;
+    public Double totalAreaTo;
+    public Double livingAreaFrom;
+    public Double livingAreaTo;
+    public Double kitchenAreaFrom;
+    public Double kitchenAreaTo;
     public Integer floor;
     public Integer floorAll;
-    public Boolean notFirst;
-    public Boolean notLast;
-    public Integer idFund;
-    public Integer idState;
-    public Integer idWallMaterial;
+    public Integer notFirst;
+    public Integer notLast;
+    public Long idFund;
+    public Long idState;
+    public Long idWallMaterial;
 
     public ApartmentReq() {
 
