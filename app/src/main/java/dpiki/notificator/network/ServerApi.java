@@ -8,6 +8,7 @@ import dpiki.notificator.network.dataobjects.HouseholdsReq;
 import dpiki.notificator.network.dataobjects.LandReq;
 import dpiki.notificator.network.dataobjects.RentReq;
 import dpiki.notificator.network.dataobjects.RequirementBase;
+import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.SearchNearContainer;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -23,5 +24,5 @@ public interface ServerApi {
     Call<List<SearchNearContainer>> getRealEstates(@Query("date") String date);
 
     @GET("get_requirements.php")
-    Call<List<RequirementBase>> getRequirements(@Query("agent_id") Long agentId);
+    Call<List<RequirementContainer>> getRequirements(@Query("agent_id") Long agentId);
 }

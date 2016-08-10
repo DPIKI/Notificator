@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dpiki.notificator.network.dataobjects.RequirementBase;
+import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.SearchNearContainer;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -39,9 +40,9 @@ public class ServerApiWrapper {
         return response.body();
     }
 
-    public List<RequirementBase> getRequirements(Long agentId) throws IOException {
-        Call<List<RequirementBase>> call = mApi.getRequirements(agentId);
-        Response<List<RequirementBase>> response = call.execute();
+    public List<RequirementContainer> getRequirements(Long agentId) throws IOException {
+        Call<List<RequirementContainer>> call = mApi.getRequirements(agentId);
+        Response<List<RequirementContainer>> response = call.execute();
 
         if (response.body() == null)
             throw new IOException("Failed parsing requirements");

@@ -13,20 +13,22 @@ import dpiki.notificator.data.RealtyTypes;
 import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.dataobjects.Apartment;
+import dpiki.notificator.network.dataobjects.ApartmentReq;
 import dpiki.notificator.network.dataobjects.Commercial;
+import dpiki.notificator.network.dataobjects.CommercialReq;
 import dpiki.notificator.network.dataobjects.Households;
+import dpiki.notificator.network.dataobjects.HouseholdsReq;
 import dpiki.notificator.network.dataobjects.Land;
+import dpiki.notificator.network.dataobjects.LandReq;
 import dpiki.notificator.network.dataobjects.RealtyBase;
 import dpiki.notificator.network.dataobjects.Rent;
+import dpiki.notificator.network.dataobjects.RentReq;
 import dpiki.notificator.network.dataobjects.RequirementBase;
+import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.Communication;
 import dpiki.notificator.network.gson.LiftingEquipment;
 import dpiki.notificator.network.gson.SearchNearContainer;
 import dpiki.notificator.network.gson.TypeRent;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Lenovo on 03.08.2016.
@@ -112,15 +114,67 @@ public class DataFetcher {
         commercialReqs.clear();
 
         try {
-            List<RequirementBase> response = mApi.getRequirements(0L); // TODO: real agent id
+            List<RequirementContainer> response = mApi.getRequirements(0L); // TODO: real agent id
             List<Requirement> requirements = new ArrayList<>();
 
+            for (RequirementContainer i : response) {
+                Requirement r = new Requirement();
+                if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_APARTMENT)) {
+                    apartmentReqs.add(makeApartmentReqs(i));
+                    r.type = RealtyTypes.TYPE_APARTMENT;
+                } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_RENT)) {
+                    rentReqs.add(makeRentReqs(i));
+                    r.type = RealtyTypes.TYPE_RENT;
+                } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_LAND)) {
+                    landReqs.add(makeLandReqs(i));
+                    r.type = RealtyTypes.TYPE_LAND;
+                } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_HOUSEHOLD)) {
+                    householdReqs.add(makeHouseholdReqs(i));
+                    r.type = RealtyTypes.TYPE_HOUSEHOLD;
+                } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_COMMERCIAL)) {
+                    commercialReqs.add(makeCommercialReqs(i));
+                    r.type = RealtyTypes.TYPE_COMMERCIAL;
+                }
+                r.id = i.getId();
+                r.unreadRecommendations = mDbUtils.getUnreadRecommendationsCount(r.id, r.type);
+                requirements.add(r);
+            }
             // TODO : handling response
 
             mDbUtils.updateRequirements(requirements);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private CommercialReq makeCommercialReqs(RequirementContainer i) {
+        CommercialReq req = new CommercialReq();
+
+        return req;
+    }
+
+    private HouseholdsReq makeHouseholdReqs(RequirementContainer i) {
+        HouseholdsReq req = new HouseholdsReq();
+
+        return req;
+    }
+
+    private LandReq makeLandReqs(RequirementContainer i) {
+        LandReq req = new LandReq();
+
+        return req;
+    }
+
+    private RentReq makeRentReqs(RequirementContainer i) {
+        RentReq req = new RentReq();
+
+        return req;
+    }
+
+    private ApartmentReq makeApartmentReqs(RequirementContainer i) {
+        ApartmentReq req = new ApartmentReq();
+
+        return req;
     }
 
     private Apartment makeApartment(SearchNearContainer container) {
@@ -278,4 +332,5 @@ public class DataFetcher {
 
         return retVal;
     }
+
 }

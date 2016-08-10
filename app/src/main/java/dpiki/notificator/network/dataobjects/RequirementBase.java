@@ -16,4 +16,5 @@ public class RequirementBase {
     public RequirementBase(Long idRequirements) {
         this.idRequirements = idRequirements;
     }
+
 }
