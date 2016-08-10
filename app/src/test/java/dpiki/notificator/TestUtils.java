@@ -21,11 +21,11 @@ public class TestUtils {
         Double oldLimit1 = (Double) fldLimit1.get(ar);
         Double oldLimit2 = (Double) fldLimit2.get(ar);
 
-         /** when parameter is not specified and at least one limit is specified return false */
+         /** when parameter is not specified and at least one limit is specified return true */
         fldTest.set(a, null);
-        assertEquals(false, a.isMatch(ar));
+        assertEquals(true, a.isMatch(ar));
         fldLimit2.set(ar, null);
-        assertEquals(false, a.isMatch(ar));
+        assertEquals(true, a.isMatch(ar));
 
         /** when limits are not specified parameter does not matter */
         fldLimit1.set(ar, null);
@@ -83,11 +83,11 @@ public class TestUtils {
 
         /**
          *  when filter is specified
-         *  return true only if param is specified and it is equal to filter
+         *  return true if param is equal to filter or if param is not specified
          */
         fldFilter.set(ar, 10L);
         fldParam.set(a, null);
-        assertEquals(false, a.isMatch(ar));
+        assertEquals(true, a.isMatch(ar));
         fldParam.set(a, 100L);
         assertEquals(false, a.isMatch(ar));
         fldParam.set(a, 10L);

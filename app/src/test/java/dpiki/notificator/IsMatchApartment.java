@@ -76,7 +76,7 @@ public class IsMatchApartment {
         a.firm = null;
         assertEquals(true, a.isMatch(ar));
         ar.firm = 1;
-        assertEquals(false, a.isMatch(ar));
+        assertEquals(true, a.isMatch(ar));
 
         ar.firm = 1;
         a.firm = 1;
