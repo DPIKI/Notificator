@@ -3,10 +3,8 @@ package dpiki.notificator.network;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import dpiki.notificator.network.dataobjects.RequirementBase;
 import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.SearchNearContainer;
 import retrofit2.Call;

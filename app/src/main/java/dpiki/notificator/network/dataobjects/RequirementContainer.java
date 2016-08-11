@@ -1,7 +1,5 @@
 package dpiki.notificator.network.dataobjects;
 
-import dpiki.notificator.data.RealtyTypes;
-
 /**
  * Created by prog1 on 10.08.2016.
  */
@@ -13,6 +11,11 @@ public class RequirementContainer {
 
     }
 
+    public RequirementContainer(Long id, String requirementInstanceType) {
+        this.id = id;
+        this.requirementInstanceType = requirementInstanceType;
+    }
+
     public void setRequirementInstanceType(String requirementInstanceType) {
         this.requirementInstanceType = requirementInstanceType;
     }
@@ -21,8 +24,11 @@ public class RequirementContainer {
         return requirementInstanceType;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
-
 }

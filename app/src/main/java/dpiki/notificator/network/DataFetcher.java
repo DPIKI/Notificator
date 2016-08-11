@@ -25,6 +25,8 @@ import dpiki.notificator.network.dataobjects.RequirementBase;
 import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.Communication;
 import dpiki.notificator.network.gson.LiftingEquipment;
+import dpiki.notificator.network.gson.Realestate;
+import dpiki.notificator.network.gson.RealestateInfo;
 import dpiki.notificator.network.gson.SearchNearContainer;
 import dpiki.notificator.network.gson.TypeRent;
 
@@ -55,19 +57,22 @@ public class DataFetcher {
     public List<Recommendation> fetch() {
         List<Recommendation> retVal = new ArrayList<>();
 
-        downloadRequirements();
-        downloadRealty();
-
-        retVal.addAll(handleDataByType(RealtyTypes.TYPE_APARTMENT));
-        retVal.addAll(handleDataByType(RealtyTypes.TYPE_RENT));
-        retVal.addAll(handleDataByType(RealtyTypes.TYPE_LAND));
-        retVal.addAll(handleDataByType(RealtyTypes.TYPE_COMMERCIAL));
-        retVal.addAll(handleDataByType(RealtyTypes.TYPE_HOUSEHOLD));
+        try {
+            downloadRequirements();
+            downloadRealty();
+            retVal.addAll(handleData(apartmentReqs, apartments, RealtyTypes.TYPE_APARTMENT));
+            retVal.addAll(handleData(rentReqs, rents, RealtyTypes.TYPE_RENT));
+            retVal.addAll(handleData(landReqs, lands, RealtyTypes.TYPE_LAND));
+            retVal.addAll(handleData(householdReqs, households, RealtyTypes.TYPE_HOUSEHOLD));
+            retVal.addAll(handleData(commercialReqs, commercials, RealtyTypes.TYPE_COMMERCIAL));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return retVal;
     }
 
-    private void downloadRealty() {
+    private void downloadRealty() throws IOException {
         apartments.clear();
         rents.clear();
         lands.clear();
@@ -77,162 +82,192 @@ public class DataFetcher {
         String strLastDate = mPrefManager.getLastFetchDate();
         mPrefManager.putLastFetchDate(strLastDate);
 
-        try {
-            List<SearchNearContainer> realty = mApi.getRealty(strLastDate);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            for (SearchNearContainer i : realty) {
-                if (i.getRealestate().getRealestateInstanceType().contains("Apartment")) {
-                    apartments.add(makeApartment(i));
-                } else if (i.getRealestate().getRealestateInstanceType().contains("Rent")) {
-                    rents.add(makeRent(i));
-                } else if (i.getRealestate().getRealestateInstanceType().contains("Land")) {
-                    lands.add(makeLand(i));
-                } else if (i.getRealestate().getRealestateInstanceType().contains("Household")) {
-                    households.add(makeHousehold(i));
-                } else if (i.getRealestate().getRealestateInstanceType().contains("Commercial")) {
-                    commercials.add(makeCommercial(i));
-                }
-
-                String strUpdatedDate = sdf.format(i.getRealestate().getUpdatedAt());
-                if (strUpdatedDate.compareTo(strLastDate) > 0)
-                    strLastDate = strUpdatedDate;
+        List<SearchNearContainer> realty = mApi.getRealty(strLastDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (SearchNearContainer i : realty) {
+            if (i.getRealestate() == null) { // TODO : спросить
+                throw new IOException("Invalid response: realEstate == null");
             }
 
-            mPrefManager.putLastFetchDate(strLastDate);
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (i.getRealestate().getRealestateInstanceType().contains("Apartment")) {
+                apartments.add(makeApartment(i));
+            } else if (i.getRealestate().getRealestateInstanceType().contains("Rent")) {
+                rents.add(makeRent(i));
+            } else if (i.getRealestate().getRealestateInstanceType().contains("Land")) {
+                lands.add(makeLand(i));
+            } else if (i.getRealestate().getRealestateInstanceType().contains("Household")) {
+                households.add(makeHousehold(i));
+            } else if (i.getRealestate().getRealestateInstanceType().contains("Commercial")) {
+                commercials.add(makeCommercial(i));
+            }
+
+            if (i.getRealestate().getUpdatedAt() == null) {
+                throw new IOException("Invalid response: updateAt == null");
+            }
+
+            String strUpdatedDate = sdf.format(i.getRealestate().getUpdatedAt());
+            if (strUpdatedDate.compareTo(strLastDate) > 0)
+                strLastDate = strUpdatedDate;
         }
+
+        mPrefManager.putLastFetchDate(strLastDate);
     }
 
-    private void downloadRequirements() {
+    private void downloadRequirements() throws IOException {
         apartmentReqs.clear();
         landReqs.clear();
         rentReqs.clear();
         householdReqs.clear();
         commercialReqs.clear();
 
-        try {
-            List<RequirementContainer> response = mApi.getRequirements(0L); // TODO: real agent id
-            List<Requirement> requirements = new ArrayList<>();
+        List<RequirementContainer> response = mApi.getRequirements(0L); // TODO: real agent id
+        List<Requirement> requirements = new ArrayList<>();
 
-            for (RequirementContainer i : response) {
-                Requirement r = new Requirement();
-                if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_APARTMENT)) {
-                    apartmentReqs.add(makeApartmentReqs(i));
-                    r.type = RealtyTypes.TYPE_APARTMENT;
-                } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_RENT)) {
-                    rentReqs.add(makeRentReqs(i));
-                    r.type = RealtyTypes.TYPE_RENT;
-                } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_LAND)) {
-                    landReqs.add(makeLandReqs(i));
-                    r.type = RealtyTypes.TYPE_LAND;
-                } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_HOUSEHOLD)) {
-                    householdReqs.add(makeHouseholdReqs(i));
-                    r.type = RealtyTypes.TYPE_HOUSEHOLD;
-                } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_COMMERCIAL)) {
-                    commercialReqs.add(makeCommercialReqs(i));
-                    r.type = RealtyTypes.TYPE_COMMERCIAL;
-                }
-                r.id = i.getId();
-                r.unreadRecommendations = mDbUtils.getUnreadRecommendationsCount(r.id, r.type);
-                requirements.add(r);
+        for (RequirementContainer i : response) {
+            Requirement r = new Requirement();
+            if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_APARTMENT)) {
+                apartmentReqs.add(makeApartmentReqs(i));
+                r.type = RealtyTypes.TYPE_APARTMENT;
+            } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_RENT)) {
+                rentReqs.add(makeRentReqs(i));
+                r.type = RealtyTypes.TYPE_RENT;
+            } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_LAND)) {
+                landReqs.add(makeLandReqs(i));
+                r.type = RealtyTypes.TYPE_LAND;
+            } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_HOUSEHOLD)) {
+                householdReqs.add(makeHouseholdReqs(i));
+                r.type = RealtyTypes.TYPE_HOUSEHOLD;
+            } else if (i.getRequirementInstanceType().contains(RealtyTypes.TYPE_COMMERCIAL)) {
+                commercialReqs.add(makeCommercialReqs(i));
+                r.type = RealtyTypes.TYPE_COMMERCIAL;
             }
-            // TODO : handling response
-
-            mDbUtils.updateRequirements(requirements);
-        } catch (IOException e) {
-            e.printStackTrace();
+            r.id = i.getId();
+            r.unreadRecommendations = mDbUtils.getUnreadRecommendationsCount(r.id, r.type);
+            requirements.add(r);
         }
+
+        mDbUtils.updateRequirements(requirements);
     }
 
     private CommercialReq makeCommercialReqs(RequirementContainer i) {
         CommercialReq req = new CommercialReq();
-
+        req.idRequirements = i.getId();
+        // TODO : implement
         return req;
     }
 
     private HouseholdReq makeHouseholdReqs(RequirementContainer i) {
         HouseholdReq req = new HouseholdReq();
-
+        req.idRequirements = i.getId();
+        // TODO : implement
         return req;
     }
 
     private LandReq makeLandReqs(RequirementContainer i) {
         LandReq req = new LandReq();
-
+        req.idRequirements = i.getId();
+        // TODO : implement
         return req;
     }
 
     private RentReq makeRentReqs(RequirementContainer i) {
         RentReq req = new RentReq();
-
+        req.idRequirements = i.getId();
+        // TODO : implement
         return req;
     }
 
     private ApartmentReq makeApartmentReqs(RequirementContainer i) {
         ApartmentReq req = new ApartmentReq();
-
+        req.idRequirements = i.getId();
+        // TODO : implement
         return req;
     }
 
     private Apartment makeApartment(SearchNearContainer container) {
         Apartment retVal = new Apartment();
-        retVal.id = container.getRealestate().getId();
-        retVal.cost = container.getRealestateType().getCost();
-        retVal.floor = container.getRealestateType().getFloor();
-        retVal.floorAll = container.getRealestateType().getFloorAll();
-        retVal.idFund = container.getRealestateType().getIdFund();
-        retVal.idState = container.getRealestateType().getIdState();
-        retVal.idTypeApartment = container.getRealestateType().getIdTypeApartment();
-        retVal.idWallMaterial = container.getRealestateType().getIdWallMaterial();
-        retVal.kitchenArea = container.getRealestateType().getKitchenArea();
-        retVal.livingArea = container.getRealestateType().getLivingArea();
-        retVal.totalArea = container.getRealestateType().getTotalArea();
-        retVal.firm = container.getRealestate().getIsFirmContactPerson();
-        retVal.idAddress = container.getRealestate().getIdAddress();
+        Realestate realEstate = container.getRealestate();
+        RealestateInfo realEstateInfo = null;
+        try {
+            realEstateInfo = container.getRealestateType();
+        } catch (NullPointerException e) {
+        }
+
+        retVal.id = realEstate != null ? realEstate.getId() : null;
+        retVal.idAddress = realEstate != null ? realEstate.getIdAddress() : null;
+        retVal.firm = realEstate != null ? realEstate.getIsFirmContactPerson() : null;
+        retVal.cost = realEstateInfo != null ? realEstateInfo.getCost() : null;
+        retVal.floor = realEstateInfo != null ? realEstateInfo.getFloor() : null;
+        retVal.floorAll = realEstateInfo != null ? realEstateInfo.getFloorAll() : null;
+        retVal.idFund = realEstateInfo != null ? realEstateInfo.getIdFund() : null;
+        retVal.idState = realEstateInfo != null ? realEstateInfo.getIdState() : null;
+        retVal.idTypeApartment = realEstateInfo != null ? realEstateInfo.getIdTypeApartment() : null;
+        retVal.idWallMaterial = realEstateInfo != null ? realEstateInfo.getIdWallMaterial() : null;
+        retVal.kitchenArea = realEstateInfo != null ? realEstateInfo.getKitchenArea() : null;
+        retVal.livingArea = realEstateInfo != null ? realEstateInfo.getLivingArea() : null;
+        retVal.totalArea = realEstateInfo != null ? realEstateInfo.getTotalArea() : null;
+
         return retVal;
     }
 
     private Land makeLand(SearchNearContainer container) {
         Land retVal = new Land();
-        retVal.id = container.getRealestate().getId();
-        retVal.cost = container.getRealestateType().getCost();
-        retVal.idEntry = container.getRealestateType().getIdEntry();
-        retVal.idFurniture = container.getRealestateType().getIdFurniture();
-        retVal.idState = container.getRealestateType().getIdState();
-        retVal.idWallMaterial = container.getRealestateType().getIdWallMaterial();
-        retVal.idAddress = container.getRealestate().getIdAddress();
-        retVal.kitchenArea = container.getRealestateType().getKitchenArea();
-        retVal.livingArea = container.getRealestateType().getLivingArea();
-        retVal.totalArea = container.getRealestateType().getTotalArea();
-        retVal.stead = container.getRealestateType().getStead();
-        retVal.firm = container.getRealestate().getIsFirmContactPerson();
+        Realestate realEstate = container.getRealestate();
+        RealestateInfo realEstateInfo = null;
+        try {
+            realEstateInfo = container.getRealestateType();
+        } catch (NullPointerException e) {
+        }
+
+        retVal.id = realEstate != null ? realEstate.getId() : null;
+        retVal.idAddress = realEstate != null ? realEstate.getIdAddress() : null;
+        retVal.firm = realEstate != null ? realEstate.getIsFirmContactPerson() : null;
+        retVal.cost = realEstateInfo != null ? realEstateInfo.getCost() : null;
+        retVal.idEntry = realEstateInfo != null ? realEstateInfo.getIdEntry() : null;
+        retVal.idFurniture = realEstateInfo != null ? realEstateInfo.getIdFurniture() : null;
+        retVal.idState = realEstateInfo != null ? realEstateInfo.getIdState() : null;
+        retVal.idWallMaterial = realEstateInfo != null ? realEstateInfo.getIdWallMaterial() : null;
+        retVal.kitchenArea = realEstateInfo != null ? realEstateInfo.getKitchenArea() : null;
+        retVal.livingArea = realEstateInfo != null ? realEstateInfo.getLivingArea() : null;
+        retVal.totalArea = realEstateInfo != null ? realEstateInfo.getTotalArea() : null;
+        retVal.stead = realEstateInfo != null ? realEstateInfo.getStead() : null;
+
         return retVal;
     }
 
     private Rent makeRent(SearchNearContainer container) {
         Rent retVal = new Rent();
-        retVal.id = container.getRealestate().getId();
-        retVal.firm = container.getRealestate().getIsFirmContactPerson();
-        retVal.idAddress = container.getRealestate().getIdAddress();
-        retVal.cost = container.getRealestateType().getCost();
-        retVal.floor = container.getRealestateType().getFloor();
-        retVal.floorAll = container.getRealestateType().getFloorAll();
-        retVal.hasPhone = container.getRealestateType().getHasPhone();
-        retVal.idComfort = container.getRealestateType().getIdComfort();
-        retVal.idFurniture = container.getRealestateType().getIdFurniture();
-        retVal.idState = container.getRealestateType().getIdState();
-        retVal.idYard = container.getRealestateType().getIdYard();
-        retVal.roomCount = container.getRealestateType().getRoomCount();
-        retVal.prepayment = container.getRealestateType().getPrepayment();
-        retVal.idEntry = container.getRealestateType().getIdEntry();
-        retVal.idTypeApartment = container.getRealestateType().getIdTypeApartment();
-        //retVal.dateFreed = container.getRealestateType().getDatePuttingHouse(); //TODO: check
+        Realestate realEstate = container.getRealestate();
+        RealestateInfo realEstateInfo = null;
+        try {
+            realEstateInfo = container.getRealestateType();
+        } catch (NullPointerException e) {
+        }
 
-        TypeRent[] foo = container.getRealestateType().getTypeRent();
-        retVal.idRent = new Long[foo.length];
-        for (int i = 0; i < foo.length; i++) {
-            retVal.idRent[i] = foo[i].getId();
+        retVal.id = realEstate != null ? realEstate.getId() : null;
+        retVal.firm = realEstate != null ? realEstate.getIsFirmContactPerson() : null;
+        retVal.idAddress = realEstate != null ? realEstate.getIdAddress() : null;
+        retVal.cost = realEstateInfo != null ? realEstateInfo.getCost() : null;
+        retVal.floor = realEstateInfo != null ? realEstateInfo.getFloor() : null;
+        retVal.floorAll = realEstateInfo != null ? realEstateInfo.getFloorAll() : null;
+        retVal.hasPhone = realEstateInfo != null ? realEstateInfo.getHasPhone() : null;
+        retVal.idComfort = realEstateInfo != null ? realEstateInfo.getIdComfort() : null;
+        retVal.idFurniture = realEstateInfo != null ? realEstateInfo.getIdFurniture() : null;
+        retVal.idState = realEstateInfo != null ? realEstateInfo.getIdState() : null;
+        retVal.idYard = realEstateInfo != null ? realEstateInfo.getIdYard() : null;
+        retVal.roomCount = realEstateInfo != null ? realEstateInfo.getRoomCount() : null;
+        retVal.prepayment = realEstateInfo != null ? realEstateInfo.getPrepayment() : null;
+        retVal.idEntry = realEstateInfo != null ? realEstateInfo.getIdEntry() : null;
+        retVal.idTypeApartment = realEstateInfo != null ? realEstateInfo.getIdTypeApartment() : null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        retVal.dateFreed = realEstateInfo != null ? sdf.format(realEstateInfo.getDatePuttingHouse()) : null;
+
+        TypeRent[] foo = realEstateInfo != null ? realEstateInfo.getTypeRent() : null;
+        if (foo != null) {
+            retVal.idRent = new Long[foo.length];
+            for (int i = 0; i < foo.length; i++) {
+                retVal.idRent[i] = foo[i].getId();
+            }
         }
 
         return retVal;
@@ -240,28 +275,39 @@ public class DataFetcher {
 
     private Commercial makeCommercial(SearchNearContainer container) {
         Commercial retVal = new Commercial();
-        retVal.id = container.getRealestate().getId();
-        retVal.idAddress = container.getRealestate().getIdAddress();
-        retVal.firm = container.getRealestate().getIsFirmContactPerson();
-        retVal.hallArea = container.getRealestateType().getHallArea();
-        retVal.landArea = container.getRealestateType().getLandArea();
-        retVal.totalArea = container.getRealestateType().getTotalArea();
-        retVal.rentArea = container.getRealestateType().getRentArea();
-        retVal.sellPrice = container.getRealestateType().getSellPrice();
-        retVal.sellPriceSquareMeter = container.getRealestateType().getSellPriceSquareMeter();
-        retVal.rentPrice = container.getRealestateType().getRentPrice();
-        retVal.rentPriceSquareMeter = container.getRealestateType().getRentPriceSquareMeter();
-
-        LiftingEquipment[] foo = container.getRealestateType().getLiftingEquipment();
-        retVal.idLiftingEquipments = new Long[foo.length];
-        for (int i = 0; i < foo.length; i++) {
-            retVal.idLiftingEquipments[i] = foo[i].getId();
+        Realestate realEstate = container.getRealestate();
+        RealestateInfo realEstateInfo = null;
+        try {
+            realEstateInfo = container.getRealestateType();
+        } catch (NullPointerException e) {
         }
 
-        Communication[] bar = container.getRealestateType().getCommunication();
-        retVal.idCommunications = new Long[bar.length];
-        for (int i = 0; i < bar.length; i++) {
-            retVal.idCommunications[i] = bar[i].getId();
+        retVal.id = realEstate != null ? realEstate.getId() : null;
+        retVal.idAddress = realEstate != null ? realEstate.getIdAddress() : null;
+        retVal.firm = realEstate != null ? realEstate.getIsFirmContactPerson() : null;
+        retVal.hallArea = realEstateInfo != null ? realEstateInfo.getHallArea() : null;
+        retVal.landArea = realEstateInfo != null ? realEstateInfo.getLandArea() : null;
+        retVal.totalArea = realEstateInfo != null ? realEstateInfo.getTotalArea() : null;
+        retVal.rentArea = realEstateInfo != null ? realEstateInfo.getRentArea() : null;
+        retVal.sellPrice = realEstateInfo != null ? realEstateInfo.getSellPrice() : null;
+        retVal.sellPriceSquareMeter = realEstateInfo != null ? realEstateInfo.getSellPriceSquareMeter() : null;
+        retVal.rentPrice = realEstateInfo != null ? realEstateInfo.getRentPrice() : null;
+        retVal.rentPriceSquareMeter = realEstateInfo != null ? realEstateInfo.getRentPriceSquareMeter() : null;
+
+        LiftingEquipment[] foo = realEstateInfo != null ? realEstateInfo.getLiftingEquipment() : null;
+        if (foo != null) {
+            retVal.idLiftingEquipments = new Long[foo.length];
+            for (int i = 0; i < foo.length; i++) {
+                retVal.idLiftingEquipments[i] = foo[i].getId();
+            }
+        }
+
+        Communication[] bar = realEstateInfo != null ? realEstateInfo.getCommunication() : null;
+        if (bar != null) {
+            retVal.idCommunications = new Long[bar.length];
+            for (int i = 0; i < bar.length; i++) {
+                retVal.idCommunications[i] = bar[i].getId();
+            }
         }
 
         return retVal;
@@ -269,50 +315,32 @@ public class DataFetcher {
 
     private Household makeHousehold(SearchNearContainer container) {
         Household retVal = new Household();
-        retVal.id = container.getRealestate().getId();
-        retVal.cost = container.getRealestateType().getCost();
-        retVal.idEntry = container.getRealestateType().getIdEntry();
-        retVal.idFurniture = container.getRealestateType().getIdFurniture();
-        retVal.idState = container.getRealestateType().getIdState();
-        retVal.idWallMaterial = container.getRealestateType().getIdWallMaterial();
-        retVal.idAddress = container.getRealestate().getIdAddress();
-        retVal.kitchenArea = container.getRealestateType().getKitchenArea();
-        retVal.livingArea = container.getRealestateType().getLivingArea();
-        retVal.totalArea = container.getRealestateType().getTotalArea();
-        retVal.stead = container.getRealestateType().getStead();
-        retVal.firm = container.getRealestate().getIsFirmContactPerson();
+        Realestate realEstate = container.getRealestate();
+        RealestateInfo realEstateInfo = null;
+        try {
+            realEstateInfo = container.getRealestateType();
+        } catch (NullPointerException e) {
+        }
+
+        retVal.id = realEstate != null ? realEstate.getId() : null;
+        retVal.idAddress = realEstate != null ? realEstate.getIdAddress() : null;
+        retVal.firm = realEstate != null ? realEstate.getIsFirmContactPerson() : null;
+        retVal.cost =  realEstateInfo != null ? realEstateInfo.getCost() : null;
+        retVal.idEntry = realEstateInfo != null ? realEstateInfo.getIdEntry() : null;
+        retVal.idFurniture = realEstateInfo != null ? realEstateInfo.getIdFurniture() : null;
+        retVal.idState = realEstateInfo != null ? realEstateInfo.getIdState() : null;
+        retVal.idWallMaterial = realEstateInfo != null ? realEstateInfo.getIdWallMaterial() : null;
+        retVal.kitchenArea = realEstateInfo != null ? realEstateInfo.getKitchenArea() : null;
+        retVal.livingArea = realEstateInfo != null ? realEstateInfo.getLivingArea() : null;
+        retVal.totalArea = realEstateInfo != null ? realEstateInfo.getTotalArea() : null;
+        retVal.stead = realEstateInfo != null ? realEstateInfo.getStead() : null;
+
         return retVal;
     }
 
-    private List<Recommendation> handleDataByType(String type) {
+    private List<Recommendation> handleData(List<RequirementBase> requirements,
+                                            List<RealtyBase> realty, String type) {
         List<Recommendation> retVal = new ArrayList<>();
-        List<RequirementBase> requirements;
-        List<RealtyBase> realty;
-
-        switch (type) {
-            case RealtyTypes.TYPE_APARTMENT:
-                requirements = apartmentReqs;
-                realty = apartments;
-                break;
-            case RealtyTypes.TYPE_COMMERCIAL:
-                requirements = commercialReqs;
-                realty = commercials;
-                break;
-            case RealtyTypes.TYPE_RENT:
-                requirements = rentReqs;
-                realty = rents;
-                break;
-            case RealtyTypes.TYPE_LAND:
-                requirements = landReqs;
-                realty = lands;
-                break;
-            case RealtyTypes.TYPE_HOUSEHOLD:
-                requirements = householdReqs;
-                realty = households;
-                break;
-            default:
-                return retVal;
-        }
 
         if (requirements.isEmpty())
             return retVal;
