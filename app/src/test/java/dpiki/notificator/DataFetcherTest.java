@@ -1,5 +1,7 @@
 package dpiki.notificator;
 
+import com.ibm.icu.text.Collator;
+
 import org.junit.Test;
 import org.mockito.Matchers;
 
@@ -48,6 +50,27 @@ public class DataFetcherTest {
         verify(prefManager).putLastFetchDate("2016-01-02 00:17:04");
         verify(databaseUtils).updateRequirements(argThat(new ListMatcher<>(dataSetRequirements())));
         assertThat(r, new ListMatcher<>(dataSetRecommendations()));
+    }
+
+    @Test
+    public void testFetchNoRequirements() throws IOException, ParseException {
+        ServerApiWrapper wrapper = mock(ServerApiWrapper.class);
+        PrefManager prefManager = mock(PrefManager.class);
+        DatabaseUtils databaseUtils = mock(DatabaseUtils.class);
+
+        when(wrapper.getRequirements(0L)).thenThrow(new IOException());
+
+        when(databaseUtils.getUnreadRecommendationsCount(Matchers.anyLong(), Matchers.anyString()))
+                .thenReturn(0);
+
+        when(prefManager.getLastFetchDate()).thenReturn("2016-01-02 00:00:00");
+
+        DataFetcher fetcher = new DataFetcher(prefManager, databaseUtils, wrapper);
+        List<Recommendation> r = fetcher.fetch();
+
+        verify(prefManager, never()).putLastFetchDate(Matchers.anyString());
+        verify(databaseUtils, never()).updateRequirements(Matchers.anyList());
+        assertThat(r, new ListMatcher<>(new ArrayList<Recommendation>()));
     }
 
     List<SearchNearContainer> dataSetSearchNearContainer() throws ParseException {
