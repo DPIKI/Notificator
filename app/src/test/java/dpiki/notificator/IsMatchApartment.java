@@ -1,10 +1,8 @@
 package dpiki.notificator;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import dpiki.notificator.network.dataobjects.Apartment;
-import dpiki.notificator.network.dataobjects.ApartmentReq;
 
 import static dpiki.notificator.TestUtils.testId;
 import static dpiki.notificator.TestUtils.testInteger;
