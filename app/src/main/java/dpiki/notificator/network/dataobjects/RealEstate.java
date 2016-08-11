@@ -1,5 +1,7 @@
 package dpiki.notificator.network.dataobjects;
 
+import dpiki.notificator.data.Requisition;
+
 /**
  * Created by Lenovo on 11.08.2016.
  */

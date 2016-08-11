@@ -6,11 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import dpiki.notificator.network.dataobjects.RealEstate;
-import dpiki.notificator.network.dataobjects.RequirementContainer;
-import dpiki.notificator.network.dataobjects.Requisition;
-import dpiki.notificator.network.gson.SearchNearContainer;
-import retrofit2.Call;
-import retrofit2.Response;
+import dpiki.notificator.data.Requisition;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
