@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.TreeMap;
 
 import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.data.Requirement;
-import dpiki.notificator.network.dataobjects.Requisition;
+import dpiki.notificator.data.Requisition;
 
 /**
  * Created by Lenovo on 02.08.2016.

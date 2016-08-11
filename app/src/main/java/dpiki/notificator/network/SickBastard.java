@@ -1,22 +1,22 @@
 package dpiki.notificator.network;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import dpiki.notificator.DatabaseUtils;
 import dpiki.notificator.PrefManager;
 import dpiki.notificator.data.Recommendation;
-import dpiki.notificator.network.dataobjects.RealEstate;
-import dpiki.notificator.network.dataobjects.Requisition;
+import dpiki.notificator.data.RealEstate;
+import dpiki.notificator.data.Requisition;
 
 /**
  * Created by Lenovo on 11.08.2016.
  */
+//TODO: Прикрутить синхронизацию
 public class SickBastard {
     private final List<Requisition> requisitions = new ArrayList<>();
-    private boolean isRequsitionsValid = false;
+    private boolean isRequisitionsValid = false;
 
     private DatabaseUtils mDbUtils;
     private ServerApiWrapper mWrapper;
@@ -31,11 +31,11 @@ public class SickBastard {
     public List<Recommendation> getRecommendations() {
         List<Recommendation> retVal = new ArrayList<>();
 
-        if (!isRequsitionsValid) {
+        if (!isRequisitionsValid) {
             refresh();
         }
 
-        if (isRequsitionsValid) {
+        if (isRequisitionsValid) {
             try {
                 requisitions.clear();
 
@@ -71,7 +71,7 @@ public class SickBastard {
     }
 
     public List<Requisition> getRequisitions() {
-        if (isRequsitionsValid) {
+        if (isRequisitionsValid) {
             return requisitions;
         } else {
             return null;
@@ -83,7 +83,7 @@ public class SickBastard {
     }
 
     public void refresh() {
-        isRequsitionsValid = false;
+        isRequisitionsValid = false;
 
         try {
             requisitions.clear();
@@ -92,7 +92,7 @@ public class SickBastard {
             for (Requisition i : requisitions) {
                 i.unreadRecommendationsCount = mDbUtils.getUnreadRecommendationsCount(i.id, i.type);
             }
-            isRequsitionsValid = true;
+            isRequisitionsValid = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,4 +107,5 @@ public class SickBastard {
         }
         mDbUtils.setUnreadRecommendationsCount(id, type, 0);
     }
+
 }
