@@ -5,6 +5,7 @@ package dpiki.notificator.network.dataobjects;
  * Created by prog1 on 01.08.2016.
  */
 public class Apartment extends RealtyBase {
+
     public Long idTypeApartment;
     public Double cost;
     public Double totalArea;

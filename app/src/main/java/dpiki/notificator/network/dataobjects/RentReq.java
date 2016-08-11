@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by prog1 on 02.08.2016.
  */
 public class RentReq extends RequirementBase {
+
     public Long idTypeApartment;
     public Long idAddress;
     public Double costFrom;

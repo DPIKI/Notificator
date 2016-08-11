@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.data.Requirement;
+import dpiki.notificator.network.dataobjects.Requisition;
 
 /**
  * Created by Lenovo on 02.08.2016.
@@ -28,102 +29,6 @@ public class DatabaseUtils {
     public DatabaseUtils(Context context) {
         this.mContext = context;
         this.mCacheRecommendations = new TreeMap<>();
-    }
-
-    /**
-     * Returns all Requirement.
-     *
-     * @return List<Requirement>
-     */
-    public List<Requirement> readRequirements() {
-        List<Requirement> requirements = new ArrayList<>();
-
-        DatabaseHelper helper = new DatabaseHelper(mContext);
-        SQLiteDatabase db = helper.getReadableDatabase();
-
-        if (db == null)
-            return requirements;
-
-        try {
-            String[] columns = {
-                    DatabaseHelper.FIELD_REQUIREMENTS_ID,
-                    DatabaseHelper.FIELD_REQUIREMENTS_TYPE,
-                    DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS
-            };
-            Cursor cursor = db.query(DatabaseHelper.TABLE_REQUIREMENTS,
-                    columns, null, null, null, null,
-                    DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS);
-
-            if (cursor == null)
-                return requirements;
-
-            try {
-                while (cursor.moveToNext()) {
-                    Requirement requirement = new Requirement();
-                    requirement.id = cursor.getLong(0);
-                    requirement.type = cursor.getString(1);
-                    requirement.unreadRecommendations = cursor.getInt(2);
-                    requirements.add(requirement);
-                }
-            } finally {
-                cursor.close();
-            }
-        } finally {
-            db.close();
-        }
-
-        return requirements;
-    }
-
-    /**
-     * Method removes requirements with the specified type,
-     * adds new requirements and removes all recommendations
-     * to removed requirements.
-     *
-     * @param requirements - all requirements are same type.
-     */
-    public void updateRequirements(List<Requirement> requirements) {
-        DatabaseHelper helper = new DatabaseHelper(mContext);
-        SQLiteDatabase db = helper.getWritableDatabase();
-
-        if (db == null)
-            return;
-
-        try {
-            db.delete(DatabaseHelper.TABLE_REQUIREMENTS, null, null);
-            mCacheRecommendations = new TreeMap<>();
-
-            String condition = "";
-            if (!requirements.isEmpty()) {
-                condition = "NOT (";
-                for (Requirement requirement : requirements) {
-                    ContentValues values = new ContentValues();
-                    values.put(DatabaseHelper.FIELD_REQUIREMENTS_ID, requirement.id);
-                    values.put(DatabaseHelper.FIELD_REQUIREMENTS_TYPE, requirement.type);
-                    values.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS,
-                            requirement.unreadRecommendations);
-                    db.insertWithOnConflict(DatabaseHelper.TABLE_REQUIREMENTS, "", values,
-                            SQLiteDatabase.CONFLICT_IGNORE);
-                    condition += " OR ("
-                            + DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT
-                            + " = " + requirement.id + " AND "
-                            + DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE
-                            + " = " + "'" + requirement.type + "'" + ")";
-
-                    mCacheRecommendations.put(requirement.type + ":" + requirement.id,
-                            requirement.unreadRecommendations);
-                }
-                condition += ")";
-                condition = condition.replaceFirst(" OR ", "");
-                Log.d(TAG, "DELETE FROM " + DatabaseHelper.TABLE_RECOMMENDATIONS
-                        + "WHERE" + condition);
-            }
-
-            // TODO: need test
-            db.delete(DatabaseHelper.TABLE_RECOMMENDATIONS, condition, null);
-        } finally {
-            db.close();
-        }
     }
 
     /**
@@ -180,7 +85,7 @@ public class DatabaseUtils {
      * @param type - type of the requirement.
      * @return List<Integer>
      */
-    public List<Long> readRecommendation(Long id, String type) {
+    public List<Long> readRecommendations(Long id, String type) {
         List<Long> idRecommendations = new ArrayList<>();
 
         DatabaseHelper helper = new DatabaseHelper(mContext);
@@ -213,14 +118,18 @@ public class DatabaseUtils {
         return idRecommendations;
     }
 
+    public void clearRecommendations(List<Requisition> r) {
+
+    }
+
     /**
      * Clears unreadRecommendationsCount of specified requirement.
      *
      * @param id - id of the requirement.
      * @param type - type of the requirement.
      */
-    public void clearUnreadRecommendationsCount(Long id, String type) {
-        DatabaseHelper helper = new DatabaseHelper(mContext);
+    public void setUnreadRecommendationsCount(Long id, String type, int count) {
+        /*DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
         mCacheRecommendations.clear();
 
@@ -237,7 +146,7 @@ public class DatabaseUtils {
                     null);
         } finally {
             db.close();
-        }
+        }*/
     }
 
     /**
@@ -248,7 +157,7 @@ public class DatabaseUtils {
      * @param type - type of the requirement.
      */
     public int getUnreadRecommendationsCount(Long id, String type) {
-        String key = type + ":" + id;
+        /*String key = type + ":" + id;
         if (mCacheRecommendations.containsKey(key)) {
             return mCacheRecommendations.get(key);
         } else {
@@ -283,7 +192,8 @@ public class DatabaseUtils {
                 db.close();
             }
         }
-
+        */
+        return 0;
     }
 
 }

@@ -5,7 +5,9 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.List;
 
+import dpiki.notificator.network.dataobjects.RealEstate;
 import dpiki.notificator.network.dataobjects.RequirementContainer;
+import dpiki.notificator.network.dataobjects.Requisition;
 import dpiki.notificator.network.gson.SearchNearContainer;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -27,24 +29,26 @@ public class ServerApiWrapper {
         mApi = retrofit.create(ServerApi.class);
     }
 
-    public List<SearchNearContainer> getRealty(String date) throws IOException {
-        Call<List<SearchNearContainer>> call = mApi.getRealEstates(date);
+    public List<RealEstate> getRealEstates(String date) throws IOException {
+        /*Call<List<SearchNearContainer>> call = mApi.getRealEstates(date);
         Response<List<SearchNearContainer>> response;
         response = call.execute();
 
         if (response.body() == null)
             throw new IOException("Error parsing realty");
 
-        return response.body();
+        return response.body();*/
+        return null;
     }
 
-    public List<RequirementContainer> getRequirements(Long agentId) throws IOException {
-        Call<List<RequirementContainer>> call = mApi.getRequirements(agentId);
+    public List<Requisition> getRequisitions(Long agentId) throws IOException {
+        /*Call<List<RequirementContainer>> call = mApi.getRequirements(agentId);
         Response<List<RequirementContainer>> response = call.execute();
 
         if (response.body() == null)
             throw new IOException("Failed parsing requirements");
 
-        return response.body();
+        return response.body();*/
+        return null;
     }
 }

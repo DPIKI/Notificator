@@ -44,7 +44,7 @@ public class SyncMarketService extends Service {
     public PrefManager mPrefManager;
 
     @Inject
-    public DataFetcher mDataFetcher;
+    public SickBastard mSickBastard;
 
     private Handler mBackgroundHandler;
     private PowerManager.WakeLock mWakeLock;
@@ -73,7 +73,7 @@ public class SyncMarketService extends Service {
 
         @Override
         public void run() {
-            List<Recommendation> recommendations = mDataFetcher.fetch();
+            List<Recommendation> recommendations = mSickBastard.getRecommendations();
             handleRecommendations(recommendations);
             mBackgroundHandler.postDelayed(fetchData, 5 * 1000);
         }
