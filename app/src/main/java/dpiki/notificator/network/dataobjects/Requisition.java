@@ -53,5 +53,5 @@ public class Requisition {
     public Integer idPhone;
     public String dateFreedFrom;
     public String dateFreedTo;
-
+    public Integer unreadRecommendationsCount;
 }
