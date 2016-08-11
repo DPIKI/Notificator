@@ -9,6 +9,7 @@ import java.util.Date;
  * Created by Lenovo on 01.08.2016.
  */
 public class Rent extends RealtyBase {
+
     public Double cost;
     public Integer floor;
     public Integer floorAll;

@@ -4,6 +4,7 @@ package dpiki.notificator.network.dataobjects;
  * Created by Lenovo on 01.08.2016.
  */
 public class Household extends RealtyBase {
+
     public Integer stead;
     public Double cost;
     public Double totalArea;

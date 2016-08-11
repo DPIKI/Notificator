@@ -4,6 +4,8 @@ package dpiki.notificator.network.dataobjects;
  * Created by Lenovo on 11.08.2016.
  */
 public class Requisition {
+    public Long id;
+    public String type;
     public Long idFund;
     public Double hallAreaFrom;
     public Double hallAreaTo;
@@ -19,8 +21,6 @@ public class Requisition {
     public Double rentalPriceTo;
     public Double rentalPriceSquareMeterFrom;
     public Double rentalPriceSquareMeterTo;
-    public Long idLiftingEquipment;
-    public Long idCommunication;
     public Double totalAreaFrom;
     public Double totalAreaTo;
     public Double livingAreaFrom;
@@ -39,16 +39,19 @@ public class Requisition {
     public Integer floorAll;
     public Integer notFirst;
     public Integer notLast;
-    public Long idState;
     public Integer roomCountFrom;
     public Integer roomCountTo;
     public Integer prepayment;
     public Long idComfort;
     public Long idFurniture;
+    public Long idState;
     public Long idYard;
     public Long idEntry;
+    public Long idRent;
+    public Long idLiftingEquipment;
+    public Long idCommunication;
     public Integer idPhone;
     public String dateFreedFrom;
     public String dateFreedTo;
-    public Long idRent;
+
 }

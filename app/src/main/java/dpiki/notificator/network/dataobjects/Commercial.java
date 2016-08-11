@@ -11,6 +11,7 @@ import dpiki.notificator.ui.MainActivity;
  * Created by Lenovo on 01.08.2016.
  */
 public class Commercial extends RealtyBase {
+
     public Double totalArea;
     public Double hallArea;
     public Double landArea;

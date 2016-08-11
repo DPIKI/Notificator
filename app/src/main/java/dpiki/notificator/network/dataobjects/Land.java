@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Lenovo on 01.08.2016.
  */
 public class Land extends RealtyBase {
+
     public Integer stead;
     public Double cost;
     public Double totalArea;
@@ -85,4 +86,5 @@ public class Land extends RealtyBase {
 
         return true;
     }
+
 }

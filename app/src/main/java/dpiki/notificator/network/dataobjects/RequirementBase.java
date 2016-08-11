@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName;
  * Created by prog1 on 05.08.2016.
  */
 public class RequirementBase {
-
     public Long idRequirements;
 
     public RequirementBase(){
