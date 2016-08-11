@@ -1,7 +1,5 @@
 package dpiki.notificator;
 
-import com.ibm.icu.text.Collator;
-
 import org.junit.Test;
 import org.mockito.Matchers;
 
@@ -9,7 +7,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -18,7 +15,6 @@ import static org.mockito.Mockito.*;
 import dpiki.notificator.data.RealtyTypes;
 import dpiki.notificator.data.Recommendation;
 import dpiki.notificator.data.Requirement;
-import dpiki.notificator.network.DataFetcher;
 import dpiki.notificator.network.ServerApiWrapper;
 import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.Realestate;

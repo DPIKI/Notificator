@@ -26,6 +26,7 @@ public class RealEstate {
     public Integer roomCount;
     public Integer prepayment;
     public Long idYard;
+    public Long idFund;
     public Long idEntry;
     public Long idState;
     public Long idAddress;

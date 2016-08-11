@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import dpiki.notificator.network.DataFetcher;
 import dpiki.notificator.network.ServerApiWrapper;
 
 /**
