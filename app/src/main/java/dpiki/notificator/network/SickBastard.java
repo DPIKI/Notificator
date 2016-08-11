@@ -8,7 +8,6 @@ import java.util.List;
 import dpiki.notificator.DatabaseUtils;
 import dpiki.notificator.PrefManager;
 import dpiki.notificator.data.Recommendation;
-import dpiki.notificator.data.Requirement;
 import dpiki.notificator.network.dataobjects.RealEstate;
 import dpiki.notificator.network.dataobjects.Requisition;
 
@@ -87,7 +86,8 @@ public class SickBastard {
         isRequsitionsValid = false;
 
         try {
-            requisitions = mWrapper.getRequisitions(0);
+            requisitions.clear();
+            requisitions.addAll(mWrapper.getRequisitions(0L));
             mDbUtils.clearRecommendations(requisitions);
             for (Requisition i : requisitions) {
                 i.unreadRecommendationsCount = mDbUtils.getUnreadRecommendationsCount(i.id, i.type);
