@@ -13,7 +13,6 @@ import dpiki.notificator.data.Requisition;
 /**
  * Created by Lenovo on 11.08.2016.
  */
-//TODO: Прикрутить синхронизацию
 public class SickBastard {
     private final List<Requisition> requisitions = new ArrayList<>();
     private boolean isRequisitionsValid = false;
@@ -105,4 +104,5 @@ public class SickBastard {
         }
         mDbUtils.setUnreadRecommendationsCount(id, type, 0);
     }
+
 }

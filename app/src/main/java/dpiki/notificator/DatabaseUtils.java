@@ -45,8 +45,8 @@ public class DatabaseUtils {
         try {
             for (Recommendation rec : recommendations) {
                 ContentValues recValues = new ContentValues();
-                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT, rec.idRequirement);
-                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REALTY, rec.idRealty);
+                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT, rec.idRequisition);
+                recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REALTY, rec.idRealEstate);
                 recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE, rec.type);
                 db.insert(DatabaseHelper.TABLE_RECOMMENDATIONS, null, recValues);
             }
@@ -56,7 +56,7 @@ public class DatabaseUtils {
     }
 
     /**
-     * Returns id recommendations of specified typeRequirement and idRequirement.
+     * Returns id recommendations of specified typeRequirement and idRequisition.
      *
      * @param id - id of the requirement.
      * @param type - type of the requirement.

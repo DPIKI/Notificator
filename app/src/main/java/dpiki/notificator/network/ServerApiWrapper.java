@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dpiki.notificator.data.RealEstate;
+import dpiki.notificator.data.RealtyTypes;
 import dpiki.notificator.data.Requisition;
 import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.Communication;
@@ -57,7 +58,7 @@ public class ServerApiWrapper {
         return mapRequisitions(response.body());
     }
 
-    private List<RealEstate> mapRealEstates(List<SearchNearContainer> searchNearContainers) {
+    private List<RealEstate> mapRealEstates(List<SearchNearContainer> searchNearContainers) throws IOException {
         List<RealEstate> realEstates = new ArrayList<>();
 
         for (SearchNearContainer container : searchNearContainers) {
@@ -70,52 +71,82 @@ public class ServerApiWrapper {
 
             }
 
-            realEstate.id = realestate != null ? realestate.getId() : null;
-            realEstate.idAddress = realestate != null ? realestate.getIdAddress() : null;
-            realEstate.firm = realestate != null ? realestate.getIsFirmContactPerson() : null;
-            realEstate.cost = realEstateInfo != null ? realEstateInfo.getCost() : null;
-            realEstate.floor = realEstateInfo != null ? realEstateInfo.getFloor() : null;
-            realEstate.floorAll = realEstateInfo != null ? realEstateInfo.getFloorAll() : null;
-            realEstate.idFund = realEstateInfo != null ? realEstateInfo.getIdFund() : null;
-            realEstate.idState = realEstateInfo != null ? realEstateInfo.getIdState() : null;
-            realEstate.idTypeApartment = realEstateInfo != null ? realEstateInfo.getIdTypeApartment() : null;
-            realEstate.idWallMaterial = realEstateInfo != null ? realEstateInfo.getIdWallMaterial() : null;
-            realEstate.kitchenArea = realEstateInfo != null ? realEstateInfo.getKitchenArea() : null;
-            realEstate.livingArea = realEstateInfo != null ? realEstateInfo.getLivingArea() : null;
-            realEstate.idEntry = realEstateInfo != null ? realEstateInfo.getIdEntry() : null;
-            realEstate.idFurniture = realEstateInfo != null ? realEstateInfo.getIdFurniture() : null;
-            realEstate.stead = realEstateInfo != null ? realEstateInfo.getStead() : null;
-            realEstate.hasPhone = realEstateInfo != null ? realEstateInfo.getHasPhone() : null;
-            realEstate.idComfort = realEstateInfo != null ? realEstateInfo.getIdComfort() : null;
-            realEstate.idYard = realEstateInfo != null ? realEstateInfo.getIdYard() : null;
-            realEstate.roomCount = realEstateInfo != null ? realEstateInfo.getRoomCount() : null;
-            realEstate.prepayment = realEstateInfo != null ? realEstateInfo.getPrepayment() : null;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            realEstate.dateFreed = realEstateInfo != null ? sdf.format(realEstateInfo.getDatePuttingHouse()) : null;
-            realEstate.hallArea = realEstateInfo != null ? realEstateInfo.getHallArea() : null;
-            realEstate.landArea = realEstateInfo != null ? realEstateInfo.getLandArea() : null;
-            realEstate.totalArea = realEstateInfo != null ? realEstateInfo.getTotalArea() : null;
-            realEstate.rentArea = realEstateInfo != null ? realEstateInfo.getRentArea() : null;
-            realEstate.sellPrice = realEstateInfo != null ? realEstateInfo.getSellPrice() : null;
-            realEstate.sellPriceSquareMeter = realEstateInfo != null ? realEstateInfo.getSellPriceSquareMeter() : null;
-            realEstate.rentPrice = realEstateInfo != null ? realEstateInfo.getRentPrice() : null;
-            realEstate.rentPriceSquareMeter = realEstateInfo != null ? realEstateInfo.getRentPriceSquareMeter() : null;
+            if (realestate == null) {
+                throw new IOException("Field realestate = null");
+            }
+            if (realEstateInfo == null) {
+                throw new IOException("RealEstate field realEstateInfo = null");
+            }
+            if (realestate.getUpdatedAt() == null) {
+                throw new IOException("RealEstate field updatedAt = null");
+            }
+            if (realestate.getId() == null) {
+                throw new IOException("RealEstate field id = null");
+            }
+            if (realestate.getRealestateInstanceType() == null) {
+                throw new IOException("RealEstate field type = null");
+            }
 
-            TypeRent[] foo = realEstateInfo != null ? realEstateInfo.getTypeRent() : null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            realEstate.id = realestate.getId();
+            if (realestate.getRealestateInstanceType().contains(RealtyTypes.TYPE_APARTMENT)) {
+                realEstate.type = RealtyTypes.TYPE_APARTMENT;
+            } else if (realestate.getRealestateInstanceType().contains(RealtyTypes.TYPE_COMMERCIAL)) {
+                realEstate.type = RealtyTypes.TYPE_COMMERCIAL;
+            } else if (realestate.getRealestateInstanceType().contains(RealtyTypes.TYPE_RENT)) {
+                realEstate.type = RealtyTypes.TYPE_RENT;
+            } else if (realestate.getRealestateInstanceType().contains(RealtyTypes.TYPE_HOUSEHOLD)) {
+                realEstate.type = RealtyTypes.TYPE_HOUSEHOLD;
+            } else if (realestate.getRealestateInstanceType().contains(RealtyTypes.TYPE_LAND)) {
+                realEstate.type = RealtyTypes.TYPE_LAND;
+            }
+            realEstate.updatedAt = sdf.format(realestate.getUpdatedAt());
+
+            realEstate.idAddress = realestate.getIdAddress();
+            realEstate.firm = realestate.getIsFirmContactPerson();
+            realEstate.cost = realEstateInfo.getCost();
+            realEstate.floor = realEstateInfo.getFloor();
+            realEstate.floorAll = realEstateInfo.getFloorAll();
+            realEstate.idFund = realEstateInfo.getIdFund();
+            realEstate.idState = realEstateInfo.getIdState();
+            realEstate.idTypeApartment = realEstateInfo.getIdTypeApartment();
+            realEstate.idWallMaterial = realEstateInfo.getIdWallMaterial();
+            realEstate.kitchenArea = realEstateInfo.getKitchenArea();
+            realEstate.livingArea = realEstateInfo.getLivingArea();
+            realEstate.idEntry = realEstateInfo.getIdEntry();
+            realEstate.idFurniture = realEstateInfo.getIdFurniture();
+            realEstate.stead = realEstateInfo.getStead();
+            realEstate.hasPhone = realEstateInfo.getHasPhone();
+            realEstate.idComfort = realEstateInfo.getIdComfort();
+            realEstate.idYard = realEstateInfo.getIdYard();
+            realEstate.roomCount = realEstateInfo.getRoomCount();
+            realEstate.prepayment = realEstateInfo.getPrepayment();
+            realEstate.dateFreed = sdf.format(realEstateInfo.getDatePuttingHouse());
+            realEstate.hallArea = realEstateInfo.getHallArea();
+            realEstate.landArea = realEstateInfo.getLandArea();
+            realEstate.totalArea = realEstateInfo.getTotalArea();
+            realEstate.rentArea = realEstateInfo.getRentArea();
+            realEstate.sellPrice = realEstateInfo.getSellPrice();
+            realEstate.sellPriceSquareMeter = realEstateInfo.getSellPriceSquareMeter();
+            realEstate.rentPrice = realEstateInfo.getRentPrice();
+            realEstate.rentPriceSquareMeter = realEstateInfo.getRentPriceSquareMeter();
+
+            TypeRent[] foo = realEstateInfo.getTypeRent();
             if (foo != null) {
                 realEstate.idRent = new Long[foo.length];
                 for (int i = 0; i < foo.length; i++) {
                     realEstate.idRent[i] = foo[i].getId();
                 }
             }
-            Communication[] bar = realEstateInfo != null ? realEstateInfo.getCommunication() : null;
+            Communication[] bar = realEstateInfo.getCommunication();
             if (bar != null) {
                 realEstate.idCommunications = new Long[bar.length];
                 for (int i = 0; i < bar.length; i++) {
                     realEstate.idCommunications[i] = bar[i].getId();
                 }
             }
-            LiftingEquipment[] buz = realEstateInfo != null ? realEstateInfo.getLiftingEquipment() : null;
+            LiftingEquipment[] buz = realEstateInfo.getLiftingEquipment();
             if (buz != null) {
                 realEstate.idLiftingEquipments = new Long[buz.length];
                 for (int i = 0; i < buz.length; i++) {
