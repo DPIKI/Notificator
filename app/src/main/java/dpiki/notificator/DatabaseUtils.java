@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import dpiki.notificator.data.Recommendation;
-import dpiki.notificator.data.Requirement;
 import dpiki.notificator.data.Requisition;
 
 /**
@@ -79,9 +78,6 @@ public class DatabaseUtils {
                             + DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = '" + type + "'",
                     null, null, null, null);
 
-            if (cursor == null)
-                return retVal;
-
             try {
                 while (cursor.moveToNext()) {
                     retVal.add(cursor.getLong(0));
@@ -103,12 +99,9 @@ public class DatabaseUtils {
     public void clearRecommendations(List<Requisition> r) {
         String whereClause = "NOT (";
         for (Requisition i : r) {
-            whereClause +=(
-                    " OR (" +
-                            DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = '" + i.type + " AND " +
-                            DatabaseHelper.FIELD_RECOMMENDATIONS_ID + " = " + i.id +
-                            ")"
-            );
+            whereClause += ( " OR (" +
+                DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = '" + i.type + " AND " +
+                DatabaseHelper.FIELD_RECOMMENDATIONS_ID + " = " + i.id + ")");
         }
 
         whereClause = whereClause.replaceFirst(" OR ", "");
@@ -146,8 +139,6 @@ public class DatabaseUtils {
             Cursor c = db.query(DatabaseHelper.TABLE_REQUIREMENTS,
                     new String[] { DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS },
                     whereClause, null, null, null, null);
-
-            assert c != null;
 
             try {
                 if (c.moveToNext()) {
@@ -192,8 +183,6 @@ public class DatabaseUtils {
                         DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
                                 DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'",
                         null, null, null, null);
-
-                assert c != null;
 
                 try {
                     if (c.moveToNext()) {
