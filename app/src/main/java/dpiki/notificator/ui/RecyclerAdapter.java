@@ -7,53 +7,25 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import dpiki.notificator.R;
-import dpiki.notificator.data.Requisition;
 
 /**
  * Created by prog1 on 07.07.2016.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    public List<Requisition> mDataset;
+    public List<IView.RequisitionInfoContainer> mDataSet;
     private OnViewClickListener mItemClickListener;
 
-    public RecyclerAdapter(List<Requisition> dataset,
-                           OnViewClickListener listener) {
+    public RecyclerAdapter (OnViewClickListener listener) {
         mItemClickListener = listener;
-        update(dataset);
     }
 
-    public void update(List<Requisition> marketClients) {
-        mDataset = marketClients;
-        Collections.reverse(mDataset);
+    public void update(List<IView.RequisitionInfoContainer> marketClients) {
+        mDataSet = marketClients;
         this.notifyDataSetChanged();
-    }
-
-    public void clearUnreadNotifications(int position) {
-        int newPos = position;
-        Iterator<Requisition> i = this.mDataset.listIterator(position);
-        while (i.hasNext()) {
-            Requisition curr = i.next();
-            if (curr.unreadRecommendationsCount == 0)
-                break;
-            newPos++;
-        }
-
-        newPos--;
-        newPos = newPos > position ? newPos : position;
-
-        Requisition curr = this.mDataset.get(position);
-        curr.unreadRecommendationsCount = 0;
-        this.notifyItemChanged(position);
-
-        this.mDataset.remove(position);
-        this.mDataset.add(newPos, curr);
-        this.notifyItemMoved(position, newPos);
     }
 
     @Override
@@ -67,20 +39,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Requisition requisition = mDataset.get(position);
-
-        holder.tvNameClient.setText("idRequisitions = " + requisition.id);
-        holder.tvNotifCount.setText(requisition.unreadRecommendationsCount.toString());
-        holder.tvNotifCount.setVisibility(requisition.unreadRecommendationsCount == 0 ? View.INVISIBLE : View.VISIBLE);
-        holder.rlCircle.setVisibility(requisition.unreadRecommendationsCount == 0 ? View.INVISIBLE : View.VISIBLE);
-        holder.tvType.setText(requisition.type);
-
-        holder.requisition = requisition;
+        if (mDataSet != null) {
+            IView.RequisitionInfoContainer r = mDataSet.get(position);
+            holder.tvNameClient.setText(r.fio);
+            holder.tvNotifCount.setText(r.unread);
+            holder.tvNotifCount.setVisibility(r.unread == 0 ? View.INVISIBLE : View.VISIBLE);
+            holder.rlCircle.setVisibility(r.unread == 0 ? View.INVISIBLE : View.VISIBLE);
+            holder.tvType.setText(r.type);
+            holder.requisition = r;
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        if (mDataSet != null) {
+            return mDataSet.size();
+        } else {
+            return 0;
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder
@@ -90,7 +66,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public TextView tvType;
         public RelativeLayout rlCircle;
         public RelativeLayout relativeLayout;
-        public Requisition requisition;
+        public IView.RequisitionInfoContainer requisition;
 
         OnViewClickListener listener;
 
@@ -101,7 +77,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             tvType = (TextView) v.findViewById(R.id.recycler_item_tv_type);
             relativeLayout = (RelativeLayout) v.findViewById(R.id.recycler_item_rl_general);
             rlCircle = (RelativeLayout) v.findViewById(R.id.recycler_item_rl_circle);
-
             requisition = null;
             relativeLayout.setOnClickListener(this);
             this.listener = listener;
@@ -117,7 +92,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
      * Created by User on 09.07.2016.
      */
     public interface OnViewClickListener {
-        void onViewClicked(Requisition requisition, int position);
+        void onViewClicked(IView.RequisitionInfoContainer r, int position);
     }
 }
 

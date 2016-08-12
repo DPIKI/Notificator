@@ -119,11 +119,11 @@ public class SyncMarketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Assert.assertEquals("\nYou need to use it everywhere : \n"
+        /*Assert.assertEquals("\nYou need to use it everywhere : \n"
                         + "SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\")\n"
                         + "HH - upperCase : 24h\n"
                         + "hh - lowerCase : 12h\n",
-                true,false);
+                true,false);*/
         App.getInstance().inject(this);
         rerunNotificationService(this);
     }

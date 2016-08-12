@@ -4,7 +4,7 @@ import org.hamcrest.Description;
 
 import java.util.List;
 
-class ListMatcher<T> extends BaseMatcher<List<T>> {
+public class ListMatcher<T> extends BaseMatcher<List<T>> {
         List<T> toCompare;
 
         public ListMatcher(List<T> toCompare) {

@@ -9,29 +9,24 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import dpiki.notificator.App;
-import dpiki.notificator.DatabaseUtils;
 import dpiki.notificator.R;
-import dpiki.notificator.data.Requisition;
-import dpiki.notificator.network.SickBastard;
 import dpiki.notificator.network.SyncMarketService;
 
 @EActivity(R.layout.activity_main)
-public class MainActivity extends AppCompatActivity {
-
-    @Inject
-    public SickBastard mSickBastard;
+public class MainActivity extends AppCompatActivity implements IView {
 
     @ViewById(R.id.activity_main_rv)
     protected RecyclerView recyclerView;
@@ -39,15 +34,19 @@ public class MainActivity extends AppCompatActivity {
     protected Toolbar toolbar;
     @ViewById(R.id.toolbar_tv_title)
     protected TextView tvToolbarTitle;
+    @ViewById(R.id.rl_activity_main_error_layout)
+    protected RelativeLayout errorLayout;
 
     private RecyclerAdapter recyclerAdapter;
     private BroadcastReceiver broadcastReceiver;
+    private IPresenter mPresenter;
+
+    public MainActivity() {
+    }
 
     @AfterViews
     protected void initRecyclerView() {
-        App.getInstance().inject(MainActivity.this);
-        List<Requisition> requisitions = mSickBastard.getRequisitions();
-        recyclerAdapter = new RecyclerAdapter(requisitions, new ItemClickListener());
+        recyclerAdapter = new RecyclerAdapter(new ItemClickListener());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -60,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @AfterViews
-    protected void initService() {
+    protected void initPresenter() {
+        mPresenter = new PresenterImpl(this, App.getInstance().sickBastard());
         SyncMarketService.startNotificationService(this);
     }
 
@@ -68,17 +68,8 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         broadcastReceiver = new Receiver();
-
         IntentFilter intentFilter = new IntentFilter(SyncMarketService.ACTION_NEW_RECOMMENDATIONS);
         registerReceiver(broadcastReceiver, intentFilter);
-
-        intentFilter = new IntentFilter(SyncMarketService.ACTION_START_RECEIVE);
-        registerReceiver(broadcastReceiver, intentFilter);
-
-        intentFilter = new IntentFilter(SyncMarketService.ACTION_STOP_RECEIVE);
-        registerReceiver(broadcastReceiver, intentFilter);
-
-        recyclerAdapter.update(mSickBastard.getRequisitions());
     }
 
     @Override
@@ -87,30 +78,56 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPresenter.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.onResume();
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showInvalidSync() {
+        errorLayout.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showRequisitions(List<RequisitionInfoContainer> requisitions) {
+        errorLayout.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        recyclerAdapter.update(requisitions);
+    }
+
+    @Click(R.id.btn_activity_main_refresh)
+    public void onClickRefreshButton(View v) {
+        mPresenter.onRefreshButtonClicked();
+    }
+
     public class ItemClickListener implements RecyclerAdapter.OnViewClickListener {
         @Override
-        public void onViewClicked(Requisition requisition, int position) {
-            if (requisition == null)
+        public void onViewClicked(RequisitionInfoContainer r, int position) {
+            if (r == null)
                 return;
 
-            if (requisition.unreadRecommendationsCount == 0)
-                return;
-
-            mSickBastard.clearUnreadRecommendations(requisition.id, requisition.type);
-            recyclerAdapter.clearUnreadNotifications(position);
+            mPresenter.onItemClicked(r.id, r.type);
         }
     }
 
     public class Receiver extends android.content.BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SyncMarketService.ACTION_START_RECEIVE)) {
-                Toast.makeText(MainActivity.this, "Receiver:Started...", Toast.LENGTH_LONG).show();
-            } else if (intent.getAction().equals(SyncMarketService.ACTION_STOP_RECEIVE)) {
-                Toast.makeText(MainActivity.this, "Receiver:Stopped...", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(MainActivity.this, "Receiver:Update...", Toast.LENGTH_LONG).show();
-                recyclerAdapter.update(mSickBastard.getRequisitions());
+            if (intent.getAction().equals(SyncMarketService.ACTION_NEW_RECOMMENDATIONS)) {
+                mPresenter.onNewRecommendations();
             }
         }
     }

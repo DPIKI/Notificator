@@ -3,6 +3,7 @@ package dpiki.notificator;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import dpiki.notificator.network.SickBastard;
 import dpiki.notificator.network.SyncMarketService;
 import dpiki.notificator.ui.MainActivity;
 
@@ -14,4 +15,5 @@ import dpiki.notificator.ui.MainActivity;
 public interface AppComponent {
     void inject(SyncMarketService utils);
     void inject(MainActivity utils);
+    SickBastard sickBastard();
 }

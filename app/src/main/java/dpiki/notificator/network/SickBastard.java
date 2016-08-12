@@ -13,7 +13,6 @@ import dpiki.notificator.data.Requisition;
 /**
  * Created by Lenovo on 11.08.2016.
  */
-//TODO: Прикрутить синхронизацию
 public class SickBastard {
     private final List<Requisition> requisitions = new ArrayList<>();
     private boolean isRequisitionsValid = false;
@@ -28,7 +27,7 @@ public class SickBastard {
         this.mPrefManager = mPrefManager;
     }
 
-    synchronized public List<Recommendation> getRecommendations() {
+    public List<Recommendation> getRecommendations() {
         List<Recommendation> retVal = new ArrayList<>();
 
         if (!isRequisitionsValid) {
@@ -42,23 +41,25 @@ public class SickBastard {
 
                 List<RealEstate> realEstates = mWrapper.getRealEstates(strLastDate);
 
-                for (RealEstate i : realEstates) {
-                    for (Requisition j : requisitions) {
-                        if (i.isMatch(j)) {
-                            retVal.add(new Recommendation(j.id, i.id, i.type));
-                            j.unreadRecommendationsCount++;
+                synchronized (requisitions) {
+                    for (RealEstate i : realEstates) {
+                        for (Requisition j : requisitions) {
+                            if (i.isMatch(j)) {
+                                retVal.add(new Recommendation(j.id, i.id, i.type));
+                                j.unreadRecommendationsCount++;
+                            }
                         }
+
+                        if (i.updatedAt.compareTo(strLastDate) > 0)
+                            strLastDate = i.updatedAt;
                     }
 
-                    if (i.updatedAt.compareTo(strLastDate) > 0)
-                        strLastDate = i.updatedAt;
+                    for (Requisition i : requisitions) {
+                        mDbUtils.setUnreadRecommendationsCount(i.id, i.type, i.unreadRecommendationsCount);
+                    }
                 }
 
                 mDbUtils.addRecommendations(retVal);
-                for (Requisition i : requisitions) {
-                    mDbUtils.setUnreadRecommendationsCount(i.id, i.type, i.unreadRecommendationsCount);
-                }
-
                 mPrefManager.putLastFetchDate(strLastDate);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -68,39 +69,46 @@ public class SickBastard {
         return retVal;
     }
 
-    synchronized public List<Requisition> getRequisitions() {
+    public List<Requisition> getRequisitions() {
         if (isRequisitionsValid) {
-            return requisitions;
+            synchronized (requisitions) {
+                return requisitions;
+            }
         } else {
             return null;
         }
     }
 
-    synchronized public List<Long> getRecommendationsForRequisition(long id, String type) {
+    public List<Long> getRecommendationsForRequisition(long id, String type) {
         return mDbUtils.readRecommendations(id, type);
     }
 
-    synchronized public void refresh() {
+    public void refresh() {
         isRequisitionsValid = false;
 
         try {
-            requisitions.clear();
-            requisitions.addAll(mWrapper.getRequisitions(0L));
-            mDbUtils.clearRecommendations(requisitions);
-            for (Requisition i : requisitions) {
-                i.unreadRecommendationsCount = mDbUtils.getUnreadRecommendationsCount(i.id, i.type);
+            List<Requisition> response = mWrapper.getRequisitions(0L);
+            synchronized (requisitions) {
+                requisitions.clear();
+                requisitions.addAll(response);
+                for (Requisition i : requisitions) {
+                    i.unreadRecommendationsCount = mDbUtils.getUnreadRecommendationsCount(i.id, i.type);
+                }
             }
+            mDbUtils.clearRecommendations(requisitions);
             isRequisitionsValid = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    synchronized public void clearUnreadRecommendations(long id, String type) {
-        for (Requisition i : requisitions) {
-            if (i.id.equals(id) && i.type.equals(type)) {
-                i.unreadRecommendationsCount = 0;
-                break;
+    public void clearUnreadRecommendations(long id, String type) {
+        synchronized (requisitions) {
+            for (Requisition i : requisitions) {
+                if (i.id.equals(id) && i.type.equals(type)) {
+                    i.unreadRecommendationsCount = 0;
+                    break;
+                }
             }
         }
         mDbUtils.setUnreadRecommendationsCount(id, type, 0);

@@ -39,7 +39,7 @@ public class AppModule {
     @Provides
     @NonNull
     @Singleton
-    SickBastard provideDataFetcher(PrefManager prefManager, DatabaseUtils utils, ServerApiWrapper wrapper) {
+    SickBastard provideSickBastard(PrefManager prefManager, DatabaseUtils utils, ServerApiWrapper wrapper) {
         return new SickBastard(utils, wrapper, prefManager);
     }
 
