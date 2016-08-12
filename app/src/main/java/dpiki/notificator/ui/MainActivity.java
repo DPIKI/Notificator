@@ -23,14 +23,15 @@ import javax.inject.Inject;
 import dpiki.notificator.App;
 import dpiki.notificator.DatabaseUtils;
 import dpiki.notificator.R;
-import dpiki.notificator.data.Requirement;
+import dpiki.notificator.data.Requisition;
+import dpiki.notificator.network.SickBastard;
 import dpiki.notificator.network.SyncMarketService;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
 
     @Inject
-    public DatabaseUtils mDatabaseUtils;
+    public SickBastard mSickBastard;
 
     @ViewById(R.id.activity_main_rv)
     protected RecyclerView recyclerView;
@@ -45,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
     @AfterViews
     protected void initRecyclerView() {
         App.getInstance().inject(MainActivity.this);
-        List<Requirement> requirements = mDatabaseUtils.readRequirements();
-        recyclerAdapter = new RecyclerAdapter(requirements, new ItemClickListener());
+        List<Requisition> requisitions = mSickBastard.getRequisitions();
+        recyclerAdapter = new RecyclerAdapter(requisitions, new ItemClickListener());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         intentFilter = new IntentFilter(SyncMarketService.ACTION_STOP_RECEIVE);
         registerReceiver(broadcastReceiver, intentFilter);
 
-        recyclerAdapter.update(mDatabaseUtils.readRequirements());
+        recyclerAdapter.update(mSickBastard.getRequisitions());
     }
 
     @Override
@@ -86,16 +87,16 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(broadcastReceiver);
     }
 
-    public class ItemClickListener implements OnViewClickListener {
+    public class ItemClickListener implements RecyclerAdapter.OnViewClickListener {
         @Override
-        public void onViewClicked(Requirement requirement, int position) {
-            if (requirement == null)
+        public void onViewClicked(Requisition requisition, int position) {
+            if (requisition == null)
                 return;
 
-            if (requirement.unreadRecommendations == 0)
+            if (requisition.unreadRecommendationsCount == 0)
                 return;
 
-            mDatabaseUtils.clearUnreadRecommendationsCount(requirement.id, requirement.type);
+            mSickBastard.clearUnreadRecommendations(requisition.id, requisition.type);
             recyclerAdapter.clearUnreadNotifications(position);
         }
     }
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Receiver:Stopped...", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(MainActivity.this, "Receiver:Update...", Toast.LENGTH_LONG).show();
-                recyclerAdapter.update(mDatabaseUtils.readRequirements());
+                recyclerAdapter.update(mSickBastard.getRequisitions());
             }
         }
     }

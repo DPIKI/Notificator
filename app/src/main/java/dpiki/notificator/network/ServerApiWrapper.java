@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dpiki.notificator.data.RealEstate;
-import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.data.Requisition;
+import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.Communication;
 import dpiki.notificator.network.gson.LiftingEquipment;
 import dpiki.notificator.network.gson.Realestate;

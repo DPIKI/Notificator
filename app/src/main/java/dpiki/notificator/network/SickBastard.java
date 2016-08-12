@@ -28,7 +28,7 @@ public class SickBastard {
         this.mPrefManager = mPrefManager;
     }
 
-    public List<Recommendation> getRecommendations() {
+    synchronized public List<Recommendation> getRecommendations() {
         List<Recommendation> retVal = new ArrayList<>();
 
         if (!isRequisitionsValid) {
@@ -37,8 +37,6 @@ public class SickBastard {
 
         if (isRequisitionsValid) {
             try {
-                requisitions.clear();
-
                 String strLastDate = mPrefManager.getLastFetchDate();
                 mPrefManager.putLastFetchDate(strLastDate);
 
@@ -70,7 +68,7 @@ public class SickBastard {
         return retVal;
     }
 
-    public List<Requisition> getRequisitions() {
+    synchronized public List<Requisition> getRequisitions() {
         if (isRequisitionsValid) {
             return requisitions;
         } else {
@@ -78,11 +76,11 @@ public class SickBastard {
         }
     }
 
-    public List<Long> getRecommendationsForRequisition(long id, String type) {
+    synchronized public List<Long> getRecommendationsForRequisition(long id, String type) {
         return mDbUtils.readRecommendations(id, type);
     }
 
-    public void refresh() {
+    synchronized public void refresh() {
         isRequisitionsValid = false;
 
         try {
@@ -98,7 +96,7 @@ public class SickBastard {
         }
     }
 
-    public void clearUnreadRecommendations(long id, String type) {
+    synchronized public void clearUnreadRecommendations(long id, String type) {
         for (Requisition i : requisitions) {
             if (i.id.equals(id) && i.type.equals(type)) {
                 i.unreadRecommendationsCount = 0;
@@ -107,5 +105,4 @@ public class SickBastard {
         }
         mDbUtils.setUnreadRecommendationsCount(id, type, 0);
     }
-
 }
