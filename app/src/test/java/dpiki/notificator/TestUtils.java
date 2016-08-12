@@ -4,15 +4,16 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.Field;
 
-import dpiki.notificator.network.dataobjects.RealtyBase;
-import dpiki.notificator.network.dataobjects.RequirementBase;
+import dpiki.notificator.data.RealEstate;
+import dpiki.notificator.data.Requisition;
+
 
 /**
  * Created by User on 09.08.2016.
  */
 public class TestUtils {
 
-    public static void testRange(RealtyBase a, RequirementBase ar, String fieldName,
+    public static void testRange(RealEstate a, Requisition ar, String fieldName,
                                  String limit1name, String limit2name)
             throws NoSuchFieldException, IllegalAccessException {
         Field fldTest = a.getClass().getField(fieldName);
@@ -67,7 +68,7 @@ public class TestUtils {
         fldLimit2.set(ar, oldLimit2);
     }
 
-    public static void testRangeInteger(RealtyBase a, RequirementBase ar, String fieldName,
+    public static void testRangeInteger(RealEstate a, Requisition ar, String fieldName,
                                         String limit1name, String limit2name)
             throws NoSuchFieldException, IllegalAccessException {
         Field fldTest = a.getClass().getField(fieldName);
@@ -122,7 +123,7 @@ public class TestUtils {
         fldLimit2.set(ar, oldLimit2);
     }
 
-    public static void testId(RealtyBase a, RequirementBase ar, String paramName,
+    public static void testId(RealEstate a, Requisition ar, String paramName,
                               String filterName)
             throws NoSuchFieldException, IllegalAccessException {
         Field fldParam = a.getClass().getField(paramName);
@@ -156,7 +157,7 @@ public class TestUtils {
         fldFilter.set(ar, oldFilter);
     }
 
-    public static void testInteger(RealtyBase a, RequirementBase ar, String paramName,
+    public static void testInteger(RealEstate a, Requisition ar, String paramName,
                                    String filterName)
             throws NoSuchFieldException, IllegalAccessException {
         Field fldParam = a.getClass().getField(paramName);
@@ -190,7 +191,7 @@ public class TestUtils {
         fldFilter.set(ar, oldFilter);
     }
 
-    public static void testArrayLong(RealtyBase a, RequirementBase ar, String paramName,
+    public static void testArrayLong(RealEstate a, Requisition ar, String paramName,
                                      String filterName)
             throws NoSuchFieldException, IllegalAccessException {
         Field fldParam = a.getClass().getField(paramName);
@@ -248,7 +249,7 @@ public class TestUtils {
         fldFilter.set(ar, oldFilter);
     }
 
-    public static void testRangeDate(RealtyBase a, RequirementBase ar, String fieldName,
+    public static void testRangeDate(RealEstate a, Requisition ar, String fieldName,
                                      String lowLimitName, String highLimitName)
             throws NoSuchFieldException, IllegalAccessException {
         Field fldTest = a.getClass().getField(fieldName);
