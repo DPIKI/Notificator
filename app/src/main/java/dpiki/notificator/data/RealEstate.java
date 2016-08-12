@@ -46,6 +46,10 @@ public class RealEstate {
 
     public boolean isMatch(Requisition r) {
 
+        if (r.type != null
+                && this.type != null
+                && !r.type.equals(this.type))
+            return false;
         if (r.idPhone != null
                 && r.idPhone != 0
                 && this.hasPhone != null

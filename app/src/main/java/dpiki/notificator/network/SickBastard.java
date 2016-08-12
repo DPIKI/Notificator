@@ -113,4 +113,5 @@ public class SickBastard {
         }
         mDbUtils.setUnreadRecommendationsCount(id, type, 0);
     }
+
 }
