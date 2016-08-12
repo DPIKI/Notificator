@@ -42,7 +42,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         if (mDataSet != null) {
             IView.RequisitionInfoContainer r = mDataSet.get(position);
             holder.tvNameClient.setText(r.fio);
-            holder.tvNotifCount.setText(r.unread);
+            holder.tvNotifCount.setText("" + r.unread);
             holder.tvNotifCount.setVisibility(r.unread == 0 ? View.INVISIBLE : View.VISIBLE);
             holder.rlCircle.setVisibility(r.unread == 0 ? View.INVISIBLE : View.VISIBLE);
             holder.tvType.setText(r.type);

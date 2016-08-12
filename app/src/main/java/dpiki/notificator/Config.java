@@ -5,6 +5,6 @@ package dpiki.notificator;
  */
 public class Config {
     public static boolean isDebug(){
-        return false;
+        return true;
     }
 }
