@@ -7,8 +7,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import dpiki.notificator.network.DataFetcher;
 import dpiki.notificator.network.ServerApiWrapper;
+import dpiki.notificator.network.SickBastard;
 
 /**
  * Created by Lenovo on 02.08.2016.
@@ -39,8 +39,8 @@ public class AppModule {
     @Provides
     @NonNull
     @Singleton
-    DataFetcher provideDataFetcher(PrefManager prefManager, DatabaseUtils utils, ServerApiWrapper wrapper) {
-        return new DataFetcher(prefManager, utils, wrapper);
+    SickBastard provideDataFetcher(PrefManager prefManager, DatabaseUtils utils, ServerApiWrapper wrapper) {
+        return new SickBastard(utils, wrapper, prefManager);
     }
 
     @Provides

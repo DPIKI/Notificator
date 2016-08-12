@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.List;
 
-import dpiki.notificator.network.dataobjects.RealEstate;
+import dpiki.notificator.data.RealEstate;
 import dpiki.notificator.data.Requisition;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

@@ -1,4 +1,4 @@
-package dpiki.notificator.network.dataobjects;
+package dpiki.notificator.data;
 
 import dpiki.notificator.data.Requisition;
 

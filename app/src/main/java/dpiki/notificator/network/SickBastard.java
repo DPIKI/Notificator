@@ -7,7 +7,7 @@ import java.util.List;
 import dpiki.notificator.DatabaseUtils;
 import dpiki.notificator.PrefManager;
 import dpiki.notificator.data.Recommendation;
-import dpiki.notificator.network.dataobjects.RealEstate;
+import dpiki.notificator.data.RealEstate;
 import dpiki.notificator.data.Requisition;
 
 /**
