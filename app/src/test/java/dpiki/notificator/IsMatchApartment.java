@@ -2,8 +2,6 @@ package dpiki.notificator;
 
 import org.junit.Test;
 
-import dpiki.notificator.network.dataobjects.Apartment;
-
 import static dpiki.notificator.TestUtils.testId;
 import static dpiki.notificator.TestUtils.testInteger;
 import static dpiki.notificator.TestUtils.testRange;

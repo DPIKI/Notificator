@@ -82,8 +82,6 @@ public class SyncMarketService extends Service {
             if (r.isEmpty())
                 return;
 
-            mDatabaseUtils.addRecommendations(r);
-
             Set<String> uniqueClients = new TreeSet<>();
             Set<Long> uniqueProducts = new TreeSet<>();
 

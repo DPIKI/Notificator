@@ -229,7 +229,7 @@ public class RealEstate {
                 && !Arrays.asList(this.idCommunications).contains(r.idCommunication))
             return false;
 
-       
+
         return true;
     }
 }

@@ -44,33 +44,12 @@ public class DatabaseUtils {
             return;
 
         try {
-            Map<String, Integer> newRecommendationsCount = new TreeMap<>();
             for (Recommendation rec : recommendations) {
                 ContentValues recValues = new ContentValues();
                 recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REQUIREMENT, rec.idRequirement);
                 recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REALTY, rec.idRealty);
                 recValues.put(DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE, rec.type);
                 db.insert(DatabaseHelper.TABLE_RECOMMENDATIONS, null, recValues);
-
-                String requirementString = rec.type + ":" + rec.idRequirement;
-                if (!newRecommendationsCount.containsKey(requirementString)) {
-                    newRecommendationsCount.put(requirementString,
-                            getUnreadRecommendationsCount(rec.idRequirement, rec.type));
-                }
-                newRecommendationsCount.put(requirementString,
-                        newRecommendationsCount.get(requirementString) + 1);
-            }
-
-            for (Map.Entry<String, Integer> i : newRecommendationsCount.entrySet()) {
-                String[] pair = i.getKey().split(":");
-                int id = Integer.parseInt(pair[1]);
-                String type = pair[0];
-                ContentValues clientValues = new ContentValues();
-                clientValues.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, i.getValue());
-                db.update(DatabaseHelper.TABLE_REQUIREMENTS, clientValues,
-                        DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
-                                DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'", null);
-                mCacheRecommendations.put(type + ":" + id, i.getValue());
             }
         } finally {
             db.close();
@@ -85,13 +64,13 @@ public class DatabaseUtils {
      * @return List<Integer>
      */
     public List<Long> readRecommendations(Long id, String type) {
-        List<Long> idRecommendations = new ArrayList<>();
+        List<Long> retVal = new ArrayList<>();
 
         DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getReadableDatabase();
 
         if (db == null)
-            return idRecommendations;
+            return retVal;
 
         try {
             String[] columns = { DatabaseHelper.FIELD_RECOMMENDATIONS_ID_REALTY };
@@ -101,11 +80,11 @@ public class DatabaseUtils {
                     null, null, null, null);
 
             if (cursor == null)
-                return idRecommendations;
+                return retVal;
 
             try {
                 while (cursor.moveToNext()) {
-                    idRecommendations.add(cursor.getLong(0));
+                    retVal.add(cursor.getLong(0));
                 }
             } finally {
                 cursor.close();
@@ -114,38 +93,80 @@ public class DatabaseUtils {
             db.close();
         }
 
-        return idRecommendations;
-    }
-
-    public void clearRecommendations(List<Requisition> r) {
-
+        return retVal;
     }
 
     /**
-     * Clears unreadRecommendationsCount of specified requirement.
-     *
-     * @param id - id of the requirement.
-     * @param type - type of the requirement.
+     * Removes all recommendations which does not relate to any requisition from r.
+     * @param r list of requisitions.
      */
-    public void setUnreadRecommendationsCount(Long id, String type, int count) {
-        /*DatabaseHelper helper = new DatabaseHelper(mContext);
+    public void clearRecommendations(List<Requisition> r) {
+        String whereClause = "NOT (";
+        for (Requisition i : r) {
+            whereClause +=(
+                    " OR (" +
+                            DatabaseHelper.FIELD_RECOMMENDATIONS_TYPE + " = '" + i.type + " AND " +
+                            DatabaseHelper.FIELD_RECOMMENDATIONS_ID + " = " + i.id +
+                            ")"
+            );
+        }
+
+        whereClause = whereClause.replaceFirst(" OR ", "");
+        DatabaseHelper helper = new DatabaseHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
-        mCacheRecommendations.clear();
 
         if (db == null)
             return;
 
         try {
-            ContentValues values = new ContentValues();
-            values.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, 0);
-            db.update(
-                    DatabaseHelper.TABLE_REQUIREMENTS,
-                    values, DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
-                            DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'",
-                    null);
+            db.delete(DatabaseHelper.TABLE_RECOMMENDATIONS, whereClause, null);
         } finally {
             db.close();
-        }*/
+        }
+    }
+
+    /**
+     * Clears unreadRecommendationsCount of specified requirement.
+     *
+     * @param id  id of the requirement.
+     * @param type  type of the requirement.
+     */
+    public void setUnreadRecommendationsCount(Long id, String type, int count) {
+        DatabaseHelper helper = new DatabaseHelper(mContext);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String whereClause = DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
+                    DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = " + type;
+
+        mCacheRecommendations.put(type + ":" + id, count);
+
+        if (db == null)
+            return;
+
+        try {
+            Cursor c = db.query(DatabaseHelper.TABLE_REQUIREMENTS,
+                    new String[] { DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS },
+                    whereClause, null, null, null, null);
+
+            assert c != null;
+
+            try {
+                if (c.moveToNext()) {
+                    ContentValues cv = new ContentValues();
+                    cv.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, count);
+                    db.update(DatabaseHelper.TABLE_REQUIREMENTS, cv, whereClause, null);
+                } else {
+                    ContentValues cv = new ContentValues();
+                    cv.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, count);
+                    cv.put(DatabaseHelper.FIELD_REQUIREMENTS_ID, id);
+                    cv.put(DatabaseHelper.FIELD_REQUIREMENTS_TYPE, type);
+                    db.insert(DatabaseHelper.TABLE_REQUIREMENTS, null, cv);
+                }
+            } finally {
+                c.close();
+            }
+        } finally {
+            db.close();
+        }
     }
 
     /**
@@ -156,10 +177,9 @@ public class DatabaseUtils {
      * @param type - type of the requirement.
      */
     public int getUnreadRecommendationsCount(Long id, String type) {
-        /*String key = type + ":" + id;
-        if (mCacheRecommendations.containsKey(key)) {
-            return mCacheRecommendations.get(key);
-        } else {
+        String key = type + ":" + id;
+
+        if (!mCacheRecommendations.containsKey(key)) {
             DatabaseHelper helper = new DatabaseHelper(mContext);
             SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -168,20 +188,25 @@ public class DatabaseUtils {
 
             try {
                 Cursor c = db.query(DatabaseHelper.TABLE_REQUIREMENTS,
-                        new String[]{DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS},
+                        new String[] { DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS },
                         DatabaseHelper.FIELD_REQUIREMENTS_ID + " = " + id + " AND " +
                                 DatabaseHelper.FIELD_REQUIREMENTS_TYPE + " = '" + type + "'",
                         null, null, null, null);
 
-                if (c == null)
-                    return 0;
+                assert c != null;
 
                 try {
                     if (c.moveToNext()) {
                         Integer unreadNotificationCount = c.getInt(0);
-                        mCacheRecommendations.put(type + ":" + id, unreadNotificationCount);
+                        mCacheRecommendations.put(key, unreadNotificationCount);
                         return unreadNotificationCount;
                     } else {
+                        ContentValues cv = new ContentValues();
+                        cv.put(DatabaseHelper.FIELD_REQUIREMENTS_UNREAD_RECOMMENDATIONS, 0);
+                        cv.put(DatabaseHelper.FIELD_REQUIREMENTS_ID, id);
+                        cv.put(DatabaseHelper.FIELD_REQUIREMENTS_TYPE, type);
+                        db.insert(DatabaseHelper.TABLE_REQUIREMENTS, null, cv);
+                        mCacheRecommendations.put(key, 0);
                         return 0;
                     }
                 } finally {
@@ -190,9 +215,8 @@ public class DatabaseUtils {
             } finally {
                 db.close();
             }
+        } else {
+            return mCacheRecommendations.get(key);
         }
-        */
-        return 0;
     }
-
 }
