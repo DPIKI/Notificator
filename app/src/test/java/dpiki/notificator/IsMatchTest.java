@@ -252,5 +252,4 @@ public class IsMatchTest {
     public void testIdProfiles() throws NoSuchFieldException, IllegalAccessException {
         testArrayArrayLong(a, ar, "idProfiles", "idProfiles");
     }
-
 }

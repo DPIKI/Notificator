@@ -112,6 +112,7 @@ public class ServerApiWrapper {
             realEstate.idFund = realEstateInfo.getIdFund();
             realEstate.idState = realEstateInfo.getIdState();
             realEstate.idTypeApartment = realEstateInfo.getIdTypeApartment();
+            realEstate.idRealEstateState = realestate.getIdStatusRealestate();
             realEstate.idWallMaterial = realEstateInfo.getIdWallMaterial();
             realEstate.kitchenArea = realEstateInfo.getKitchenArea();
             realEstate.livingArea = realEstateInfo.getLivingArea();
