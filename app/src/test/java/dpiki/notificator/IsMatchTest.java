@@ -54,7 +54,7 @@ public class IsMatchTest {
 
     @Test
     public void testIdTypeApartment() throws NoSuchFieldException, IllegalAccessException {
-        testLongArray(a, ar, "idTypeApartment", "idTypeApartment");
+        testLongArray(a, ar, "idTypeApartment", "idTypeApartments");
     }
 
     @Test
@@ -170,12 +170,12 @@ public class IsMatchTest {
 
     @Test
     public void testIdLiftingEquipment() throws NoSuchFieldException, IllegalAccessException {
-        testArrayArrayLong(a, ar, "idLiftingEquipments", "idLiftingEquipment");
+        testArrayArrayLong(a, ar, "idLiftingEquipments", "idLiftingEquipments");
     }
 
     @Test
-    public void testIdCommunication() throws NoSuchFieldException, IllegalAccessException {
-        testArrayArrayLong(a, ar, "idCommunications", "idCommunication");
+    public void testIdCommunications() throws NoSuchFieldException, IllegalAccessException {
+        testArrayArrayLong(a, ar, "idCommunications", "idCommunications");
     }
 
     @Test
@@ -224,8 +224,8 @@ public class IsMatchTest {
     }
 
     @Test
-    public void testIdRent() throws NoSuchFieldException, IllegalAccessException {
-        testArrayLong(a, ar, "idRent", "idRent");
+    public void testIdRents() throws NoSuchFieldException, IllegalAccessException {
+        testArrayLong(a, ar, "idRents", "idRent");
     }
 
     @Test
@@ -249,8 +249,8 @@ public class IsMatchTest {
     }
 
     @Test
-    public void testIdProfile() throws NoSuchFieldException, IllegalAccessException {
-        testArrayArrayLong(a, ar, "idProfile", "idProfile");
+    public void testIdProfiles() throws NoSuchFieldException, IllegalAccessException {
+        testArrayArrayLong(a, ar, "idProfiles", "idProfiles");
     }
 
 }

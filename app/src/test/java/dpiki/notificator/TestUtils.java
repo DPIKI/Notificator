@@ -298,7 +298,7 @@ public class TestUtils {
         assertEquals(true, a.isMatch(ar));
 
         fldParam.set(a, new Long[]{40L, 50L});
-        assertEquals(true, a.isMatch(ar));
+        assertEquals(false, a.isMatch(ar));
 
         fldParam.set(a, oldParam);
         fldFilter.set(ar, oldFilter);

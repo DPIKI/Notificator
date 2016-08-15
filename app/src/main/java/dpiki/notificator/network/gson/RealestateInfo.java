@@ -184,14 +184,14 @@ public class RealestateInfo {
     }
 
     /**
-     * @return the idTypeApartment
+     * @return the idTypeApartments
      */
     public Long getIdTypeApartment() {
         return idTypeApartment;
     }
 
     /**
-     * @param idTypeApartment the idTypeApartment to set
+     * @param idTypeApartment the idTypeApartments to set
      */
     public void setIdTypeApartment(Long idTypeApartment) {
         this.idTypeApartment = idTypeApartment;
