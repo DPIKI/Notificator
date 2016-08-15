@@ -1,9 +1,7 @@
 package dpiki.notificator.data;
 
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Created by Lenovo on 11.08.2016.
@@ -14,6 +12,7 @@ public class RealEstate {
     public String updatedAt;
     public Integer hasPhone;
     public Integer firm;
+    public Integer hasElevator;
     public Double totalArea;
     public Double hallArea;
     public Double landArea;
@@ -28,6 +27,8 @@ public class RealEstate {
     public Integer floor;
     public Integer floorAll;
     public Integer stead;
+    public Integer steadX;
+    public Integer steadY;
     public Integer roomCount;
     public Integer prepayment;
     public Long idYard;
@@ -39,10 +40,12 @@ public class RealEstate {
     public Long idFurniture;
     public Long idWallMaterial;
     public Long idTypeApartment;
+    public Long idRealEstateState;
     public String dateFreed;
-    public Long[] idRent;
+    public Long[] idRents;
     public Long[] idLiftingEquipments;
     public Long[] idCommunications;
+    public Long[] idProfiles;
 
     public boolean isMatch(Requisition r) {
         if (r.type != null
@@ -56,6 +59,9 @@ public class RealEstate {
             return false;
         if (r.firm != null && this.firm != null
                 && !r.firm.equals(this.firm))
+            return false;
+        if (r.hasElevator != null && this.hasElevator != null
+                && !r.hasElevator.equals(this.hasElevator))
             return false;
         if (r.totalAreaFrom != null && this.totalArea != null
                 && r.totalAreaFrom > this.totalArea)
@@ -146,6 +152,18 @@ public class RealEstate {
         if (r.steadTo != null && this.stead != null
                 && r.steadTo < this.stead)
             return false;
+        if (r.steadXFrom != null && this.steadX != null
+                && r.steadXFrom > this.steadX)
+            return false;
+        if (r.steadXTo != null && this.steadX != null
+                && r.steadXTo < this.steadX)
+            return false;
+        if (r.steadYFrom != null && this.steadY != null
+                && r.steadYFrom > this.steadY)
+            return false;
+        if (r.steadYTo != null && this.steadY != null
+                && r.steadYTo < this.steadY)
+            return false;
         if (r.roomCountFrom != null && this.roomCount != null
                 && r.roomCountFrom > this.roomCount)
             return false;
@@ -179,8 +197,11 @@ public class RealEstate {
         if (r.idWallMaterial != null && this.idWallMaterial != null
                 && !r.idWallMaterial.equals(this.idWallMaterial))
             return false;
-        if (r.idTypeApartment != null && this.idTypeApartment != null
-                && !r.idTypeApartment.equals(this.idTypeApartment))
+        if (r.idTypeApartments != null && this.idTypeApartment != null
+                && !Arrays.asList(r.idTypeApartments).contains(this.idTypeApartment))
+            return false;
+        if (r.idRealEstateState != null && this.idRealEstateState != null
+                && !r.idRealEstateState.equals(this.idRealEstateState))
             return false;
         if (r.dateFreedFrom != null && this.dateFreed != null
                 && r.dateFreedFrom.compareTo(dateFreed) > 0)
@@ -188,16 +209,44 @@ public class RealEstate {
         if (r.dateFreedTo != null && this.dateFreed != null
                 && r.dateFreedTo.compareTo(dateFreed) < 0)
                 return false;
-        if (r.idRent != null && this.idRent != null
-                && !Arrays.asList(this.idRent).contains(r.idRent))
+        if (r.idRent != null && this.idRents != null
+                && !Arrays.asList(this.idRents).contains(r.idRent))
             return false;
-        if (r.idLiftingEquipment != null && this.idLiftingEquipments != null
-                && !Arrays.asList(this.idLiftingEquipments).contains(r.idLiftingEquipment))
-            return false;
-        if (r.idCommunication != null && this.idCommunications != null
-                && !Arrays.asList(this.idCommunications).contains(r.idCommunication))
-            return false;
+        if (r.idLiftingEquipments != null && this.idLiftingEquipments != null) {
+            Boolean isExist = false;
+            for (Long idLiftingEquipment : r.idLiftingEquipments) {
+                if(Arrays.asList(this.idLiftingEquipments).contains(idLiftingEquipment)) {
+                    isExist = true;
+                    break;
+                }
+            }
+            if (!isExist)
+                return false;
+        }
+        if (r.idCommunications != null && this.idCommunications != null) {
+            Boolean isExist = false;
+            for (Long idCommunication : r.idCommunications) {
+                if(Arrays.asList(this.idLiftingEquipments).contains(idCommunication)) {
+                    isExist = true;
+                    break;
+                }
+            }
+            if (!isExist)
+                return false;
+        }
+        if (r.idProfiles != null && this.idProfiles != null) {
+            Boolean isExist = false;
+            for (Long idProfile : r.idProfiles) {
+                if (Arrays.asList(this.idProfiles).contains(idProfile)) {
+                    isExist = true;
+                    break;
+                }
+            }
+            if (!isExist)
+                return false;
+        }
 
         return true;
     }
+
 }

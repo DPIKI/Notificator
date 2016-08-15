@@ -52,7 +52,7 @@ public class IsMatchTest {
 
     @Test
     public void testIdTypeApartment() throws NoSuchFieldException, IllegalAccessException {
-        testId(a, ar, "idTypeApartment", "idTypeApartment");
+        testId(a, ar, "idTypeApartments", "idTypeApartments");
     }
 
     @Test
@@ -168,12 +168,12 @@ public class IsMatchTest {
 
     @Test
     public void testIdLiftingEquipment() throws NoSuchFieldException, IllegalAccessException {
-        testArrayLong(a, ar, "idLiftingEquipments", "idLiftingEquipment");
+        testArrayLong(a, ar, "idLiftingEquipments", "idLiftingEquipments");
     }
 
     @Test
     public void testIdCommunication() throws NoSuchFieldException, IllegalAccessException {
-        testArrayLong(a, ar, "idCommunications", "idCommunication");
+        testArrayLong(a, ar, "idCommunications", "idCommunications");
     }
 
     @Test
@@ -223,7 +223,7 @@ public class IsMatchTest {
 
     @Test
     public void testIdRent() throws NoSuchFieldException, IllegalAccessException {
-        testArrayLong(a, ar, "idRent", "idRent");
+        testArrayLong(a, ar, "idRents", "idRents");
     }
 
 }

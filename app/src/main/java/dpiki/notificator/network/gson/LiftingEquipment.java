@@ -32,14 +32,14 @@ public class LiftingEquipment {
     }
 
     /**
-     * @return the idLiftingEquipment
+     * @return the idLiftingEquipments
      */
     public String getLiftingEquipment() {
         return LiftingEquipment;
     }
 
     /**
-     * @param idLiftingEquipment the idLiftingEquipment to set
+     * @param idLiftingEquipment the idLiftingEquipments to set
      */
     public void setIdLiftingEquipment(String liftingEquipment) {
         this.LiftingEquipment = liftingEquipment;

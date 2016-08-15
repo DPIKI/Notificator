@@ -5,6 +5,7 @@ package dpiki.notificator.data;
  */
 public class Requisition {
     public Long id;
+    public Long idRealEstateState;
     public String type;
     public Long idFund;
     public Double hallAreaFrom;
@@ -29,11 +30,16 @@ public class Requisition {
     public Double kitchenAreaTo;
     public Integer steadFrom;
     public Integer steadTo;
+    public Integer steadXFrom;
+    public Integer steadXTo;
+    public Integer steadYFrom;
+    public Integer steadYTo;
     public Long idWallMaterial;
-    public Long idTypeApartment;
+    public Long[] idTypeApartments;
     public Long idAddress;
     public Double costFrom;
     public Double costTo;
+    public Integer hasElevator;
     public Integer firm;
     public Integer floor;
     public Integer floorAll;
@@ -48,8 +54,9 @@ public class Requisition {
     public Long idYard;
     public Long idEntry;
     public Long idRent;
-    public Long idLiftingEquipment;
-    public Long idCommunication;
+    public Long[] idLiftingEquipments;
+    public Long[] idCommunications;
+    public Long[] idProfiles;
     public Integer idPhone;
     public String dateFreedFrom;
     public String dateFreedTo;
@@ -59,8 +66,9 @@ public class Requisition {
 
     }
 
-    public Requisition(Long id, String type, Long idFund, Double hallAreaFrom, Double hallAreaTo, Double landAreaFrom, Double landAreaTo, Double rentAreaFrom, Double rentAreaTo, Double sellPriceFrom, Double sellPriceTo, Double sellPriceSquareMeterFrom, Double sellPriceSquareMeterTo, Double rentalPriceFrom, Double rentalPriceTo, Double rentalPriceSquareMeterFrom, Double rentalPriceSquareMeterTo, Double totalAreaFrom, Double totalAreaTo, Double livingAreaFrom, Double livingAreaTo, Double kitchenAreaFrom, Double kitchenAreaTo, Integer steadFrom, Integer steadTo, Long idWallMaterial, Long idTypeApartment, Long idAddress, Double costFrom, Double costTo, Integer firm, Integer floor, Integer floorAll, Integer notFirst, Integer notLast, Integer roomCountFrom, Integer roomCountTo, Integer prepayment, Long idComfort, Long idFurniture, Long idState, Long idYard, Long idEntry, Long idRent, Long idLiftingEquipment, Long idCommunication, Integer idPhone, String dateFreedFrom, String dateFreedTo, Integer unreadRecommendationsCount) {
+    public Requisition(Long id, Long idRealEstateState, String type, Long idFund, Double hallAreaFrom, Double hallAreaTo, Double landAreaFrom, Double landAreaTo, Double rentAreaFrom, Double rentAreaTo, Double sellPriceFrom, Double sellPriceTo, Double sellPriceSquareMeterFrom, Double sellPriceSquareMeterTo, Double rentalPriceFrom, Double rentalPriceTo, Double rentalPriceSquareMeterFrom, Double rentalPriceSquareMeterTo, Double totalAreaFrom, Double totalAreaTo, Double livingAreaFrom, Double livingAreaTo, Double kitchenAreaFrom, Double kitchenAreaTo, Integer steadFrom, Integer steadTo, Integer steadXFrom, Integer steadXTo, Integer steadYFrom, Integer steadYTo, Long idWallMaterial, Long[] idTypeApartments, Long idAddress, Double costFrom, Double costTo, Integer hasElevator, Integer firm, Integer floor, Integer floorAll, Integer notFirst, Integer notLast, Integer roomCountFrom, Integer roomCountTo, Integer prepayment, Long idComfort, Long idFurniture, Long idState, Long idYard, Long idEntry, Long idRent, Long[] idLiftingEquipments, Long[] idCommunications, Long[] idProfiles, Integer idPhone, String dateFreedFrom, String dateFreedTo, Integer unreadRecommendationsCount) {
         this.id = id;
+        this.idRealEstateState = idRealEstateState;
         this.type = type;
         this.idFund = idFund;
         this.hallAreaFrom = hallAreaFrom;
@@ -85,11 +93,16 @@ public class Requisition {
         this.kitchenAreaTo = kitchenAreaTo;
         this.steadFrom = steadFrom;
         this.steadTo = steadTo;
+        this.steadXFrom = steadXFrom;
+        this.steadXTo = steadXTo;
+        this.steadYFrom = steadYFrom;
+        this.steadYTo = steadYTo;
         this.idWallMaterial = idWallMaterial;
-        this.idTypeApartment = idTypeApartment;
+        this.idTypeApartments = idTypeApartments;
         this.idAddress = idAddress;
         this.costFrom = costFrom;
         this.costTo = costTo;
+        this.hasElevator = hasElevator;
         this.firm = firm;
         this.floor = floor;
         this.floorAll = floorAll;
@@ -104,16 +117,18 @@ public class Requisition {
         this.idYard = idYard;
         this.idEntry = idEntry;
         this.idRent = idRent;
-        this.idLiftingEquipment = idLiftingEquipment;
-        this.idCommunication = idCommunication;
+        this.idLiftingEquipments = idLiftingEquipments;
+        this.idCommunications = idCommunications;
+        this.idProfiles = idProfiles;
         this.idPhone = idPhone;
         this.dateFreedFrom = dateFreedFrom;
         this.dateFreedTo = dateFreedTo;
         this.unreadRecommendationsCount = unreadRecommendationsCount;
     }
 
-    public Requisition(Requisition r) {
+    public Requisition(Requisition r) throws CloneNotSupportedException {
         this.id = r.id;
+        this.idRealEstateState = r.idRealEstateState;
         this.type = r.type;
         this.idFund = r.idFund;
         this.hallAreaFrom = r.hallAreaFrom;
@@ -138,11 +153,16 @@ public class Requisition {
         this.kitchenAreaTo = r.kitchenAreaTo;
         this.steadFrom = r.steadFrom;
         this.steadTo = r.steadTo;
+        this.steadXFrom = r.steadXFrom;
+        this.steadXTo = r.steadXTo;
+        this.steadYFrom = r.steadYFrom;
+        this.steadYTo = r.steadYTo;
         this.idWallMaterial = r.idWallMaterial;
-        this.idTypeApartment = r.idTypeApartment;
+        this.idTypeApartments = r.idTypeApartments;
         this.idAddress = r.idAddress;
         this.costFrom = r.costFrom;
         this.costTo = r.costTo;
+        this.hasElevator = r.hasElevator;
         this.firm = r.firm;
         this.floor = r.floor;
         this.floorAll = r.floorAll;
@@ -157,11 +177,13 @@ public class Requisition {
         this.idYard = r.idYard;
         this.idEntry = r.idEntry;
         this.idRent = r.idRent;
-        this.idLiftingEquipment = r.idLiftingEquipment;
-        this.idCommunication = r.idCommunication;
+        this.idLiftingEquipments = r.idLiftingEquipments;
+        this.idCommunications = r.idCommunications;
+        this.idProfiles = r.idProfiles;
         this.idPhone = r.idPhone;
         this.dateFreedFrom = r.dateFreedFrom;
         this.dateFreedTo = r.dateFreedTo;
         this.unreadRecommendationsCount = r.unreadRecommendationsCount;
     }
+
 }

@@ -13,6 +13,7 @@ import dpiki.notificator.data.Requisition;
 import dpiki.notificator.network.dataobjects.RequirementContainer;
 import dpiki.notificator.network.gson.Communication;
 import dpiki.notificator.network.gson.LiftingEquipment;
+import dpiki.notificator.network.gson.Profile;
 import dpiki.notificator.network.gson.Realestate;
 import dpiki.notificator.network.gson.RealestateInfo;
 import dpiki.notificator.network.gson.SearchNearContainer;
@@ -118,6 +119,7 @@ public class ServerApiWrapper {
             realEstate.idFurniture = realEstateInfo.getIdFurniture();
             realEstate.stead = realEstateInfo.getStead();
             realEstate.hasPhone = realEstateInfo.getHasPhone();
+            realEstate.hasElevator = realEstateInfo.getHasElevator();
             realEstate.idComfort = realEstateInfo.getIdComfort();
             realEstate.idYard = realEstateInfo.getIdYard();
             realEstate.roomCount = realEstateInfo.getRoomCount();
@@ -134,26 +136,32 @@ public class ServerApiWrapper {
 
             TypeRent[] foo = realEstateInfo.getTypeRent();
             if (foo != null) {
-                realEstate.idRent = new Long[foo.length];
-                for (int i = 0; i < foo.length; i++) {
-                    realEstate.idRent[i] = foo[i].getId();
+                realEstate.idRents = new Long[foo.length];
+                for (int i = 0; i < realEstate.idRents.length; i++) {
+                    realEstate.idRents[i] = foo[i].getId();
                 }
             }
             Communication[] bar = realEstateInfo.getCommunication();
             if (bar != null) {
                 realEstate.idCommunications = new Long[bar.length];
-                for (int i = 0; i < bar.length; i++) {
+                for (int i = 0; i < realEstate.idCommunications.length; i++) {
                     realEstate.idCommunications[i] = bar[i].getId();
                 }
             }
             LiftingEquipment[] buz = realEstateInfo.getLiftingEquipment();
             if (buz != null) {
                 realEstate.idLiftingEquipments = new Long[buz.length];
-                for (int i = 0; i < buz.length; i++) {
+                for (int i = 0; i < realEstate.idLiftingEquipments.length; i++) {
                     realEstate.idLiftingEquipments[i] = buz[i].getId();
                 }
             }
-
+            Profile[] bat = realEstateInfo.getProfile();
+            if (bat != null) {
+                realEstate.idProfiles = new Long[bat.length];
+                for (int i = 0; i < realEstate.idProfiles.length; i++) {
+                    realEstate.idProfiles[i] = bat[i].getId();
+                }
+            }
         }
 
         return realEstates;
