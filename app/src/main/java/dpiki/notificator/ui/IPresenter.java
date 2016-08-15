@@ -9,4 +9,5 @@ public interface IPresenter {
     void onItemClicked(long id, String type);
     void onRefreshButtonClicked();
     void onNewRecommendations();
+    void onRequisitionRefreshed();
 }

@@ -9,6 +9,7 @@ public interface IView {
     void showMessage(String message);
     void showInvalidSync();
     void showRequisitions(List<RequisitionInfoContainer> requisitions);
+    void showProgress();
 
     class RequisitionInfoContainer {
         public long id;

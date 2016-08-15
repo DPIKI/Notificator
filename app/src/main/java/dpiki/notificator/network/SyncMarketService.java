@@ -27,20 +27,24 @@ import dpiki.notificator.data.Recommendation;
 
 public class SyncMarketService extends Service {
     public static final String TAG = "SyncMS";
+    public static final String ACTION_START_RECEIVE = "dpiki.notificator.action.START_RECEIVE";
+    public static final String ACTION_STOP_RECEIVE = "dpiki.notificator.action.STOP_RECEIVE";
+    public static final String ACTION_RERUN = "dpiki.notificator.action.STOP_RERUN_SERVICE";
+    public static final String ACTION_REFRESH = "dpiki.notificator.action.REFRESH";
+    public static final String BROADCAST_SERVICE_STARTED = "dpiki.notificator.action.BROADCAST_STARTED";
+    public static final String BROADCAST_SERVICE_STOPPED = "dpiki.notificator.action.BROADCAST_STOPPED";
+    public static final String BROADCAST_SERVICE_REFRESHED = "dpiki.notificator.action.BROADCAST_STARTED";
+    public static final String BROADCAST_SERVICE_NEW_RECOMMENDATIONS = "dpiki.notificator.action.BROADCAST_NEW_RECOMMENDATIONS";
 
     public static int FOREGROUND_NOTIFICATION_ID = 1;
     public static int RECOMMENDATION_NOTIFICATION_ID = 2;
 
-    public static final String ACTION_START_RECEIVE = "dpiki.notificator.action.START_RECEIVE";
-    public static final String ACTION_STOP_RECEIVE = "dpiki.notificator.action.STOP_RECEIVE";
-    public static final String ACTION_NEW_RECOMMENDATIONS = "dpiki.notificator.action.NEW_RECOMMENDATION";
+    private static boolean mAreNotificationsReceiving = false;
 
     @Inject
     public DatabaseUtils mDatabaseUtils;
-
     @Inject
     public PrefManager mPrefManager;
-
     @Inject
     public SickBastard mSickBastard;
 
@@ -48,22 +52,11 @@ public class SyncMarketService extends Service {
     private PowerManager.WakeLock mWakeLock;
     private boolean mIsThreadRunning;
 
-    Runnable initBackgroundThread = new Runnable() {
+    Runnable refreshRequisitionsList = new Runnable() {
         @Override
         public void run() {
-            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FetcherThreadLock");
-            if (!mWakeLock.isHeld())
-                mWakeLock.acquire();
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(SyncMarketService.this)
-                    .setWhen(System.currentTimeMillis())
-                    .setSmallIcon(android.R.drawable.btn_default)
-                    .setTicker("Ticker")
-                    .setContentText("Text")
-                    .setContentTitle("Title");
-            Notification n = builder.build();
-            startForeground(FOREGROUND_NOTIFICATION_ID, n);
+            mSickBastard.refresh();
+            sendBroadcast(new Intent(BROADCAST_SERVICE_REFRESHED));
         }
     };
 
@@ -100,7 +93,27 @@ public class SyncMarketService extends Service {
             NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             nm.notify(RECOMMENDATION_NOTIFICATION_ID, n);
 
-            sendBroadcast(new Intent(ACTION_NEW_RECOMMENDATIONS));
+            sendBroadcast(new Intent(BROADCAST_SERVICE_NEW_RECOMMENDATIONS));
+        }
+    };
+
+    Runnable initBackgroundThread = new Runnable() {
+        @Override
+        public void run() {
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FetcherThreadLock");
+            if (!mWakeLock.isHeld())
+                mWakeLock.acquire();
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(SyncMarketService.this)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(android.R.drawable.btn_default)
+                    .setTicker("Ticker")
+                    .setContentText("Text")
+                    .setContentTitle("Title");
+            Notification n = builder.build();
+            startForeground(FOREGROUND_NOTIFICATION_ID, n);
+            sendBroadcast(new Intent(BROADCAST_SERVICE_STARTED));
         }
     };
 
@@ -111,15 +124,37 @@ public class SyncMarketService extends Service {
                 mWakeLock.release();
             stopForeground(true);
             mBackgroundHandler.getLooper().quit();
+            sendBroadcast(new Intent(BROADCAST_SERVICE_STOPPED));
         }
     };
 
-    Runnable refreshRequisitionsList = new Runnable() {
-        @Override
-        public void run() {
+    public static void startNotificationService(Context context) {
+        Intent startIntent = new Intent(context, SyncMarketService.class);
+        startIntent.setAction(ACTION_START_RECEIVE);
+        context.startService(startIntent);
+    }
 
-        }
-    };
+    public static void stopNotificationService(Context context) {
+        Intent stopIntent = new Intent(context, SyncMarketService.class);
+        stopIntent.setAction(ACTION_STOP_RECEIVE);
+        context.startService(stopIntent);
+    }
+
+    public static void rerunNotificationService(Context context) {
+        Intent stopIntent = new Intent(context, SyncMarketService.class);
+        stopIntent.setAction(ACTION_REFRESH);
+        context.startService(stopIntent);
+    }
+
+    public static void refreshRequisitions(Context context) {
+        Intent stopIntent = new Intent(context, SyncMarketService.class);
+        stopIntent.setAction(ACTION_REFRESH);
+        context.startService(stopIntent);
+    }
+
+    public static boolean serverStatus(Context context) {
+        return mAreNotificationsReceiving;
+    }
 
     @Override
     public void onCreate() {
@@ -145,6 +180,10 @@ public class SyncMarketService extends Service {
             startReceiveNotifications();
         } else if (intent.getAction().equals(ACTION_STOP_RECEIVE)) {
             stopReceiveNotifications();
+        } else if (intent.getAction().equals(ACTION_RERUN)) {
+            rerunReceiveNotifications();
+        } else if (intent.getAction().equals(ACTION_REFRESH)) {
+            mBackgroundHandler.post(refreshRequisitionsList);
         }
         return START_STICKY;
     }
@@ -154,6 +193,7 @@ public class SyncMarketService extends Service {
         mPrefManager.putReceiveNotificationsFlag(true);
         Intent intent = new Intent(ACTION_START_RECEIVE);
         sendBroadcast(intent);
+        mAreNotificationsReceiving = true;
     }
 
     private void stopReceiveNotifications() {
@@ -161,6 +201,13 @@ public class SyncMarketService extends Service {
         mPrefManager.putReceiveNotificationsFlag(false);
         Intent intent = new Intent(ACTION_STOP_RECEIVE);
         sendBroadcast(intent);
+        mAreNotificationsReceiving = false;
+    }
+
+    private void rerunReceiveNotifications() {
+        if (mPrefManager.getReceiveNotificationsFlag()) {
+            startReceiveNotifications();
+        }
     }
 
     private void startBackgroundThread() {
@@ -184,30 +231,6 @@ public class SyncMarketService extends Service {
             mBackgroundHandler.post(cleanUpBackgroundThread);
             mIsThreadRunning = false;
         }
-    }
-
-    public static void startNotificationService(Context context) {
-        Intent startIntent = new Intent(context, SyncMarketService.class);
-        startIntent.setAction(ACTION_START_RECEIVE);
-        context.startService(startIntent);
-    }
-
-    public static void stopNotificationService(Context context) {
-        Intent stopIntent = new Intent(context, SyncMarketService.class);
-        stopIntent.setAction(ACTION_STOP_RECEIVE);
-        context.startService(stopIntent);
-    }
-
-    public static void rerunNotificationService(Context context) {
-        if (serverStatus(context)) {
-            startNotificationService(context);
-        }
-    }
-
-    public static boolean serverStatus(Context context) {
-        // TODO : need more clever solution
-        PrefManager prefManager = new PrefManager(context);
-        return prefManager.getReceiveNotificationsFlag();
     }
 
     @Nullable

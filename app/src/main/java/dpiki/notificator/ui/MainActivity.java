@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements IView {
     protected TextView tvToolbarTitle;
     @ViewById(R.id.rl_activity_main_error_layout)
     protected RelativeLayout errorLayout;
+    @ViewById(R.id.rl_activity_main_progress_layout)
+    protected RelativeLayout progressLayout;
 
     private RecyclerAdapter recyclerAdapter;
     private BroadcastReceiver broadcastReceiver;
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements IView {
 
     @AfterViews
     protected void initPresenter() {
-        mPresenter = new PresenterImpl(this, App.getInstance().sickBastard());
+        mPresenter = new PresenterImpl(this, App.getInstance().sickBastard(), this);
         SyncMarketService.startNotificationService(this);
     }
 
@@ -68,7 +70,11 @@ public class MainActivity extends AppCompatActivity implements IView {
     public void onStart() {
         super.onStart();
         broadcastReceiver = new Receiver();
-        IntentFilter intentFilter = new IntentFilter(SyncMarketService.ACTION_NEW_RECOMMENDATIONS);
+
+        IntentFilter intentFilter = new IntentFilter(SyncMarketService.BROADCAST_SERVICE_NEW_RECOMMENDATIONS);
+        registerReceiver(broadcastReceiver, intentFilter);
+
+        intentFilter = new IntentFilter(SyncMarketService.BROADCAST_SERVICE_REFRESHED);
         registerReceiver(broadcastReceiver, intentFilter);
     }
 
@@ -99,13 +105,22 @@ public class MainActivity extends AppCompatActivity implements IView {
     public void showInvalidSync() {
         errorLayout.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
+        progressLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void showRequisitions(List<RequisitionInfoContainer> requisitions) {
         errorLayout.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
+        progressLayout.setVisibility(View.GONE);
         recyclerAdapter.update(requisitions);
+    }
+
+    @Override
+    public void showProgress() {
+        errorLayout.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+        progressLayout.setVisibility(View.VISIBLE);
     }
 
     @Click(R.id.btn_activity_main_refresh)
@@ -126,8 +141,10 @@ public class MainActivity extends AppCompatActivity implements IView {
     public class Receiver extends android.content.BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SyncMarketService.ACTION_NEW_RECOMMENDATIONS)) {
+            if (intent.getAction().equals(SyncMarketService.BROADCAST_SERVICE_NEW_RECOMMENDATIONS)) {
                 mPresenter.onNewRecommendations();
+            } else if (intent.getAction().equals(SyncMarketService.BROADCAST_SERVICE_REFRESHED)) {
+                mPresenter.onRequisitionRefreshed();
             }
         }
     }
