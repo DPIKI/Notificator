@@ -45,7 +45,6 @@ public class RealEstate {
     public Long[] idCommunications;
 
     public boolean isMatch(Requisition r) {
-
         if (r.type != null
                 && this.type != null
                 && !r.type.equals(this.type))
@@ -183,43 +182,12 @@ public class RealEstate {
         if (r.idTypeApartment != null && this.idTypeApartment != null
                 && !r.idTypeApartment.equals(this.idTypeApartment))
             return false;
-        if (r.dateFreedFrom != null && this.dateFreed != null){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date dateFreedFrom = null;
-            Date dateFreed = null;
-            try {
-                dateFreedFrom = sdf.parse(r.dateFreedFrom);
-                dateFreed = sdf.parse(this.dateFreed);
-            } catch (java.text.ParseException e) {
-                e.printStackTrace();
-            }
-
-            if (dateFreed == null || dateFreedFrom == null){
+        if (r.dateFreedFrom != null && this.dateFreed != null
+                && r.dateFreedFrom.compareTo(dateFreed) > 0)
                 return false;
-            }
-
-            if (dateFreedFrom.after(dateFreed))
+        if (r.dateFreedTo != null && this.dateFreed != null
+                && r.dateFreedTo.compareTo(dateFreed) < 0)
                 return false;
-        }
-
-        if (r.dateFreedTo != null && this.dateFreed != null){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date dateFreedTo = null;
-            Date dateFreed = null;
-            try {
-                dateFreedTo = sdf.parse(r.dateFreedTo);
-                dateFreed = sdf.parse(this.dateFreed);
-            } catch (java.text.ParseException e) {
-                e.printStackTrace();
-            }
-
-            if (dateFreed == null || dateFreedTo == null){
-                return false;
-            }
-
-            if (dateFreedTo.before(dateFreed))
-                return false;
-        }
         if (r.idRent != null && this.idRent != null
                 && !Arrays.asList(this.idRent).contains(r.idRent))
             return false;
