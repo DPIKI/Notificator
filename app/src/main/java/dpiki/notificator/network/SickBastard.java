@@ -71,9 +71,13 @@ public class SickBastard {
 
     public List<Requisition> getRequisitions() {
         if (isRequisitionsValid) {
+            List<Requisition> retVal = new ArrayList<>();
             synchronized (requisitions) {
-                return requisitions;
+                for (Requisition i : requisitions) {
+                    retVal.add(new Requisition(i));
+                }
             }
+            return retVal;
         } else {
             return null;
         }
@@ -94,8 +98,8 @@ public class SickBastard {
                 for (Requisition i : requisitions) {
                     i.unreadRecommendationsCount = mDbUtils.getUnreadRecommendationsCount(i.id, i.type);
                 }
+                mDbUtils.clearRecommendations(requisitions);
             }
-            mDbUtils.clearRecommendations(requisitions);
             isRequisitionsValid = true;
         } catch (IOException e) {
             e.printStackTrace();

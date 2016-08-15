@@ -48,12 +48,42 @@ public class ServerApiWrapperMock extends ServerApiWrapper {
         retVal.add(r);
 
         r = new Requisition();
+        r.id = 1L;
+        r.type = RealtyTypes.TYPE_APARTMENT;
+        retVal.add(r);
+
+        r = new Requisition();
         r.id = 0L;
         r.type = RealtyTypes.TYPE_LAND;
         retVal.add(r);
 
         r = new Requisition();
         r.id = 1L;
+        r.type = RealtyTypes.TYPE_LAND;
+        retVal.add(r);
+
+        r = new Requisition();
+        r.id = 2L;
+        r.type = RealtyTypes.TYPE_LAND;
+        retVal.add(r);
+
+        r = new Requisition();
+        r.id = 3L;
+        r.type = RealtyTypes.TYPE_LAND;
+        retVal.add(r);
+
+        r = new Requisition();
+        r.id = 4L;
+        r.type = RealtyTypes.TYPE_LAND;
+        retVal.add(r);
+
+        r = new Requisition();
+        r.id = 5L;
+        r.type = RealtyTypes.TYPE_LAND;
+        retVal.add(r);
+
+        r = new Requisition();
+        r.id = 6L;
         r.type = RealtyTypes.TYPE_LAND;
         retVal.add(r);
 

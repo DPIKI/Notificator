@@ -46,6 +46,8 @@ public class PresenterImpl implements IPresenter {
 
     @Override
     public void onRefreshButtonClicked() {
+        mSickBastard.refresh();
+
         List<Requisition> requisitions = mSickBastard.getRequisitions();
         if (requisitions != null) {
             List<IView.RequisitionInfoContainer> containers = new ArrayList<>();
@@ -63,9 +65,9 @@ public class PresenterImpl implements IPresenter {
         @Override
         public int compare(IView.RequisitionInfoContainer lhs, IView.RequisitionInfoContainer rhs) {
             if (lhs.unread > rhs.unread) {
-                return 1;
-            } else if (lhs.unread < rhs.unread) {
                 return -1;
+            } else if (lhs.unread < rhs.unread) {
+                return 1;
             } else {
                 return 0;
             }

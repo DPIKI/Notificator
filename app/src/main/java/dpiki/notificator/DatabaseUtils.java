@@ -144,20 +144,24 @@ public class DatabaseUtils {
                     new String[] { DatabaseHelper.FIELD_REQUISITIONS_UNREAD_RECOMMENDATIONS},
                     whereClause, null, null, null, null);
 
-            try {
-                if (c.moveToNext()) {
-                    ContentValues cv = new ContentValues();
-                    cv.put(DatabaseHelper.FIELD_REQUISITIONS_UNREAD_RECOMMENDATIONS, count);
-                    db.update(DatabaseHelper.TABLE_REQUISITIONS, cv, whereClause, null);
-                } else {
-                    ContentValues cv = new ContentValues();
-                    cv.put(DatabaseHelper.FIELD_REQUISITIONS_UNREAD_RECOMMENDATIONS, count);
-                    cv.put(DatabaseHelper.FIELD_REQUISITIONS_ID, id);
-                    cv.put(DatabaseHelper.FIELD_REQUISITIONS_TYPE, type);
-                    db.insert(DatabaseHelper.TABLE_REQUISITIONS, null, cv);
+            if (count != 0) {
+                try {
+                    if (c.moveToNext()) {
+                        ContentValues cv = new ContentValues();
+                        cv.put(DatabaseHelper.FIELD_REQUISITIONS_UNREAD_RECOMMENDATIONS, count);
+                        db.update(DatabaseHelper.TABLE_REQUISITIONS, cv, whereClause, null);
+                    } else {
+                        ContentValues cv = new ContentValues();
+                        cv.put(DatabaseHelper.FIELD_REQUISITIONS_UNREAD_RECOMMENDATIONS, count);
+                        cv.put(DatabaseHelper.FIELD_REQUISITIONS_ID, id);
+                        cv.put(DatabaseHelper.FIELD_REQUISITIONS_TYPE, type);
+                        db.insert(DatabaseHelper.TABLE_REQUISITIONS, null, cv);
+                    }
+                } finally {
+                    c.close();
                 }
-            } finally {
-                c.close();
+            } else {
+                db.delete(DatabaseHelper.TABLE_REQUISITIONS, whereClause, null);
             }
         } finally {
             db.close();
