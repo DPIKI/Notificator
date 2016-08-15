@@ -14,8 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import junit.framework.Assert;
-
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -113,6 +111,13 @@ public class SyncMarketService extends Service {
                 mWakeLock.release();
             stopForeground(true);
             mBackgroundHandler.getLooper().quit();
+        }
+    };
+
+    Runnable refreshRequisitionsList = new Runnable() {
+        @Override
+        public void run() {
+
         }
     };
 

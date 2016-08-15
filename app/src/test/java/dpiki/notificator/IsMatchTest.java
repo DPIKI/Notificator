@@ -5,9 +5,11 @@ import org.junit.Test;
 import dpiki.notificator.data.RealEstate;
 import dpiki.notificator.data.Requisition;
 
+import static dpiki.notificator.TestUtils.testArrayArrayLong;
 import static dpiki.notificator.TestUtils.testArrayLong;
 import static dpiki.notificator.TestUtils.testId;
 import static dpiki.notificator.TestUtils.testInteger;
+import static dpiki.notificator.TestUtils.testLongArray;
 import static dpiki.notificator.TestUtils.testRange;
 import static dpiki.notificator.TestUtils.testRangeDate;
 import static dpiki.notificator.TestUtils.testRangeInteger;
@@ -52,7 +54,7 @@ public class IsMatchTest {
 
     @Test
     public void testIdTypeApartment() throws NoSuchFieldException, IllegalAccessException {
-        testId(a, ar, "idTypeApartment", "idTypeApartment");
+        testLongArray(a, ar, "idTypeApartment", "idTypeApartment");
     }
 
     @Test
@@ -168,12 +170,12 @@ public class IsMatchTest {
 
     @Test
     public void testIdLiftingEquipment() throws NoSuchFieldException, IllegalAccessException {
-        testArrayLong(a, ar, "idLiftingEquipments", "idLiftingEquipment");
+        testArrayArrayLong(a, ar, "idLiftingEquipments", "idLiftingEquipment");
     }
 
     @Test
     public void testIdCommunication() throws NoSuchFieldException, IllegalAccessException {
-        testArrayLong(a, ar, "idCommunications", "idCommunication");
+        testArrayArrayLong(a, ar, "idCommunications", "idCommunication");
     }
 
     @Test
@@ -224,6 +226,31 @@ public class IsMatchTest {
     @Test
     public void testIdRent() throws NoSuchFieldException, IllegalAccessException {
         testArrayLong(a, ar, "idRent", "idRent");
+    }
+
+    @Test
+    public void testHasElevator() throws NoSuchFieldException, IllegalAccessException {
+        testInteger(a, ar, "hasElevator", "hasElevator");
+    }
+
+    @Test
+    public void testIdRealEstateState() throws NoSuchFieldException, IllegalAccessException {
+        testId(a, ar, "idRealEstateState", "idRealEstateState");
+    }
+
+    @Test
+    public void testSteadX() throws NoSuchFieldException, IllegalAccessException {
+        testRangeInteger(a, ar, "steadX", "steadXFrom", "steadXTo");
+    }
+
+    @Test
+    public void testSteadY() throws NoSuchFieldException, IllegalAccessException {
+        testRangeInteger(a, ar, "steadY", "steadYFrom", "steadYTo");
+    }
+
+    @Test
+    public void testIdProfile() throws NoSuchFieldException, IllegalAccessException {
+        testArrayArrayLong(a, ar, "idProfile", "idProfile");
     }
 
 }

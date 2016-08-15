@@ -1,11 +1,11 @@
 package dpiki.notificator;
 
-import static org.junit.Assert.*;
-
 import java.lang.reflect.Field;
 
 import dpiki.notificator.data.RealEstate;
 import dpiki.notificator.data.Requisition;
+
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -244,6 +244,113 @@ public class TestUtils {
 
         fldParam.set(a, null);
         assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, oldParam);
+        fldFilter.set(ar, oldFilter);
+    }
+
+    public static void testArrayArrayLong(RealEstate a, Requisition ar, String paramName,
+                                     String filterName)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field fldParam = a.getClass().getField(paramName);
+        Field fldFilter = ar.getClass().getField(filterName);
+
+        Long[] oldParam = (Long[]) fldParam.get(a);
+        Long[] oldFilter = (Long[]) fldFilter.get(ar);
+
+        /** when filter is null always return true **/
+        fldFilter.set(ar, null);
+
+        fldParam.set(a, new Long[]{10L, 20L, 30L, 40L, 50L});
+        assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, new Long[]{});
+        assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, null);
+        assertEquals(true, a.isMatch(ar));
+
+        /** when param is null return true **/
+        fldParam.set(a, null);
+
+        fldFilter.set(ar, null);
+        assertEquals(true, a.isMatch(ar));
+
+        fldFilter.set(ar, new Long[]{});
+        assertEquals(true, a.isMatch(ar));
+
+        fldFilter.set(ar, new Long[]{20L,10L});
+        assertEquals(true, a.isMatch(ar));
+
+        /**
+         *  when filter is specified
+         *  return true if param contains at least one filter value
+         */
+        fldFilter.set(ar, new Long[]{10L, 20L, 30L});
+
+        fldParam.set(a, new Long[]{10L});
+        assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, new Long[]{10L, 20L});
+        assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, new Long[]{10L, 20L, 40L});
+        assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, new Long[]{40L, 50L});
+        assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, oldParam);
+        fldFilter.set(ar, oldFilter);
+    }
+
+    public static void testLongArray(RealEstate a, Requisition ar, String paramName,
+                                     String filterName)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field fldParam = a.getClass().getField(paramName);
+        Field fldFilter = ar.getClass().getField(filterName);
+
+        Long oldParam = (Long) fldParam.get(a);
+        Long[] oldFilter = (Long[]) fldFilter.get(ar);
+
+        /** when filter is null always return true **/
+        fldFilter.set(ar, null);
+
+        fldParam.set(a, 50L);
+        assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, null);
+        assertEquals(true, a.isMatch(ar));
+
+        /** when param is null return true **/
+        fldParam.set(a, null);
+
+        fldFilter.set(ar, null);
+        assertEquals(true, a.isMatch(ar));
+
+        fldFilter.set(ar, new Long[]{});
+        assertEquals(true, a.isMatch(ar));
+
+        fldFilter.set(ar, new Long[]{20L, 30L});
+        assertEquals(true, a.isMatch(ar));
+
+        /**
+         *  when filter is specified
+         *  return true if param contains at least one filter value
+         */
+        fldFilter.set(ar, new Long[]{10L, 20L, 30L});
+
+        fldParam.set(a, 0L);
+        assertEquals(false, a.isMatch(ar));
+
+        fldParam.set(a, 10L);
+        assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, 20L);
+        assertEquals(true, a.isMatch(ar));
+
+        fldParam.set(a, 40L);
+        assertEquals(false, a.isMatch(ar));
 
         fldParam.set(a, oldParam);
         fldFilter.set(ar, oldFilter);
